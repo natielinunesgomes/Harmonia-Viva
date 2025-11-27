@@ -5,7 +5,7 @@ import { TRACKS } from '../constants';
 
 const YOUTUBE_URL = "https://www.youtube.com/@HarmoniaViva-HV";
 
-// Memoized Sidebar Content to prevent re-rendering when mobile menu toggles
+// Memoized Sidebar Content
 const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => (
   <>
     <Link to="/" className="p-6 border-b border-gray-800 block cursor-pointer hover:bg-white/5 transition-colors" onClick={onClose}>
@@ -34,15 +34,13 @@ const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => (
       {/* Dynamic Tracks */}
       {TRACKS.map((track) => {
         const isCreation = track.id === 'creation';
-        const themeColor = isCreation ? 'pink' : 'green';
-        const bgHeader = isCreation 
-          ? 'bg-gradient-to-r from-pink-900/20 to-transparent border-l-4 border-pink-500' 
-          : 'bg-gradient-to-r from-green-900/20 to-transparent border-l-4 border-green-500';
         const titleColor = isCreation ? 'text-pink-400' : 'text-green-400';
+        const borderColor = isCreation ? 'border-pink-500' : 'border-green-500';
+        const bgHeader = isCreation ? 'from-pink-900/10' : 'from-green-900/10';
 
         return (
           <div key={track.id} className="pb-2">
-            <div className={`py-3 px-6 mb-2 ${bgHeader}`}>
+            <div className={`py-3 px-6 mb-2 bg-gradient-to-r ${bgHeader} to-transparent border-l-4 ${borderColor}`}>
               <h3 className={`text-sm font-bold uppercase tracking-wider flex items-center gap-2 ${titleColor}`}>
                 <track.icon className="w-4 h-4" />
                 {track.title}
@@ -105,8 +103,9 @@ export const Layout: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row font-sans text-gray-100 bg-suno-dark relative">
+      
       {/* Mobile/Tablet Header */}
-      <header className="lg:hidden bg-suno-dark border-b border-gray-800 p-4 flex justify-between items-center sticky top-0 z-30 shadow-md">
+      <header className="lg:hidden bg-suno-dark/95 backdrop-blur-md border-b border-gray-800 p-4 flex justify-between items-center sticky top-0 z-30 shadow-md">
         <Link 
           to="/"
           className="font-bold text-xl tracking-tight text-white flex items-center gap-2 focus:outline-none" 
@@ -134,7 +133,9 @@ export const Layout: React.FC = () => {
 
       {/* Sidebar Navigation */}
       <aside className={`
-        fixed lg:sticky top-0 left-0 h-screen w-72 bg-suno-card border-r border-gray-800 z-50 transform transition-transform duration-300 ease-in-out will-change-transform
+        fixed lg:sticky top-0 left-0 h-screen w-72 
+        bg-gray-900 lg:bg-suno-card/80 backdrop-blur-xl border-r border-gray-800 
+        z-50 transform transition-transform duration-300 ease-in-out will-change-transform
         ${mobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}
         flex flex-col
       `}>
@@ -142,10 +143,10 @@ export const Layout: React.FC = () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 min-w-0 bg-suno-dark relative flex flex-col">
+      <main className="flex-1 min-w-0 bg-transparent relative flex flex-col">
         <Outlet />
         
-        <footer className="mt-auto py-8 text-center text-gray-600 text-sm border-t border-gray-800/50">
+        <footer className="mt-auto py-8 text-center text-gray-600 text-sm border-t border-gray-800/50 bg-suno-dark/50 backdrop-blur-sm">
           <p>© 2025 Harmonia Viva. Todos os direitos reservados.</p>
           <div className="flex items-center justify-center gap-4 mt-2">
              <a href="https://suno.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-500 transition-colors">Suno Oficial</a>

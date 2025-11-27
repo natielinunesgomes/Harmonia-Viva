@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles that are safe to use with or without PostCSS processing */
+body {
+  background-color: #0f0f13;
+  color: #f4f4f5;
+  font-family: 'Inter', sans-serif;
+}
