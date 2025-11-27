@@ -1,10 +1,8 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { PromptResult } from "../types";
 
-const API_KEY = process.env.API_KEY || '';
-
-// Singleton instance
-const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
+// The API key must be obtained exclusively from the environment variable process.env.API_KEY.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const MODEL_NAME = 'gemini-2.5-flash';
 
 // In-memory cache for instant retrieval of repeated queries
@@ -55,8 +53,6 @@ const parseResponse = (response: GenerateContentResponse): PromptResult | null =
 };
 
 export const generateSunoPrompt = async (userInput: string): Promise<PromptResult> => {
-  if (!ai) return { stylePrompt: "Erro", explanation: "API Key ausente." };
-  
   const cleanInput = userInput.trim().toLowerCase();
   
   // 1. Cache Check (Instant Return)
@@ -97,8 +93,6 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
 };
 
 export const generateMagicPrompt = async (currentInput: string): Promise<PromptResult> => {
-  if (!ai) return { stylePrompt: "Erro", explanation: "API Key ausente." };
-
   try {
     const isRandom = !currentInput || currentInput.trim() === "";
     

@@ -10,11 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CDN for Immediate Preview Rendering -->
+    <!-- Tailwind CDN for Immediate Preview Rendering (Fixes 'Notepad' look) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
-        darkMode: 'class',
         theme: {
           extend: {
             colors: {
@@ -47,18 +46,18 @@
       }
     </script>
 
-    <!-- Critical CSS -->
+    <!-- Critical CSS for immediate dark theme feedback and scrollbar -->
     <style>
       body { 
         background-color: #0f0f13; 
         margin: 0; 
         color: #f4f4f5;
         font-family: 'Inter', sans-serif;
-        /* Subtle background pattern */
+        /* Ambient Background */
         background-image: 
           radial-gradient(circle at 50% 0%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-          linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), 
-          linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+          linear-gradient(to right, #ffffff05 1px, transparent 1px), 
+          linear-gradient(to bottom, #ffffff05 1px, transparent 1px);
         background-size: 100% 100%, 24px 24px, 24px 24px;
         min-height: 100vh;
       }
