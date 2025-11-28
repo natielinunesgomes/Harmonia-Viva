@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Wand2, Copy, Check, Zap, Sparkles, RefreshCcw, History, Music2, Trash2, Mic2 } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Wand2, Copy, Check, Zap, Sparkles, RefreshCcw, Music2, Mic2 } from 'lucide-react';
 import { generateSunoPrompt, generateMagicPrompt } from '../services/geminiService';
-import { PromptResult, PromptHistoryItem } from '../types';
+import { PromptResult } from '../types';
 
 // --- CONSTANTES E OPÇÕES DO MODO GUIADO ---
 const GENRES = [
@@ -27,7 +27,6 @@ export const PromptGenerator: React.FC = () => {
   // Estado Principal
   const [mode, setMode] = useState<'guided' | 'free'>('guided');
   const [loading, setLoading] = useState(false);
-  const [history, setHistory] = useState<PromptHistoryItem[]>([]);
   const [currentResult, setCurrentResult] = useState<PromptResult | null>(null);
   
   // Estado do Modo Guiado
@@ -50,17 +49,6 @@ export const PromptGenerator: React.FC = () => {
     }
   }, [currentResult]);
 
-  const addToHistory = (result: PromptResult, input: string) => {
-    const newItem: PromptHistoryItem = {
-      ...result,
-      id: Date.now().toString(),
-      timestamp: Date.now(),
-      originalInput: input
-    };
-    setHistory(prev => [newItem, ...prev].slice(0, 10)); // Mantém os últimos 10
-    setCurrentResult(result);
-  };
-
   const constructPromptFromTags = () => {
     const parts = [];
     if (selectedGenre) parts.push(`Gênero: ${selectedGenre}`);
@@ -78,7 +66,7 @@ export const PromptGenerator: React.FC = () => {
     setLoading(true);
     try {
       const result = await generateSunoPrompt(input);
-      addToHistory(result, input);
+      setCurrentResult(result);
     } finally {
       setLoading(false);
     }
@@ -89,7 +77,7 @@ export const PromptGenerator: React.FC = () => {
     try {
       const input = mode === 'guided' ? constructPromptFromTags() : freeInput;
       const result = await generateMagicPrompt(input);
-      addToHistory(result, "Magic Mode: " + (input || "Surpresa"));
+      setCurrentResult(result);
     } finally {
       setLoading(false);
     }
@@ -99,11 +87,6 @@ export const PromptGenerator: React.FC = () => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const clearHistory = () => {
-    setHistory([]);
-    setCurrentResult(null);
   };
 
   return (
@@ -254,8 +237,8 @@ export const PromptGenerator: React.FC = () => {
         </div>
       </div>
 
-      {/* COLUNA DIREITA: RESULTADOS E HISTÓRICO */}
-      <div className="w-full lg:w-[400px] flex flex-col gap-6">
+      {/* COLUNA DIREITA: RESULTADOS */}
+      <div className="w-full lg:w-[400px] flex flex-col gap-6 lg:sticky lg:top-8 h-fit">
         
         {/* Resultado Principal */}
         <div ref={resultRef} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-2xl min-h-[160px]">
@@ -304,64 +287,6 @@ export const PromptGenerator: React.FC = () => {
           </div>
         </div>
 
-        {/* Histórico Recente */}
-        {history.length > 0 && (
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden flex-1 max-h-[500px] flex flex-col">
-            <div className="p-4 border-b border-gray-800 flex justify-between items-center sticky top-0 bg-gray-900 z-10">
-              <h3 className="font-bold text-gray-300 text-sm flex items-center gap-2">
-                <History className="w-4 h-4" /> Histórico da Sessão
-              </h3>
-              <button 
-                onClick={clearHistory}
-                className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1"
-              >
-                <Trash2 className="w-3 h-3" /> Limpar
-              </button>
-            </div>
-            
-            <div className="overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-gray-700">
-              {history.map((item) => (
-                <div 
-                  key={item.id} 
-                  className={`p-3 rounded-lg border transition-all text-left group ${
-                    currentResult?.stylePrompt === item.stylePrompt 
-                      ? 'bg-gray-800 border-pink-500/50' 
-                      : 'bg-black/20 border-gray-800 hover:border-gray-600'
-                  }`}
-                >
-                  <div className="flex justify-between items-start gap-2 mb-2">
-                    <span className="text-[10px] text-gray-500 uppercase font-bold truncate max-w-[200px]">
-                      {item.explanation || 'Estilo Gerado'}
-                    </span>
-                    <span className="text-[10px] text-gray-600">
-                      {new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                    </span>
-                  </div>
-                  
-                  <p className="text-xs text-gray-300 font-mono line-clamp-2 mb-2">
-                    {item.stylePrompt}
-                  </p>
-
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setCurrentResult(item)}
-                      className="text-[10px] bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded border border-gray-700"
-                    >
-                      Ver
-                    </button>
-                    <button
-                      onClick={() => copyToClipboard(item.stylePrompt, item.id)}
-                      className="text-[10px] bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded border border-gray-700 flex items-center gap-1 ml-auto"
-                    >
-                      {copiedId === item.id ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3" />}
-                      Copiar
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
     </div>
