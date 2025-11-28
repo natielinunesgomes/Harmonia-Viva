@@ -1,9 +1,44 @@
 import React, { useState, useCallback, memo } from 'react';
-import { Music, Menu, X, Youtube, Wand2 } from 'lucide-react';
+import { Music, Menu, X, Youtube, Wand2, LucideIcon } from 'lucide-react';
 import { NavLink, Link, Outlet, useLocation } from 'react-router-dom';
 import { TRACKS } from '../constants';
 
 const YOUTUBE_URL = "https://www.youtube.com/@HarmoniaViva-HV";
+
+interface NavItemProps { 
+  to: string; 
+  icon?: LucideIcon; 
+  label: string; 
+  onClick?: () => void; 
+  activeColorClass: string; 
+  activeBgClass: string; 
+  activeBorderClass: string; 
+}
+
+// Reusable NavItem Component for consistent styling
+const NavItem: React.FC<NavItemProps> = ({ 
+  to, 
+  icon: Icon, 
+  label, 
+  onClick, 
+  activeColorClass, 
+  activeBgClass, 
+  activeBorderClass 
+}) => (
+  <NavLink
+    to={to}
+    onClick={onClick}
+    className={({ isActive }) => `
+      w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 border border-transparent
+      ${isActive 
+        ? `${activeBgClass} ${activeColorClass} ${activeBorderClass} font-medium shadow-sm` 
+        : 'text-gray-400 hover:text-white hover:bg-white/5'}
+    `}
+  >
+    {Icon && <Icon className="w-4 h-4" />}
+    <span className="truncate text-left">{label}</span>
+  </NavLink>
+);
 
 // Memoized Sidebar Content
 const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => (
@@ -18,7 +53,7 @@ const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => (
 
     <nav className="flex-1 overflow-y-auto py-6 space-y-6 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
       
-      {/* Tools Section */}
+      {/* Ferramentas Section */}
       <div className="pb-2">
         <div className="py-3 px-6 mb-2 bg-gradient-to-r from-violet-900/10 to-transparent border-l-4 border-violet-500">
            <h3 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2 text-violet-400">
@@ -27,18 +62,14 @@ const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => (
            </h3>
         </div>
         <div className="space-y-1 px-4">
-           <NavLink
-              to="/generator"
-              onClick={onClose}
-              className={({ isActive }) => `
-                w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 border border-transparent
-                ${isActive 
-                  ? 'bg-violet-500/10 text-violet-200 border-violet-500/20 font-medium shadow-sm' 
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'}
-              `}
-            >
-              <span className="truncate text-left">Gerador de Prompts</span>
-            </NavLink>
+           <NavItem
+             to="/generator"
+             label="Gerador de Prompts"
+             onClick={onClose}
+             activeColorClass="text-violet-200"
+             activeBgClass="bg-violet-500/10"
+             activeBorderClass="border-violet-500/20"
+           />
         </div>
       </div>
 
@@ -48,6 +79,10 @@ const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => (
         const titleColor = isCreation ? 'text-pink-400' : 'text-green-400';
         const borderColor = isCreation ? 'border-pink-500' : 'border-green-500';
         const bgHeader = isCreation ? 'from-pink-900/10' : 'from-green-900/10';
+        
+        const activeColor = isCreation ? 'text-pink-200' : 'text-green-200';
+        const activeBg = isCreation ? 'bg-pink-500/10' : 'bg-green-500/10';
+        const activeBorder = isCreation ? 'border-pink-500/20' : 'border-green-500/20';
 
         return (
           <div key={track.id} className="pb-2">
@@ -59,24 +94,15 @@ const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => (
             </div>
             <div className="space-y-1 px-4">
               {track.lessons.map((lesson) => (
-                <NavLink
+                <NavItem
                   key={lesson.id}
                   to={`/lesson/${lesson.id}`}
+                  label={lesson.title}
                   onClick={onClose}
-                  className={({ isActive }) => {
-                    const activeClass = isCreation 
-                      ? 'bg-pink-500/10 text-pink-200 border border-pink-500/20' 
-                      : 'bg-green-500/10 text-green-200 border border-green-500/20';
-                    
-                    return `w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 border border-transparent ${
-                      isActive 
-                        ? `${activeClass} font-medium shadow-sm` 
-                        : 'text-gray-400 hover:text-white hover:bg-white/5'
-                    }`;
-                  }}
-                >
-                  <span className="truncate text-left">{lesson.title}</span>
-                </NavLink>
+                  activeColorClass={activeColor}
+                  activeBgClass={activeBg}
+                  activeBorderClass={activeBorder}
+                />
               ))}
             </div>
           </div>
