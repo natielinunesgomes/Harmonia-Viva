@@ -1,8 +1,19 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { PromptResult } from "../types";
 
-// Guidelines: The API key must be obtained exclusively from the environment variable process.env.API_KEY.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Helper to get API Key safely in Vite/Vercel environment
+const getApiKey = () => {
+  // @ts-ignore - import.meta is a Vite specific property
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
+    // @ts-ignore
+    return import.meta.env.VITE_API_KEY;
+  }
+  // Fallback for other environments
+  return process.env.API_KEY;
+};
+
+const apiKey = getApiKey();
+const ai = new GoogleGenAI({ apiKey: apiKey || '' });
 const MODEL_NAME = 'gemini-2.5-flash';
 
 // In-memory cache for instant retrieval of repeated queries
@@ -53,8 +64,8 @@ const parseResponse = (response: GenerateContentResponse): PromptResult | null =
 };
 
 export const generateSunoPrompt = async (userInput: string): Promise<PromptResult> => {
-  if (!process.env.API_KEY) {
-    console.error("API Key not found. Ensure process.env.API_KEY is set.");
+  if (!apiKey) {
+    console.error("API Key not found. Ensure VITE_API_KEY is set in Vercel.");
     return generateFallback(userInput);
   }
 
@@ -96,7 +107,7 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
 };
 
 export const generateMagicPrompt = async (currentInput: string): Promise<PromptResult> => {
-  if (!process.env.API_KEY) return generateFallback(currentInput);
+  if (!apiKey) return generateFallback(currentInput);
 
   try {
     const isRandom = !currentInput || currentInput.trim() === "";
