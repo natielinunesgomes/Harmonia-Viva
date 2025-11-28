@@ -1,8 +1,18 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { PromptResult } from "../types";
 
-// The API key must be obtained exclusively from the environment variable.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Helper to get API Key safely in both Vite and standard node environments
+const getApiKey = () => {
+  // @ts-ignore
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    // @ts-ignore
+    return import.meta.env.VITE_API_KEY;
+  }
+  return process.env.API_KEY;
+};
+
+const apiKey = getApiKey();
+const ai = new GoogleGenAI({ apiKey });
 const MODEL_NAME = 'gemini-2.5-flash';
 
 // In-memory cache for instant retrieval of repeated queries
