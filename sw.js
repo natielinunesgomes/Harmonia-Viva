@@ -1,19 +1,10 @@
-const CACHE_NAME = 'harmonia-viva-v1';
+const CACHE_NAME = 'harmonia-viva-v2';
 const EXTERNAL_LIB_CACHE = 'external-libs-v1';
 
+// Only cache the entry point. Vite bundles everything else with hashes.
 const URLS_TO_CACHE = [
   './',
-  './index.html',
-  './index.tsx',
-  './App.tsx',
-  './types.ts',
-  './constants.tsx',
-  './components/Layout.tsx',
-  './components/LessonContent.tsx',
-  './components/PromotionalBanner.tsx',
-  './components/Loading.tsx',
-  './pages/Home.tsx',
-  './pages/LessonPage.tsx'
+  './index.html'
 ];
 
 self.addEventListener('install', (event) => {
@@ -43,8 +34,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
-  // Strategy for External CDNs (Libraries): Cache First, then Network
-  // These files are versioned and unlikely to change often.
+  // Strategy for External CDNs
   if (requestUrl.hostname === 'aistudiocdn.com' || requestUrl.hostname === 'cdn.tailwindcss.com') {
     event.respondWith(
       caches.open(EXTERNAL_LIB_CACHE).then((cache) => {
@@ -59,24 +49,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Strategy for App Files: Network First, then Cache (Stale-while-revalidate fallback)
-  // Ensures user gets the latest code updates but falls back to cache if offline/slow.
+  // Network First for everything else
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Check if we received a valid response
-        if (!response || response.status !== 200 || response.type !== 'basic') {
-          return response;
-        }
-        // Clone and cache the updated file
-        const responseToCache = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
         return response;
       })
       .catch(() => {
-        // Network failed, try cache
         return caches.match(event.request);
       })
   );

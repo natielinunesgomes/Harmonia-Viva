@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { PromptResult } from "../types";
 
+// Guidelines: The API key must be obtained exclusively from the environment variable process.env.API_KEY.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const MODEL_NAME = 'gemini-2.5-flash';
 
@@ -53,7 +54,7 @@ const parseResponse = (response: GenerateContentResponse): PromptResult | null =
 
 export const generateSunoPrompt = async (userInput: string): Promise<PromptResult> => {
   if (!process.env.API_KEY) {
-    console.error("API Key not found. Please check your .env file.");
+    console.error("API Key not found. Ensure process.env.API_KEY is set.");
     return generateFallback(userInput);
   }
 
@@ -72,7 +73,7 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
         systemInstruction: SYSTEM_INSTRUCTION,
         responseMimeType: "application/json",
         responseSchema: responseSchema,
-        maxOutputTokens: 200, // Reduced token limit since we removed lyrics structure
+        maxOutputTokens: 200, 
         temperature: 0.7, 
         thinkingConfig: { thinkingBudget: 0 },
       }
@@ -81,9 +82,7 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
     const result = parseResponse(response);
     
     if (!result) {
-        // If API returns empty or invalid JSON, use fallback to keep UI responsive
-        const fallback = generateFallback(userInput);
-        return fallback;
+        return generateFallback(userInput);
     }
     
     // 2. Cache Set
@@ -92,7 +91,6 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
 
   } catch (error) {
     console.error("API Error:", error);
-    // Return fallback on network error instead of blocking UI
     return generateFallback(userInput);
   }
 };
