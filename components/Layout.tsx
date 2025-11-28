@@ -20,20 +20,24 @@ const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => (
       
       {/* Tools Section */}
       <div className="pb-2">
-        <div className="py-2 px-6 mb-2">
-           <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Ferramentas</h3>
+        <div className="py-3 px-6 mb-2 bg-gradient-to-r from-violet-900/10 to-transparent border-l-4 border-violet-500">
+           <h3 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2 text-violet-400">
+             <Wand2 className="w-4 h-4" />
+             Ferramentas
+           </h3>
+        </div>
+        <div className="space-y-1 px-4">
            <NavLink
               to="/generator"
               onClick={onClose}
               className={({ isActive }) => `
-                flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-bold transition-all duration-200 border
+                w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 border border-transparent
                 ${isActive 
-                  ? 'bg-gradient-to-r from-violet-600/20 to-indigo-600/20 text-violet-300 border-violet-500/30 shadow-lg shadow-violet-900/10' 
-                  : 'text-gray-400 hover:text-white hover:bg-white/5 border-transparent'}
+                  ? 'bg-violet-500/10 text-violet-200 border-violet-500/20 font-medium shadow-sm' 
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'}
               `}
             >
-              <Wand2 className="w-4 h-4" />
-              Gerador de Prompts
+              <span className="truncate text-left">Gerador de Prompts</span>
             </NavLink>
         </div>
       </div>
