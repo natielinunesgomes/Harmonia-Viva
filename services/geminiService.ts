@@ -1,10 +1,22 @@
 import { GoogleGenAI, Type, GenerateContentResponse, Schema } from "@google/genai";
 import { PromptResult } from "../types";
 
-// Initialize the client with the environment variable strictly as per guidelines
-// NOTE: process.env.API_KEY is defined in vite.config.ts for browser compatibility
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// NOTE: process.env.API_KEY is defined in vite.config.ts
+// We handle the case where it might be empty to prevent the app from crashing in hosting environments
+const apiKey = process.env.API_KEY;
 const MODEL_NAME = 'gemini-2.5-flash';
+
+// Safe Initialization: Only create instance if key exists, otherwise we use fallback
+let ai: GoogleGenAI | null = null;
+if (apiKey && apiKey.length > 0) {
+  try {
+    ai = new GoogleGenAI({ apiKey });
+  } catch (e) {
+    console.warn("Failed to initialize GoogleGenAI client:", e);
+  }
+} else {
+  console.warn("API Key missing. Running in offline/fallback mode.");
+}
 
 // CACHE SYSTEM: LocalStorage persistence + Memory Map
 const CACHE_KEY = 'harmonia_prompt_cache';
@@ -56,11 +68,11 @@ const responseSchema: Schema = {
 const generateFallback = (input: string): PromptResult => {
   const genres = ["Pop", "Rock", "Electronic", "Jazz", "Hip Hop", "MPB", "Funk"];
   const randomGenre = genres[Math.floor(Math.random() * genres.length)];
-  const baseStyle = input ? input : randomGenre;
+  const baseStyle = input && input.trim() !== "" ? input : randomGenre;
   
   return {
-    stylePrompt: `${baseStyle}, energetic, rhythmic, 120bpm, studio quality, clear vocals, professional mix`,
-    explanation: "Modo Turbo (Simulado - Erro na IA)"
+    stylePrompt: `${baseStyle}, energetic, rhythmic, 120bpm, studio quality, clear vocals, professional mix (Offline Mode)`,
+    explanation: "Modo Offline (API Key não configurada)"
   };
 };
 
@@ -82,6 +94,11 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
   // 1. Cache Check
   if (promptCache.has(cleanInput)) {
     return promptCache.get(cleanInput)!;
+  }
+
+  // Safety check for AI client
+  if (!ai) {
+    return generateFallback(userInput);
   }
 
   try {
@@ -114,6 +131,11 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
 };
 
 export const generateMagicPrompt = async (currentInput: string): Promise<PromptResult> => {
+  // Safety check for AI client
+  if (!ai) {
+    return generateFallback(currentInput);
+  }
+
   try {
     const isRandom = !currentInput || currentInput.trim() === "";
     
