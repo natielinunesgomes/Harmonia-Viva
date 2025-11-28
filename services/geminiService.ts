@@ -2,11 +2,10 @@ import { GoogleGenAI, Type, GenerateContentResponse, Schema } from "@google/gena
 import { PromptResult } from "../types";
 
 // NOTE: process.env.API_KEY is defined in vite.config.ts
-// We handle the case where it might be empty to prevent the app from crashing in hosting environments
 const apiKey = process.env.API_KEY;
 const MODEL_NAME = 'gemini-2.5-flash';
 
-// Safe Initialization: Only create instance if key exists, otherwise we use fallback
+// --- CONFIGURAÇÃO DA IA ---
 let ai: GoogleGenAI | null = null;
 if (apiKey && apiKey.length > 0) {
   try {
@@ -18,13 +17,43 @@ if (apiKey && apiKey.length > 0) {
   console.warn("API Key missing. Running in offline/fallback mode.");
 }
 
-// CACHE SYSTEM: LocalStorage persistence + Memory Map
-const CACHE_KEY = 'harmonia_prompt_cache';
-const loadCache = (): Map<string, PromptResult> => {
+// --- SISTEMA DE CACHE AVANÇADO (TTL + Size Limit) ---
+const CACHE_KEY = 'harmonia_prompt_cache_v2';
+const MAX_CACHE_SIZE = 100;
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas
+
+interface CacheItem {
+  timestamp: number;
+  data: PromptResult;
+}
+
+// Carrega e limpa itens expirados imediatamente
+const loadCache = (): Map<string, CacheItem> => {
   try {
     const stored = localStorage.getItem(CACHE_KEY);
-    return stored ? new Map(JSON.parse(stored)) : new Map();
+    if (!stored) return new Map();
+
+    const rawMap = new Map<string, CacheItem>(JSON.parse(stored));
+    const now = Date.now();
+    const validMap = new Map<string, CacheItem>();
+
+    // Garbage Collection on Load
+    let hasChanges = false;
+    for (const [key, item] of rawMap.entries()) {
+      if (now - item.timestamp < CACHE_TTL_MS) {
+        validMap.set(key, item);
+      } else {
+        hasChanges = true;
+      }
+    }
+
+    if (hasChanges) {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(Array.from(validMap.entries())));
+    }
+
+    return validMap;
   } catch (e) {
+    console.warn("Cache corrupted, resetting.");
     return new Map();
   }
 };
@@ -33,53 +62,83 @@ const promptCache = loadCache();
 
 const saveCache = () => {
   try {
-    // Limit cache size to prevent LS overflow
-    if (promptCache.size > 50) {
-      const keysToDelete = Array.from(promptCache.keys()).slice(0, 20); // Delete oldest
-      keysToDelete.forEach(k => promptCache.delete(k));
+    // Enforce Size Limit (Remove Oldest)
+    if (promptCache.size > MAX_CACHE_SIZE) {
+      // Convert to array, sort by timestamp ascending (oldest first), slice excess
+      const sortedEntries = Array.from(promptCache.entries())
+        .sort(([, a], [, b]) => a.timestamp - b.timestamp);
+      
+      const entriesToKeep = sortedEntries.slice(promptCache.size - MAX_CACHE_SIZE);
+      
+      // Rebuild map with only kept entries
+      promptCache.clear();
+      entriesToKeep.forEach(([k, v]) => promptCache.set(k, v));
     }
+    
     localStorage.setItem(CACHE_KEY, JSON.stringify(Array.from(promptCache.entries())));
   } catch (e) {
     console.warn("Failed to save cache to localStorage");
   }
 };
 
-const SYSTEM_INSTRUCTION = `
-Act as a Suno AI expert.
-Task: Create an optimized music prompt.
-Rules:
-1. "stylePrompt": dense tags, genres, instruments, bpm. No artist names.
-2. "explanation": max 10 words.
+// --- ENGENHARIA DE PROMPT (SUNO SPECIALIST) ---
 
-Output JSON only.
+const SYSTEM_INSTRUCTION = `
+You are an elite Music Prompt Engineer specialized in Suno AI v3.5 and Udio.
+Your goal is to convert user descriptions into highly specific, 'token-dense' style prompts that generate professional-grade audio.
+
+RULES FOR 'stylePrompt':
+1. STRUCTURE: Genre, Sub-Genre, Specific Instruments, Vibe/Mood, Tempo (BPM), Vocal Style, Production Quality.
+2. DENSITY: Do not use sentences. Use comma-separated tags.
+3. SPECIFICITY: 
+   - Instead of "Rock", use "Post-Punk, distorted bass, fast tempo 160bpm, raw energy".
+   - Instead of "Sad", use "Melancholic, minor key, slow ballad, emotional piano, reverb soaked vocals".
+4. FORBIDDEN: Do NOT use real artist names (e.g., "Like Taylor Swift"). Use vibe descriptions instead (e.g., "Pop country, polished female vocals, storytelling").
+5. LOCALIZATION: If the user types in Portuguese, analyze the context of Brazilian styles (Funk, Sertanejo, MPB) deeply.
+
+RULES FOR 'explanation':
+1. Explain WHY you chose these specific tags in Portuguese (PT-BR).
+2. Keep it under 15 words.
+3. Focus on the strategy (e.g., "Adicionei 'lo-fi' para dar textura vintage ao beat").
+
+OUTPUT FORMAT: JSON only.
 `;
 
 const responseSchema: Schema = {
   type: Type.OBJECT,
   properties: {
-    stylePrompt: { type: Type.STRING },
-    explanation: { type: Type.STRING },
+    stylePrompt: { 
+      type: Type.STRING,
+      description: "The optimized string of tags for Suno AI." 
+    },
+    explanation: { 
+      type: Type.STRING, 
+      description: "Short strategic tip in Portuguese."
+    },
   },
   required: ["stylePrompt", "explanation"],
   propertyOrdering: ["stylePrompt", "explanation"]
 };
 
-// Fallback generator for offline/error states
+// --- FALLBACK GENERATOR ---
 const generateFallback = (input: string): PromptResult => {
-  const genres = ["Pop", "Rock", "Electronic", "Jazz", "Hip Hop", "MPB", "Funk"];
-  const randomGenre = genres[Math.floor(Math.random() * genres.length)];
-  const baseStyle = input && input.trim() !== "" ? input : randomGenre;
+  const isPortuguese = /[ãéíóúç]/i.test(input);
+  const baseInput = input && input.trim() !== "" ? input : "Pop";
   
   return {
-    stylePrompt: `${baseStyle}, energetic, rhythmic, 120bpm, studio quality, clear vocals, professional mix (Offline Mode)`,
-    explanation: "Modo Offline (API Key não configurada)"
+    stylePrompt: `${baseInput}, studio quality, radio ready, 120bpm, clear mixing, professional mastering (Offline Mode)`,
+    explanation: isPortuguese 
+      ? "Modo Offline: Verifique sua API Key ou conexão." 
+      : "Offline Mode: Check your API Key or connection."
   };
 };
 
+// --- PARSER ---
 const parseResponse = (response: GenerateContentResponse): PromptResult | null => {
   try {
     const text = response.text;
     if (!text) return null;
+    // Remove markdown code blocks if present
     const jsonStr = text.replace(/```json|```/g, '').trim();
     return JSON.parse(jsonStr) as PromptResult;
   } catch (error) {
@@ -88,39 +147,46 @@ const parseResponse = (response: GenerateContentResponse): PromptResult | null =
   }
 };
 
+// --- MAIN FUNCTIONS ---
+
 export const generateSunoPrompt = async (userInput: string): Promise<PromptResult> => {
   const cleanInput = userInput.trim().toLowerCase();
-  
-  // 1. Cache Check
+  const now = Date.now();
+
+  // 1. Cache Check (With TTL Validation)
   if (promptCache.has(cleanInput)) {
-    return promptCache.get(cleanInput)!;
+    const cachedItem = promptCache.get(cleanInput)!;
+    if (now - cachedItem.timestamp < CACHE_TTL_MS) {
+      // Refresh timestamp on hit to keep it in cache (LRU logic)
+      cachedItem.timestamp = now;
+      saveCache();
+      return cachedItem.data;
+    } else {
+      promptCache.delete(cleanInput); // Expired
+    }
   }
 
-  // Safety check for AI client
-  if (!ai) {
-    return generateFallback(userInput);
-  }
+  // Safety check
+  if (!ai) return generateFallback(userInput);
 
   try {
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
-      contents: `Create Suno prompt for: "${userInput}"`,
+      contents: `User Input: "${userInput}". \nTask: Expand this into a full Suno AI style prompt. Make it rich and specific.`,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
         responseMimeType: "application/json",
         responseSchema: responseSchema,
-        temperature: 0.7,
+        temperature: 0.65, // Slightly creative but focused
       }
     });
 
     const result = parseResponse(response);
     
-    if (!result) {
-        return generateFallback(userInput);
-    }
+    if (!result) return generateFallback(userInput);
     
     // 2. Cache Set & Persist
-    promptCache.set(cleanInput, result);
+    promptCache.set(cleanInput, { timestamp: now, data: result });
     saveCache();
     return result;
 
@@ -131,24 +197,22 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
 };
 
 export const generateMagicPrompt = async (currentInput: string): Promise<PromptResult> => {
-  // Safety check for AI client
-  if (!ai) {
-    return generateFallback(currentInput);
-  }
+  if (!ai) return generateFallback(currentInput);
 
   try {
     const isRandom = !currentInput || currentInput.trim() === "";
     
-    const userPrompt = isRandom
-      ? "Create a unique, random, creative music style."
-      : `Create a creative VARIATION of this style: "${currentInput}". Change genre or vibe.`;
+    // More complex prompt for "Magic" mode
+    const magicPrompt = isRandom
+      ? "Create a completely unique, experimental, and high-quality music style definition that blends two unexpected genres."
+      : `Take this concept: "${currentInput}". Remix it completely. Change the genre, tempo, or era but keep the emotional core. Make it surprising.`;
 
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
-      contents: userPrompt,
+      contents: magicPrompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 1.3, // Higher temp for magic/creativity
+        temperature: 1.2, // High creativity
         responseMimeType: "application/json",
         responseSchema: responseSchema,
       }
