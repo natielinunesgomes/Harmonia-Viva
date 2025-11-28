@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI, Type, GenerateContentResponse, Schema } from "@google/genai";
 import { PromptResult } from "../types";
 
 // Initialize the client with the environment variable strictly as per guidelines
@@ -42,7 +42,7 @@ Rules:
 Output JSON only.
 `;
 
-const responseSchema = {
+const responseSchema: Schema = {
   type: Type.OBJECT,
   properties: {
     stylePrompt: { type: Type.STRING },
