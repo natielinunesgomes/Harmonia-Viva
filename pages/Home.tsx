@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlayCircle, Music, DollarSign, ExternalLink } from 'lucide-react';
+import { PlayCircle, Music, DollarSign, ExternalLink, Wand2 } from 'lucide-react';
 import { PromotionalBanner } from '../components/PromotionalBanner';
 import { TRACKS } from '../constants';
 
@@ -27,6 +27,14 @@ const Home: React.FC = () => {
           >
             <PlayCircle className="w-5 h-5" />
             Começar Masterclass
+          </button>
+          
+          <button 
+            onClick={() => navigate(`/generator`)}
+            className="w-full sm:w-auto px-8 py-4 bg-gray-800 text-white border border-gray-700 rounded-full font-bold hover:bg-gray-700 hover:border-violet-500 transition-all transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg"
+          >
+            <Wand2 className="w-5 h-5 text-violet-400" />
+            Gerador de Prompts
           </button>
         </div>
       </div>

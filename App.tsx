@@ -6,6 +6,7 @@ import { Loading } from './components/Loading';
 // Lazy load pages to reduce initial bundle size and improve TTFB
 const Home = React.lazy(() => import('./pages/Home'));
 const LessonPage = React.lazy(() => import('./pages/LessonPage'));
+const GeneratorPage = React.lazy(() => import('./pages/GeneratorPage'));
 
 function App() {
   return (
@@ -14,6 +15,11 @@ function App() {
         <Route index element={
           <Suspense fallback={<Loading />}>
             <Home />
+          </Suspense>
+        } />
+        <Route path="generator" element={
+          <Suspense fallback={<Loading />}>
+            <GeneratorPage />
           </Suspense>
         } />
         <Route path="lesson/:id" element={

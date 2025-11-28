@@ -1,5 +1,5 @@
 import React, { useState, useCallback, memo } from 'react';
-import { Music, Menu, X, Youtube } from 'lucide-react';
+import { Music, Menu, X, Youtube, Wand2 } from 'lucide-react';
 import { NavLink, Link, Outlet, useLocation } from 'react-router-dom';
 import { TRACKS } from '../constants';
 
@@ -16,8 +16,28 @@ const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => (
       <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest">Suno Masterclass</p>
     </Link>
 
-    <nav className="flex-1 overflow-y-auto py-6 space-y-8 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+    <nav className="flex-1 overflow-y-auto py-6 space-y-6 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
       
+      {/* Tools Section */}
+      <div className="pb-2">
+        <div className="py-2 px-6 mb-2">
+           <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Ferramentas</h3>
+           <NavLink
+              to="/generator"
+              onClick={onClose}
+              className={({ isActive }) => `
+                flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-bold transition-all duration-200 border
+                ${isActive 
+                  ? 'bg-gradient-to-r from-violet-600/20 to-indigo-600/20 text-violet-300 border-violet-500/30 shadow-lg shadow-violet-900/10' 
+                  : 'text-gray-400 hover:text-white hover:bg-white/5 border-transparent'}
+              `}
+            >
+              <Wand2 className="w-4 h-4" />
+              Gerador de Prompts
+            </NavLink>
+        </div>
+      </div>
+
       {/* Dynamic Tracks */}
       {TRACKS.map((track) => {
         const isCreation = track.id === 'creation';
