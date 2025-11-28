@@ -2,6 +2,7 @@ import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { PromptResult } from "../types";
 
 // Initialize the client with the environment variable strictly as per guidelines
+// NOTE: process.env.API_KEY is defined in vite.config.ts for browser compatibility
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const MODEL_NAME = 'gemini-2.5-flash';
 
@@ -47,7 +48,8 @@ const responseSchema = {
     stylePrompt: { type: Type.STRING },
     explanation: { type: Type.STRING },
   },
-  required: ["stylePrompt", "explanation"]
+  required: ["stylePrompt", "explanation"],
+  propertyOrdering: ["stylePrompt", "explanation"]
 };
 
 // Fallback generator for offline/error states
@@ -90,9 +92,7 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
         systemInstruction: SYSTEM_INSTRUCTION,
         responseMimeType: "application/json",
         responseSchema: responseSchema,
-        // Removed maxOutputTokens to prevent JSON truncation
-        temperature: 0.7, 
-        thinkingConfig: { thinkingBudget: 0 },
+        temperature: 0.7,
       }
     });
 
@@ -129,7 +129,6 @@ export const generateMagicPrompt = async (currentInput: string): Promise<PromptR
         temperature: 1.3, // Higher temp for magic/creativity
         responseMimeType: "application/json",
         responseSchema: responseSchema,
-        thinkingConfig: { thinkingBudget: 0 },
       }
     });
 

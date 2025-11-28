@@ -67,11 +67,11 @@ export const PromptGenerator: React.FC = () => {
                 }
               }}
               placeholder="Descreva o que você quer ouvir... (Ex: Um funk triste sobre um amor perdido, estilo anos 90)"
-              className="relative w-full h-32 bg-gray-900 border border-gray-700 rounded-xl p-4 text-white placeholder-gray-500 focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none resize-none transition-all text-lg"
+              className="relative w-full h-40 bg-gray-900 border border-gray-700 rounded-xl p-4 text-white placeholder-gray-500 focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none resize-none transition-all text-lg"
             />
           </div>
           
-          <div className="flex flex-col gap-3 justify-center lg:min-w-[200px]">
+          <div className="flex flex-col gap-3 justify-center lg:min-w-[220px]">
             {/* Gerar Prompt Button with Tooltip */}
             <div className="relative group w-full">
               <button
