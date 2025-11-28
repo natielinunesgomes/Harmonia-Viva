@@ -1,4 +1,3 @@
-import React from 'react';
 import { Lesson, Track } from './types';
 import { TipBox, WarningBox, Step, LinkBtn } from './components/LessonContent';
 import { Music, DollarSign } from 'lucide-react';

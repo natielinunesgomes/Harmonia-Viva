@@ -2,14 +2,28 @@ import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { PromptResult } from "../types";
 
 // Helper to get API Key safely in Vite/Vercel environment
-const getApiKey = () => {
-  // @ts-ignore - import.meta is a Vite specific property
-  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
+const getApiKey = (): string | undefined => {
+  try {
+    // Vite environment
     // @ts-ignore
-    return import.meta.env.VITE_API_KEY;
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
+      // @ts-ignore
+      return import.meta.env.VITE_API_KEY;
+    }
+  } catch (e) {
+    // Ignore error if import.meta is not available
   }
-  // Fallback for other environments
-  return process.env.API_KEY;
+
+  try {
+    // Node environment fallback
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+      return process.env.API_KEY;
+    }
+  } catch (e) {
+    // Ignore error if process is not available
+  }
+  
+  return undefined;
 };
 
 const apiKey = getApiKey();
