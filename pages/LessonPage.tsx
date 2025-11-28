@@ -30,7 +30,8 @@ const LessonPage: React.FC = () => {
     if (currentIndex >= 0 && currentIndex < ALL_LESSONS.length - 1) {
       navigate(`/lesson/${ALL_LESSONS[currentIndex + 1].id}`);
     } else {
-      navigate('/generator');
+      // Finished all lessons, go back home
+      navigate('/');
     }
   };
 

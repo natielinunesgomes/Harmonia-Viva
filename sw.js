@@ -8,15 +8,12 @@ const URLS_TO_CACHE = [
   './App.tsx',
   './types.ts',
   './constants.tsx',
-  './services/geminiService.ts',
   './components/Layout.tsx',
   './components/LessonContent.tsx',
-  './components/PromptGenerator.tsx',
   './components/PromotionalBanner.tsx',
   './components/Loading.tsx',
   './pages/Home.tsx',
-  './pages/LessonPage.tsx',
-  './pages/GeneratorPage.tsx'
+  './pages/LessonPage.tsx'
 ];
 
 self.addEventListener('install', (event) => {

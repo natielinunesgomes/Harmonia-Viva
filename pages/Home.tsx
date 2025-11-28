@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlayCircle, Zap, Music, DollarSign, ExternalLink } from 'lucide-react';
+import { PlayCircle, Music, DollarSign, ExternalLink } from 'lucide-react';
 import { PromotionalBanner } from '../components/PromotionalBanner';
 import { TRACKS } from '../constants';
 
@@ -27,13 +27,6 @@ const Home: React.FC = () => {
           >
             <PlayCircle className="w-5 h-5" />
             Começar Masterclass
-          </button>
-          <button 
-            onClick={() => navigate('/generator')}
-            className="group w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full font-bold hover:from-violet-500 hover:to-indigo-500 transition-all transform hover:scale-105 shadow-lg shadow-violet-500/25 flex items-center justify-center gap-2 border border-violet-400/20"
-          >
-            <Zap className="w-5 h-5 text-yellow-300 fill-yellow-300 group-hover:animate-pulse" />
-            Gerador de Estilos
           </button>
         </div>
       </div>
