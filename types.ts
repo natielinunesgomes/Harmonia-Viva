@@ -26,4 +26,8 @@ export interface PromptResult {
   explanation: string;
 }
 
-// Removido ViewState pois agora usamos React Router
+export interface PromptHistoryItem extends PromptResult {
+  id: string;
+  timestamp: number;
+  originalInput: string;
+}

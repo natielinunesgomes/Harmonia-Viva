@@ -85,7 +85,7 @@ const saveCache = () => {
 
 const SYSTEM_INSTRUCTION = `
 You are an elite Music Prompt Engineer specialized in Suno AI v3.5 and Udio.
-Your goal is to convert user descriptions into highly specific, 'token-dense' style prompts that generate professional-grade audio.
+Your goal is to convert user inputs (which may be simple tags or full descriptions) into highly specific, 'token-dense' style prompts that generate professional-grade audio.
 
 RULES FOR 'stylePrompt':
 1. STRUCTURE: Genre, Sub-Genre, Specific Instruments, Vibe/Mood, Tempo (BPM), Vocal Style, Production Quality.
@@ -94,12 +94,12 @@ RULES FOR 'stylePrompt':
    - Instead of "Rock", use "Post-Punk, distorted bass, fast tempo 160bpm, raw energy".
    - Instead of "Sad", use "Melancholic, minor key, slow ballad, emotional piano, reverb soaked vocals".
 4. FORBIDDEN: Do NOT use real artist names (e.g., "Like Taylor Swift"). Use vibe descriptions instead (e.g., "Pop country, polished female vocals, storytelling").
-5. LOCALIZATION: If the user types in Portuguese, analyze the context of Brazilian styles (Funk, Sertanejo, MPB) deeply.
+5. LOCALIZATION: If the user types in Portuguese or mentions Brazilian genres (Funk, Sertanejo, MPB), analyze the sub-genre deeply (e.g., "Sertanejo Universitário", "Bossa Nova", "Funk Carioca").
 
 RULES FOR 'explanation':
 1. Explain WHY you chose these specific tags in Portuguese (PT-BR).
 2. Keep it under 15 words.
-3. Focus on the strategy (e.g., "Adicionei 'lo-fi' para dar textura vintage ao beat").
+3. Focus on the strategy.
 
 OUTPUT FORMAT: JSON only.
 `;
@@ -172,12 +172,12 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
   try {
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
-      contents: `User Input: "${userInput}". \nTask: Expand this into a full Suno AI style prompt. Make it rich and specific.`,
+      contents: `User Input: "${userInput}". \nTask: Construct a high-quality Suno AI style string from these keywords or description.`,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
         responseMimeType: "application/json",
         responseSchema: responseSchema,
-        temperature: 0.65, // Slightly creative but focused
+        temperature: 0.7, 
       }
     });
 
@@ -205,7 +205,7 @@ export const generateMagicPrompt = async (currentInput: string): Promise<PromptR
     // More complex prompt for "Magic" mode
     const magicPrompt = isRandom
       ? "Create a completely unique, experimental, and high-quality music style definition that blends two unexpected genres."
-      : `Take this concept: "${currentInput}". Remix it completely. Change the genre, tempo, or era but keep the emotional core. Make it surprising.`;
+      : `User Input: "${currentInput}". Task: Remix this concept completely. Change the genre or tempo but keep the emotional core. Make it surprising and unique.`;
 
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
