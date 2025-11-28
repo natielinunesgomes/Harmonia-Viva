@@ -1,7 +1,7 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { PromptResult } from "../types";
 
-// The API key must be obtained exclusively from the environment variable process.env.API_KEY.
+// The API key must be obtained exclusively from the environment variable.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const MODEL_NAME = 'gemini-2.5-flash';
 
@@ -70,6 +70,7 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
         responseSchema: responseSchema,
         maxOutputTokens: 200, // Reduced token limit since we removed lyrics structure
         temperature: 0.7, 
+        thinkingConfig: { thinkingBudget: 0 },
       }
     });
 
@@ -108,7 +109,8 @@ export const generateMagicPrompt = async (currentInput: string): Promise<PromptR
         temperature: 1.3,
         maxOutputTokens: 200,
         responseMimeType: "application/json",
-        responseSchema: responseSchema
+        responseSchema: responseSchema,
+        thinkingConfig: { thinkingBudget: 0 },
       }
     });
 
