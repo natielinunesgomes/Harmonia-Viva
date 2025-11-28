@@ -1,18 +1,7 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { PromptResult } from "../types";
 
-// Helper to get API Key safely in both Vite and standard node environments
-const getApiKey = () => {
-  // @ts-ignore
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    // @ts-ignore
-    return import.meta.env.VITE_API_KEY;
-  }
-  return process.env.API_KEY;
-};
-
-const apiKey = getApiKey();
-const ai = new GoogleGenAI({ apiKey });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const MODEL_NAME = 'gemini-2.5-flash';
 
 // In-memory cache for instant retrieval of repeated queries
@@ -63,6 +52,11 @@ const parseResponse = (response: GenerateContentResponse): PromptResult | null =
 };
 
 export const generateSunoPrompt = async (userInput: string): Promise<PromptResult> => {
+  if (!process.env.API_KEY) {
+    console.error("API Key not found. Please check your .env file.");
+    return generateFallback(userInput);
+  }
+
   const cleanInput = userInput.trim().toLowerCase();
   
   // 1. Cache Check (Instant Return)
@@ -104,6 +98,8 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
 };
 
 export const generateMagicPrompt = async (currentInput: string): Promise<PromptResult> => {
+  if (!process.env.API_KEY) return generateFallback(currentInput);
+
   try {
     const isRandom = !currentInput || currentInput.trim() === "";
     
