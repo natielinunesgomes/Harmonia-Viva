@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Harmonia Viva - A plataforma definitiva para aprender a criar músicas profissionais com Suno AI. Cursos, prompts e ferramentas de monetização.">
+    <meta name="theme-color" content="#0f0f13">
     <title>Harmonia Viva</title>
     
     <!-- Performance Optimization: Resource Hints -->
@@ -10,42 +12,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CDN for Immediate Preview Rendering (Safety Net) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              suno: {
-                dark: '#0f0f13',
-                card: '#18181b',
-                primary: '#ec4899', 
-                secondary: '#8b5cf6', 
-                accent: '#10b981', 
-              }
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            },
-            animation: {
-              'fade-in': 'fadeIn 0.5s ease-out',
-              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            },
-            keyframes: {
-              fadeIn: {
-                '0%': { opacity: '0', transform: 'translateY(10px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
-              }
-            },
-            backgroundImage: {
-              'grid-pattern': "linear-gradient(to right, #ffffff05 1px, transparent 1px), linear-gradient(to bottom, #ffffff05 1px, transparent 1px)",
-            }
-          }
-        }
-      }
-    </script>
-
     <!-- Critical CSS for immediate dark theme feedback and scrollbar -->
     <style>
       body { 
@@ -84,7 +50,7 @@
         color: white;
       }
     </style>
-<script type="importmap">
+  <script type="importmap">
 {
   "imports": {
     "react": "https://aistudiocdn.com/react@^19.2.0",

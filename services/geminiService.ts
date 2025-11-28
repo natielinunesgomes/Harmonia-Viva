@@ -4,10 +4,8 @@ import { PromptResult } from "../types";
 // Helper to get API Key safely in Vite/Vercel environment
 const getApiKey = (): string | undefined => {
   try {
-    // Vite environment
-    // @ts-ignore
-    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
-      // @ts-ignore
+    // Vite environment standard
+    if (import.meta.env && import.meta.env.VITE_API_KEY) {
       return import.meta.env.VITE_API_KEY;
     }
   } catch (e) {
@@ -15,7 +13,7 @@ const getApiKey = (): string | undefined => {
   }
 
   try {
-    // Node environment fallback
+    // Node environment fallback (if needed for some SSR setups)
     if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
       return process.env.API_KEY;
     }
@@ -30,8 +28,31 @@ const apiKey = getApiKey();
 const ai = new GoogleGenAI({ apiKey: apiKey || '' });
 const MODEL_NAME = 'gemini-2.5-flash';
 
-// In-memory cache for instant retrieval of repeated queries
-const promptCache = new Map<string, PromptResult>();
+// CACHE SYSTEM: LocalStorage persistence + Memory Map
+const CACHE_KEY = 'harmonia_prompt_cache';
+const loadCache = (): Map<string, PromptResult> => {
+  try {
+    const stored = localStorage.getItem(CACHE_KEY);
+    return stored ? new Map(JSON.parse(stored)) : new Map();
+  } catch (e) {
+    return new Map();
+  }
+};
+
+const promptCache = loadCache();
+
+const saveCache = () => {
+  try {
+    // Limit cache size to prevent LS overflow
+    if (promptCache.size > 50) {
+      const keysToDelete = Array.from(promptCache.keys()).slice(0, 20); // Delete oldest
+      keysToDelete.forEach(k => promptCache.delete(k));
+    }
+    localStorage.setItem(CACHE_KEY, JSON.stringify(Array.from(promptCache.entries())));
+  } catch (e) {
+    console.warn("Failed to save cache to localStorage");
+  }
+};
 
 // Optimized system instruction - Removed lyrics structure for speed
 const SYSTEM_INSTRUCTION = `
@@ -70,7 +91,9 @@ const parseResponse = (response: GenerateContentResponse): PromptResult | null =
   try {
     const text = response.text;
     if (!text) return null;
-    return JSON.parse(text.replace(/```json|```/g, '').trim()) as PromptResult;
+    // Sanitize response to ensure JSON parsing works
+    const jsonStr = text.replace(/```json|```/g, '').trim();
+    return JSON.parse(jsonStr) as PromptResult;
   } catch (error) {
     console.warn("JSON Parse Warning:", error);
     return null;
@@ -79,7 +102,7 @@ const parseResponse = (response: GenerateContentResponse): PromptResult | null =
 
 export const generateSunoPrompt = async (userInput: string): Promise<PromptResult> => {
   if (!apiKey) {
-    console.error("API Key not found. Ensure VITE_API_KEY is set in Vercel.");
+    console.warn("API Key missing. Using fallback.");
     return generateFallback(userInput);
   }
 
@@ -110,8 +133,9 @@ export const generateSunoPrompt = async (userInput: string): Promise<PromptResul
         return generateFallback(userInput);
     }
     
-    // 2. Cache Set
+    // 2. Cache Set & Persist
     promptCache.set(cleanInput, result);
+    saveCache();
     return result;
 
   } catch (error) {
@@ -135,7 +159,7 @@ export const generateMagicPrompt = async (currentInput: string): Promise<PromptR
       contents: userPrompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 1.3,
+        temperature: 1.3, // Higher temp for magic/creativity
         maxOutputTokens: 200,
         responseMimeType: "application/json",
         responseSchema: responseSchema,

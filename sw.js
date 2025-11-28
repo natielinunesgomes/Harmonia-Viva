@@ -1,21 +1,12 @@
-const CACHE_NAME = 'harmonia-viva-v2';
-const EXTERNAL_LIB_CACHE = 'external-libs-v1';
+const CACHE_NAME = 'harmonia-viva-v3';
+const EXTERNAL_LIB_CACHE = 'external-libs-v2';
 
-// Only cache the entry point. Vite bundles everything else with hashes.
-const URLS_TO_CACHE = [
-  './',
-  './index.html'
-];
-
+// Clean install
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(URLS_TO_CACHE);
-    })
-  );
   self.skipWaiting();
 });
 
+// Clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -34,8 +25,9 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
-  // Strategy for External CDNs
-  if (requestUrl.hostname === 'aistudiocdn.com' || requestUrl.hostname === 'cdn.tailwindcss.com') {
+  // 1. External CDNs (Fonts, Tailwind via build) -> Cache First
+  // Note: Even if we removed Tailwind CDN from index.html, fonts are still external
+  if (requestUrl.hostname === 'fonts.googleapis.com' || requestUrl.hostname === 'fonts.gstatic.com') {
     event.respondWith(
       caches.open(EXTERNAL_LIB_CACHE).then((cache) => {
         return cache.match(event.request).then((response) => {
@@ -49,14 +41,37 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network First for everything else
+  // 2. Navigation Requests (HTML) -> Network First
+  // Ensure user always gets the latest index.html so they get the latest JS bundle hashes
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .catch(() => {
+          return caches.match('./index.html');
+        })
+    );
+    return;
+  }
+
+  // 3. Static Assets (JS, CSS, Images in /assets/) -> Cache First
+  // Vite generates files with hashes (e.g., index-123.js), so they are immutable.
+  if (requestUrl.pathname.startsWith('/assets/')) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          return fetch(event.request).then((networkResponse) => {
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          });
+        });
+      })
+    );
+    return;
+  }
+
+  // 4. Default -> Network First
   event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request);
-      })
+    fetch(event.request).catch(() => caches.match(event.request))
   );
 });
