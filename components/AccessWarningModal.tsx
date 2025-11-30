@@ -5,17 +5,13 @@ export const AccessWarningModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Verifica se o usuário já viu o aviso nesta sessão do navegador
-    const hasSeenWarning = sessionStorage.getItem('access_warning_acknowledged');
-    if (!hasSeenWarning) {
-      setIsOpen(true);
-      // Desabilita o scroll do body enquanto o modal está aberto
-      document.body.style.overflow = 'hidden';
-    }
+    // Força a abertura do modal sempre que o componente é montado (page reload)
+    setIsOpen(true);
+    // Desabilita o scroll do body enquanto o modal está aberto
+    document.body.style.overflow = 'hidden';
   }, []);
 
   const handleClose = () => {
-    sessionStorage.setItem('access_warning_acknowledged', 'true');
     setIsOpen(false);
     // Reabilita o scroll
     document.body.style.overflow = 'unset';
