@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Loading } from './components/Loading';
 import { AccessWarningModal } from './components/AccessWarningModal';
+import { ProgressProvider } from './contexts/ProgressContext';
+import { Confetti } from './components/Confetti';
 
 // Lazy load pages to reduce initial bundle size and improve TTFB
 const Home = React.lazy(() => import('./pages/Home'));
@@ -11,7 +13,8 @@ const GeneratorPage = React.lazy(() => import('./pages/GeneratorPage'));
 
 function App() {
   return (
-    <>
+    <ProgressProvider>
+      <Confetti />
       <AccessWarningModal />
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -37,7 +40,7 @@ function App() {
           } />
         </Route>
       </Routes>
-    </>
+    </ProgressProvider>
   );
 }
 

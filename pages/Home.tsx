@@ -1,11 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlayCircle, Music, DollarSign, ExternalLink, Wand2 } from 'lucide-react';
+import { PlayCircle, Music, DollarSign, ExternalLink, Wand2, ArrowRight } from 'lucide-react';
 import { PromotionalBanner } from '../components/PromotionalBanner';
 import { TRACKS } from '../constants';
+import { useProgress } from '../contexts/ProgressContext';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { getTrackProgress } = useProgress();
+
+  const creationProgress = getTrackProgress(TRACKS[0].lessons);
+  const monetizationProgress = getTrackProgress(TRACKS[1].lessons);
 
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 md:py-16 animate-fade-in">
@@ -25,8 +30,11 @@ const Home: React.FC = () => {
             onClick={() => navigate(`/lesson/${TRACKS[0].lessons[0].id}`)}
             className="w-full sm:w-auto px-8 py-4 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition-all transform hover:scale-105 flex items-center justify-center gap-2 shadow-xl shadow-white/5"
           >
-            <PlayCircle className="w-5 h-5" />
-            Começar Masterclass
+            {creationProgress > 0 ? (
+              <>Continuar Curso <ArrowRight className="w-5 h-5" /></>
+            ) : (
+              <>Começar Masterclass <PlayCircle className="w-5 h-5" /></>
+            )}
           </button>
           
           <button 
@@ -44,12 +52,24 @@ const Home: React.FC = () => {
       <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-12">
         <div 
           onClick={() => navigate(`/lesson/${TRACKS[0].lessons[0].id}`)}
-          className="bg-suno-card p-6 md:p-8 rounded-2xl border border-gray-800 hover:border-pink-500/30 transition-all cursor-pointer group hover:-translate-y-1 shadow-lg"
+          className="bg-suno-card p-6 md:p-8 rounded-2xl border border-gray-800 hover:border-pink-500/30 transition-all cursor-pointer group hover:-translate-y-1 shadow-lg relative overflow-hidden"
         >
+          {/* Progress Bar Top */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gray-800">
+            <div className="h-full bg-pink-500 transition-all duration-1000" style={{ width: `${creationProgress}%` }} />
+          </div>
+
           <div className="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-pink-500/30 transition-colors">
             <Music className="w-6 h-6 text-pink-500" />
           </div>
-          <h3 className="text-2xl font-bold text-white mb-2">Trilha de Criação</h3>
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="text-2xl font-bold text-white">Trilha de Criação</h3>
+            {creationProgress > 0 && (
+              <span className="text-xs font-bold bg-pink-500/10 text-pink-400 px-2 py-1 rounded">
+                {creationProgress}% Concluído
+              </span>
+            )}
+          </div>
           <p className="text-gray-400 mb-4 text-sm md:text-base">Do zero ao profissional. Aprenda interface, prompts, metatags avançadas e estilos brasileiros.</p>
           <span className="text-pink-400 text-sm font-bold flex items-center gap-1">
             {TRACKS[0].lessons.length} Lições <ExternalLink className="w-3 h-3" />
@@ -58,12 +78,24 @@ const Home: React.FC = () => {
 
         <div 
           onClick={() => navigate(`/lesson/${TRACKS[1].lessons[0].id}`)}
-          className="bg-suno-card p-6 md:p-8 rounded-2xl border border-gray-800 hover:border-green-500/30 transition-all cursor-pointer group hover:-translate-y-1 shadow-lg"
+          className="bg-suno-card p-6 md:p-8 rounded-2xl border border-gray-800 hover:border-green-500/30 transition-all cursor-pointer group hover:-translate-y-1 shadow-lg relative overflow-hidden"
         >
+          {/* Progress Bar Top */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gray-800">
+            <div className="h-full bg-green-500 transition-all duration-1000" style={{ width: `${monetizationProgress}%` }} />
+          </div>
+
           <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500/30 transition-colors">
             <DollarSign className="w-6 h-6 text-green-500" />
           </div>
-          <h3 className="text-2xl font-bold text-white mb-2">Trilha de Monetização</h3>
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="text-2xl font-bold text-white">Trilha de Monetização</h3>
+            {monetizationProgress > 0 && (
+              <span className="text-xs font-bold bg-green-500/10 text-green-400 px-2 py-1 rounded">
+                {monetizationProgress}% Concluído
+              </span>
+            )}
+          </div>
           <p className="text-gray-400 mb-4 text-sm md:text-base">Transforme música em renda. Nichos de YouTube, SEO, criação de vídeo e direitos autorais.</p>
           <span className="text-green-400 text-sm font-bold flex items-center gap-1">
             {TRACKS[1].lessons.length} Lições <ExternalLink className="w-3 h-3" />

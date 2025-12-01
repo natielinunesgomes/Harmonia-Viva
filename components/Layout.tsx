@@ -1,7 +1,8 @@
 import React, { useState, useCallback, memo } from 'react';
-import { Music, Menu, X, Youtube, Wand2, LucideIcon } from 'lucide-react';
+import { Music, Menu, X, Youtube, Wand2, LucideIcon, CheckCircle2, Trophy } from 'lucide-react';
 import { NavLink, Link, Outlet, useLocation } from 'react-router-dom';
 import { TRACKS } from '../constants';
+import { useProgress } from '../contexts/ProgressContext';
 
 const YOUTUBE_URL = "https://www.youtube.com/@HarmoniaViva-HV";
 
@@ -12,7 +13,8 @@ interface NavItemProps {
   onClick?: () => void; 
   activeColorClass: string; 
   activeBgClass: string; 
-  activeBorderClass: string; 
+  activeBorderClass: string;
+  isCompleted?: boolean;
 }
 
 // Reusable NavItem Component for consistent styling
@@ -23,107 +25,139 @@ const NavItem: React.FC<NavItemProps> = ({
   onClick, 
   activeColorClass, 
   activeBgClass, 
-  activeBorderClass 
+  activeBorderClass,
+  isCompleted
 }) => (
   <NavLink
     to={to}
     onClick={onClick}
     className={({ isActive }) => `
-      w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 border border-transparent
+      w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all duration-200 border border-transparent group
       ${isActive 
         ? `${activeBgClass} ${activeColorClass} ${activeBorderClass} font-medium shadow-sm` 
         : 'text-gray-400 hover:text-white hover:bg-white/5'}
     `}
   >
-    {Icon && <Icon className="w-4 h-4" />}
-    <span className="truncate text-left">{label}</span>
+    <div className="flex items-center gap-3 truncate">
+      {isCompleted ? (
+        <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+      ) : (
+        Icon && <Icon className="w-4 h-4 shrink-0" />
+      )}
+      <span className="truncate text-left">{label}</span>
+    </div>
   </NavLink>
 );
 
 // Memoized Sidebar Content
-const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => (
-  <>
-    <Link to="/" className="p-6 border-b border-gray-800 block cursor-pointer hover:bg-white/5 transition-colors" onClick={onClose}>
-      <h1 className="font-bold text-xl text-white flex items-center gap-2">
-        <Music className="text-pink-500 w-6 h-6" /> 
-        Harmonia Viva
-      </h1>
-      <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest">Suno Masterclass</p>
-    </Link>
+const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => {
+  const { completedLessons, getTrackProgress } = useProgress();
 
-    <nav className="flex-1 overflow-y-auto py-6 space-y-6 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
-      
-      {/* Ferramentas Section */}
-      <div className="pb-2">
-        <div className="py-3 px-6 mb-2 bg-gradient-to-r from-violet-900/10 to-transparent border-l-4 border-violet-500">
-           <h3 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2 text-violet-400">
-             <Wand2 className="w-4 h-4" />
-             Ferramentas
-           </h3>
-        </div>
-        <div className="space-y-1 px-4">
-           <NavItem
-             to="/generator"
-             label="Gerador de Prompts"
-             onClick={onClose}
-             activeColorClass="text-violet-200"
-             activeBgClass="bg-violet-500/10"
-             activeBorderClass="border-violet-500/20"
-           />
-        </div>
-      </div>
+  return (
+    <>
+      <Link to="/" className="p-6 border-b border-gray-800 block cursor-pointer hover:bg-white/5 transition-colors" onClick={onClose}>
+        <h1 className="font-bold text-xl text-white flex items-center gap-2">
+          <Music className="text-pink-500 w-6 h-6" /> 
+          Harmonia Viva
+        </h1>
+        <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest">Suno Masterclass</p>
+      </Link>
 
-      {/* Dynamic Tracks */}
-      {TRACKS.map((track) => {
-        const isCreation = track.id === 'creation';
-        const titleColor = isCreation ? 'text-pink-400' : 'text-green-400';
-        const borderColor = isCreation ? 'border-pink-500' : 'border-green-500';
-        const bgHeader = isCreation ? 'from-pink-900/10' : 'from-green-900/10';
+      <nav className="flex-1 overflow-y-auto py-6 space-y-8 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
         
-        const activeColor = isCreation ? 'text-pink-200' : 'text-green-200';
-        const activeBg = isCreation ? 'bg-pink-500/10' : 'bg-green-500/10';
-        const activeBorder = isCreation ? 'border-pink-500/20' : 'border-green-500/20';
-
-        return (
-          <div key={track.id} className="pb-2">
-            <div className={`py-3 px-6 mb-2 bg-gradient-to-r ${bgHeader} to-transparent border-l-4 ${borderColor}`}>
-              <h3 className={`text-sm font-bold uppercase tracking-wider flex items-center gap-2 ${titleColor}`}>
-                <track.icon className="w-4 h-4" />
-                {track.title}
-              </h3>
-            </div>
-            <div className="space-y-1 px-4">
-              {track.lessons.map((lesson) => (
-                <NavItem
-                  key={lesson.id}
-                  to={`/lesson/${lesson.id}`}
-                  label={lesson.title}
-                  onClick={onClose}
-                  activeColorClass={activeColor}
-                  activeBgClass={activeBg}
-                  activeBorderClass={activeBorder}
-                />
-              ))}
-            </div>
+        {/* Ferramentas Section */}
+        <div className="pb-2">
+          <div className="py-2 px-6 mb-2 bg-gradient-to-r from-violet-900/10 to-transparent border-l-4 border-violet-500">
+             <h3 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2 text-violet-400">
+               <Wand2 className="w-4 h-4" />
+               Ferramentas
+             </h3>
           </div>
-        );
-      })}
-    </nav>
+          <div className="space-y-1 px-4">
+             <NavItem
+               to="/generator"
+               label="Gerador de Prompts"
+               onClick={onClose}
+               activeColorClass="text-violet-200"
+               activeBgClass="bg-violet-500/10"
+               activeBorderClass="border-violet-500/20"
+             />
+          </div>
+        </div>
 
-    {/* Sidebar Footer */}
-    <div className="p-6 border-t border-gray-800">
-      <a 
-        href={YOUTUBE_URL}
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="flex items-center gap-2 text-gray-400 hover:text-red-500 transition-colors text-sm group"
-      >
-        <Youtube className="w-5 h-5 group-hover:scale-110 transition-transform" />
-        <span>Canal Harmonia Viva</span>
-      </a>
-    </div>
-  </>
-));
+        {/* Dynamic Tracks */}
+        {TRACKS.map((track) => {
+          const isCreation = track.id === 'creation';
+          const progress = getTrackProgress(track.lessons);
+          const isComplete = progress === 100;
+
+          const titleColor = isComplete 
+            ? 'text-yellow-400' 
+            : (isCreation ? 'text-pink-400' : 'text-green-400');
+            
+          const borderColor = isComplete
+            ? 'border-yellow-500'
+            : (isCreation ? 'border-pink-500' : 'border-green-500');
+            
+          const bgHeader = isCreation ? 'from-pink-900/10' : 'from-green-900/10';
+          
+          const activeColor = isCreation ? 'text-pink-200' : 'text-green-200';
+          const activeBg = isCreation ? 'bg-pink-500/10' : 'bg-green-500/10';
+          const activeBorder = isCreation ? 'border-pink-500/20' : 'border-green-500/20';
+
+          return (
+            <div key={track.id} className="pb-2">
+              <div className={`py-2 px-6 mb-2 bg-gradient-to-r ${bgHeader} to-transparent border-l-4 ${borderColor}`}>
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className={`text-sm font-bold uppercase tracking-wider flex items-center gap-2 ${titleColor}`}>
+                    {isComplete ? <Trophy className="w-4 h-4" /> : <track.icon className="w-4 h-4" />}
+                    {track.title}
+                  </h3>
+                  <span className={`text-[10px] font-bold ${titleColor}`}>{progress}%</span>
+                </div>
+                {/* Progress Bar */}
+                <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full transition-all duration-1000 ease-out ${isComplete ? 'bg-yellow-500' : (isCreation ? 'bg-pink-600' : 'bg-green-600')}`}
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1 px-4">
+                {track.lessons.map((lesson) => (
+                  <NavItem
+                    key={lesson.id}
+                    to={`/lesson/${lesson.id}`}
+                    label={lesson.title}
+                    onClick={onClose}
+                    activeColorClass={activeColor}
+                    activeBgClass={activeBg}
+                    activeBorderClass={activeBorder}
+                    isCompleted={completedLessons.includes(lesson.id)}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </nav>
+
+      {/* Sidebar Footer */}
+      <div className="p-6 border-t border-gray-800">
+        <a 
+          href={YOUTUBE_URL}
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-gray-400 hover:text-red-500 transition-colors text-sm group"
+        >
+          <Youtube className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          <span>Canal Harmonia Viva</span>
+        </a>
+      </div>
+    </>
+  );
+});
 
 export const Layout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
