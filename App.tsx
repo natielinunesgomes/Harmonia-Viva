@@ -6,10 +6,12 @@ import { AccessWarningModal } from './components/AccessWarningModal';
 import { ProgressProvider } from './contexts/ProgressContext';
 import { Confetti } from './components/Confetti';
 
-// Lazy load pages to reduce initial bundle size and improve TTFB
-const Home = React.lazy(() => import('./pages/Home'));
+// Eager load core pages for instant navigation
+import Home from './pages/Home';
+import GeneratorPage from './pages/GeneratorPage';
+
+// Lazy load lesson content to split heavy text content
 const LessonPage = React.lazy(() => import('./pages/LessonPage'));
-const GeneratorPage = React.lazy(() => import('./pages/GeneratorPage'));
 
 function App() {
   return (
@@ -18,26 +20,14 @@ function App() {
       <AccessWarningModal />
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={
-            <Suspense fallback={<Loading />}>
-              <Home />
-            </Suspense>
-          } />
-          <Route path="generator" element={
-            <Suspense fallback={<Loading />}>
-              <GeneratorPage />
-            </Suspense>
-          } />
+          <Route index element={<Home />} />
+          <Route path="generator" element={<GeneratorPage />} />
           <Route path="lesson/:id" element={
             <Suspense fallback={<Loading />}>
               <LessonPage />
             </Suspense>
           } />
-          <Route path="*" element={
-            <Suspense fallback={<Loading />}>
-              <Home />
-            </Suspense>
-          } />
+          <Route path="*" element={<Home />} />
         </Route>
       </Routes>
     </ProgressProvider>

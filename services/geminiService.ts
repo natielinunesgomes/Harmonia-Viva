@@ -1,116 +1,136 @@
 import { GoogleGenAI, Type, GenerateContentResponse, Schema } from "@google/genai";
 import { PromptResult } from "../types";
 
-// NOTE: process.env.API_KEY is defined in vite.config.ts
-const apiKey = process.env.API_KEY;
+// --- CONSTANTS & CONFIGURATION ---
+// Use process.env.API_KEY as per guidelines
+const API_KEY = process.env.API_KEY || "";
 const MODEL_NAME = 'gemini-2.5-flash';
 
-// --- CONFIGURAÇÃO DA IA ---
-let ai: GoogleGenAI | null = null;
-if (apiKey && apiKey.length > 0) {
-  try {
-    ai = new GoogleGenAI({ apiKey });
-  } catch (e) {
-    console.warn("Failed to initialize GoogleGenAI client:", e);
+// --- LRU CACHE IMPLEMENTATION ---
+class LRUCache<K, V> {
+  private capacity: number;
+  private ttl: number;
+  private cache: Map<K, { value: V; timestamp: number }>;
+  private storageKey: string;
+
+  constructor(capacity: number, ttlMs: number, storageKey: string) {
+    this.capacity = capacity;
+    this.ttl = ttlMs;
+    this.storageKey = storageKey;
+    this.cache = new Map();
+    this.loadFromStorage();
   }
-} else {
-  console.warn("API Key missing. Running in offline/fallback mode.");
-}
 
-// --- SISTEMA DE CACHE AVANÇADO (TTL + Size Limit) ---
-const CACHE_KEY = 'harmonia_prompt_cache_v3';
-const MAX_CACHE_SIZE = 100;
-const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas
+  private loadFromStorage(): void {
+    try {
+      const stored = localStorage.getItem(this.storageKey);
+      if (!stored) return;
 
-interface CacheItem {
-  timestamp: number;
-  data: PromptResult;
-}
+      const raw = JSON.parse(stored) as Array<[K, { value: V; timestamp: number }]>;
+      const now = Date.now();
+      
+      // Filter expired items during load
+      raw.forEach(([key, item]) => {
+        if (now - item.timestamp < this.ttl) {
+          this.cache.set(key, item);
+        }
+      });
+    } catch (e) {
+      console.warn("Cache corrupted, resetting.", e);
+      this.cache.clear();
+    }
+  }
 
-interface PromptOptions {
-  bpm?: number;
-  isInstrumental?: boolean;
-}
+  private saveToStorage(): void {
+    try {
+      const serialized = JSON.stringify(Array.from(this.cache.entries()));
+      localStorage.setItem(this.storageKey, serialized);
+    } catch (e) {
+      console.warn("Failed to save cache", e);
+    }
+  }
 
-// Carrega e limpa itens expirados imediatamente
-const loadCache = (): Map<string, CacheItem> => {
-  try {
-    const stored = localStorage.getItem(CACHE_KEY);
-    if (!stored) return new Map();
+  get(key: K): V | undefined {
+    const item = this.cache.get(key);
+    if (!item) return undefined;
 
-    const rawMap = new Map<string, CacheItem>(JSON.parse(stored));
     const now = Date.now();
-    const validMap = new Map<string, CacheItem>();
-
-    // Garbage Collection on Load
-    let hasChanges = false;
-    for (const [key, item] of rawMap.entries()) {
-      if (now - item.timestamp < CACHE_TTL_MS) {
-        validMap.set(key, item);
-      } else {
-        hasChanges = true;
-      }
+    if (now - item.timestamp > this.ttl) {
+      this.cache.delete(key);
+      this.saveToStorage();
+      return undefined;
     }
 
-    if (hasChanges) {
-        localStorage.setItem(CACHE_KEY, JSON.stringify(Array.from(validMap.entries())));
-    }
-
-    return validMap;
-  } catch (e) {
-    console.warn("Cache corrupted, resetting.");
-    return new Map();
+    // Refresh LRU order: delete and re-set
+    this.cache.delete(key);
+    this.cache.set(key, item); 
+    this.saveToStorage(); // Optional: might be expensive to save on every read, but ensures order persistence
+    return item.value;
   }
-};
 
-const promptCache = loadCache();
-
-const saveCache = () => {
-  try {
-    // Enforce Size Limit (Remove Oldest)
-    if (promptCache.size > MAX_CACHE_SIZE) {
-      const sortedEntries = Array.from(promptCache.entries())
-        .sort(([, a], [, b]) => a.timestamp - b.timestamp);
-      
-      const entriesToKeep = sortedEntries.slice(promptCache.size - MAX_CACHE_SIZE);
-      
-      promptCache.clear();
-      entriesToKeep.forEach(([k, v]) => promptCache.set(k, v));
+  set(key: K, value: V): void {
+    if (this.cache.has(key)) {
+      this.cache.delete(key);
+    } else if (this.cache.size >= this.capacity) {
+      // Remove the first item (least recently used in Map)
+      const firstKey = this.cache.keys().next().value;
+      if (firstKey !== undefined) this.cache.delete(firstKey);
     }
-    
-    localStorage.setItem(CACHE_KEY, JSON.stringify(Array.from(promptCache.entries())));
-  } catch (e) {
-    console.warn("Failed to save cache to localStorage");
+
+    this.cache.set(key, { value, timestamp: Date.now() });
+    this.saveToStorage();
   }
-};
+}
 
-// --- ENGENHARIA DE PROMPT (SUNO SPECIALIST) ---
+// Initialize Cache
+const promptCache = new LRUCache<string, PromptResult>(
+  100, // Max items
+  24 * 60 * 60 * 1000, // 24h TTL
+  'harmonia_prompt_cache_v4'
+);
 
+// --- API CLIENT ---
+let client: GoogleGenAI | null = null;
+try {
+  if (API_KEY) {
+    client = new GoogleGenAI({ apiKey: API_KEY });
+  } else {
+    console.warn("API Key missing. Service running in fallback mode.");
+  }
+} catch (e) {
+  console.error("Failed to initialize GoogleGenAI:", e);
+}
+
+// --- PROMPT ENGINEERING ---
 const SYSTEM_INSTRUCTION = `
-You are an elite Music Prompt Engineer specialized in Suno AI v3.5 and Udio.
-Your goal is to convert user inputs into highly specific, 'token-dense' style prompts.
+You are an elite Audio Engineer and Music Producer, specialized in "Suno AI v3.5 God Mode".
+Your goal is to construct acoustically dense, high-fidelity style prompts.
 
-IMPORTANT TECHNICAL FLAGS:
-1. INSTRUMENTAL: If the user requests "Instrumental", you MUST start the prompt with "Instrumental," and remove any vocal tags (like "male vocals", "choir").
-2. BPM: If a BPM is provided, you MUST include it (e.g., "128bpm").
+CORE PHILOSOPHY: "SONIC ARCHITECTURE"
+Do not just list genres. You must build the sound layer by layer.
 
-RULES FOR 'stylePrompt':
-1. STRUCTURE: [Instrumental Flag?], Genre, Sub-Genre, Vibe/Mood, Instruments, Technical Elements, BPM.
-2. DENSITY: Use comma-separated tags. No sentences.
-3. SPECIFICITY: 
-   - Instead of "Rock", use "Post-Punk, distorted bass, raw energy".
-   - Instead of "Sad", use "Melancholic, minor key, slow ballad, emotional piano".
-4. FORBIDDEN: Do NOT use real artist names. Use vibe descriptions.
-5. LOCALIZATION: Translate Brazilian genres deeply (e.g., "Sertanejo Universitário", "Bossa Nova", "Funk Carioca").
+STRUCTURE REQUIRED (Comma separated tags):
+1. [META]: Genre, Sub-genre, BPM (if specified), Key (e.g., C Minor).
+2. [FOUNDATION]: Drums (e.g., "Thunderous 808", "Brush Snare"), Bass (e.g., "Reese Bass", "Upright Bass").
+3. [TEXTURE]: Instruments (e.g., "Glassy Synths", "Distorted Stratocaster"), Atmosphere (e.g., "Smoky", "Ethereal").
+4. [LEAD/VOCAL]: 
+   - IF INSTRUMENTAL: Define the lead melody instrument (e.g., "Soaring Saxophone Solo Lead").
+   - IF VOCAL: Define vocal texture (e.g., "Gritty Male Vocals", "Breathy Female Vocals").
+5. [PRODUCTION]: Mixing keywords (e.g., "Panoramic Stereo", "Warm Tape Saturation", "Crisp Highs", "Wall of Sound").
 
-RULES FOR 'explanation':
-1. Explain WHY you chose these specific tags in Portuguese (PT-BR).
-2. Keep it under 15 words.
+RULES:
+- EXPAND: If user says "Rock", output "Arena Rock, High-gain distortion, Power Drums, Stadium Reverb".
+- LOCALIZATION: For Brazilian styles, use native terms mixed with English production terms.
+- FORMAT: No sentences. Only tags.
 
-OUTPUT FORMAT: JSON only.
+OUTPUT JSON:
+{
+  "stylePrompt": "The optimized tag string",
+  "explanation": "A 10-word strategic audio tip in Portuguese (PT-BR)."
+}
 `;
 
-const responseSchema: Schema = {
+const RESPONSE_SCHEMA: Schema = {
   type: Type.OBJECT,
   properties: {
     stylePrompt: { 
@@ -126,17 +146,24 @@ const responseSchema: Schema = {
   propertyOrdering: ["stylePrompt", "explanation"]
 };
 
-// --- FALLBACK GENERATOR ---
+// --- TYPES ---
+export interface PromptOptions {
+  bpm?: number;
+  isInstrumental?: boolean;
+}
+
+// --- HELPER FUNCTIONS ---
+
 const generateFallback = (input: string, options?: PromptOptions): PromptResult => {
   const isPortuguese = /[ãéíóúç]/i.test(input);
   const baseInput = input && input.trim() !== "" ? input : "Pop";
   
-  let result = `${baseInput}, studio quality, radio ready`;
+  let result = `${baseInput}, studio quality, radio ready, panoramic stereo`;
   
   if (options?.isInstrumental) {
-    result = `Instrumental, ${result}`;
+    result = `Instrumental, ${result}, melodic lead instrument`;
   } else {
-    result += ", clear vocals";
+    result += ", clear vocals, high fidelity";
   }
   
   if (options?.bpm) {
@@ -151,11 +178,11 @@ const generateFallback = (input: string, options?: PromptOptions): PromptResult 
   };
 };
 
-// --- PARSER ---
 const parseResponse = (response: GenerateContentResponse): PromptResult | null => {
   try {
     const text = response.text;
     if (!text) return null;
+    // Sanitize markdown code blocks if present
     const jsonStr = text.replace(/```json|```/g, '').trim();
     return JSON.parse(jsonStr) as PromptResult;
   } catch (error) {
@@ -164,94 +191,90 @@ const parseResponse = (response: GenerateContentResponse): PromptResult | null =
   }
 };
 
-// --- MAIN FUNCTIONS ---
+// --- PUBLIC API ---
 
 export const generateSunoPrompt = async (userInput: string, options?: PromptOptions): Promise<PromptResult> => {
   const cleanInput = userInput.trim().toLowerCase();
-  const bpmKey = options?.bpm ? `_${options.bpm}` : '';
-  const instrKey = options?.isInstrumental ? '_instr' : '';
-  const cacheKey = `${cleanInput}${bpmKey}${instrKey}`;
-  const now = Date.now();
+  
+  // Create a deterministic cache key based on inputs
+  const cacheKey = JSON.stringify({
+    input: cleanInput,
+    bpm: options?.bpm,
+    instr: options?.isInstrumental,
+    ver: 'v4' // Increment this to invalidate old caches if logic changes
+  });
 
-  // 1. Cache Check
-  if (promptCache.has(cacheKey)) {
-    const cachedItem = promptCache.get(cacheKey)!;
-    if (now - cachedItem.timestamp < CACHE_TTL_MS) {
-      cachedItem.timestamp = now;
-      saveCache();
-      return cachedItem.data;
-    } else {
-      promptCache.delete(cacheKey);
-    }
-  }
+  // 1. Check Cache
+  const cached = promptCache.get(cacheKey);
+  if (cached) return cached;
 
-  if (!ai) return generateFallback(userInput, options);
+  if (!client) return generateFallback(userInput, options);
 
   try {
-    // Construct Context
     let promptContext = `User Input: "${userInput}".\n`;
+    
     if (options?.isInstrumental) {
-      promptContext += "CONSTRAINT: This must be an INSTRUMENTAL track. No vocals.\n";
+      promptContext += "CONSTRAINT: This MUST be an INSTRUMENTAL track. You MUST define a 'Lead Instrument' for the melody.\n";
     } else {
-      promptContext += "CONSTRAINT: Include Vocal tags (e.g. Male, Female).\n";
+      promptContext += "CONSTRAINT: Include specific Vocal Texture tags.\n";
     }
     
     if (options?.bpm) {
       promptContext += `CONSTRAINT: Target Tempo is ${options.bpm} BPM.\n`;
     }
 
-    const response = await ai.models.generateContent({
+    const response = await client.models.generateContent({
       model: MODEL_NAME,
-      contents: promptContext + "Task: Construct a high-quality Suno AI style string.",
+      contents: promptContext + "Task: Construct a 'God Mode' Suno AI style string.",
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
         responseMimeType: "application/json",
-        responseSchema: responseSchema,
-        temperature: 0.7, 
+        responseSchema: RESPONSE_SCHEMA,
+        temperature: 0.75, 
       }
     });
 
     const result = parseResponse(response);
     
-    if (!result) return generateFallback(userInput, options);
+    if (!result) throw new Error("Empty or invalid response from AI");
     
-    // 2. Cache Set
-    promptCache.set(cacheKey, { timestamp: now, data: result });
-    saveCache();
+    // 2. Set Cache
+    promptCache.set(cacheKey, result);
     return result;
 
   } catch (error) {
-    console.error("API Error:", error);
+    console.error("Gemini API Error:", error);
     return generateFallback(userInput, options);
   }
 };
 
 export const generateMagicPrompt = async (currentInput: string): Promise<PromptResult> => {
-  if (!ai) return generateFallback(currentInput);
+  if (!client) return generateFallback(currentInput);
 
   try {
     const isRandom = !currentInput || currentInput.trim() === "";
     
     const magicPrompt = isRandom
-      ? "Create a completely unique, experimental music style blending two unexpected genres."
-      : `User Input: "${currentInput}". Task: Remix this concept. Change genre/tempo but keep the core emotion. Make it unique.`;
+      ? "Create a 'Suno God Mode' style for a completely unique, experimental music genre fusion that sounds expensive."
+      : `User Input: "${currentInput}". Task: Remix this concept into a 'Grammy Winning' production. Change the genre but keep the emotion. Make it sound HD.`;
 
-    const response = await ai.models.generateContent({
+    const response = await client.models.generateContent({
       model: MODEL_NAME,
       contents: magicPrompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 1.2,
+        temperature: 1.1, // Higher temperature for "Magic" randomness
         responseMimeType: "application/json",
-        responseSchema: responseSchema,
+        responseSchema: RESPONSE_SCHEMA,
       }
     });
 
     const result = parseResponse(response);
-    return result || generateFallback(currentInput);
+    if (!result) throw new Error("Invalid Magic Response");
+    return result;
     
   } catch (error) {
-    console.error("API Error:", error);
+    console.error("Gemini Magic Error:", error);
     return generateFallback(currentInput);
   }
 };

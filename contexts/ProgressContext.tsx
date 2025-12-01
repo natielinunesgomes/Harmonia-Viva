@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
+// --- TYPES ---
 interface ProgressContextType {
   completedLessons: string[];
   markAsCompleted: (lessonId: string) => void;
@@ -8,6 +9,9 @@ interface ProgressContextType {
   getTrackProgress: (trackLessons: { id: string }[]) => number;
 }
 
+const STORAGE_KEY = 'harmonia_progress';
+
+// --- CONTEXT ---
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined);
 
 export const useProgress = () => {
@@ -18,48 +22,59 @@ export const useProgress = () => {
   return context;
 };
 
+// --- PROVIDER ---
 export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Lazy initialization of state to avoid reading localStorage on every render
   const [completedLessons, setCompletedLessons] = useState<string[]>(() => {
     try {
-      const saved = localStorage.getItem('harmonia_progress');
+      const saved = localStorage.getItem(STORAGE_KEY);
       return saved ? JSON.parse(saved) : [];
-    } catch {
+    } catch (e) {
+      console.error("Failed to parse progress from localStorage", e);
       return [];
     }
   });
 
   const [isConfettiActive, setIsConfettiActive] = useState(false);
 
+  // Sync with LocalStorage whenever completedLessons changes
   useEffect(() => {
-    localStorage.setItem('harmonia_progress', JSON.stringify(completedLessons));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(completedLessons));
+    } catch (e) {
+      console.error("Failed to save progress to localStorage", e);
+    }
   }, [completedLessons]);
 
-  const markAsCompleted = (lessonId: string) => {
-    if (!completedLessons.includes(lessonId)) {
-      setCompletedLessons(prev => [...prev, lessonId]);
-    }
-  };
+  const markAsCompleted = useCallback((lessonId: string) => {
+    setCompletedLessons(prev => {
+      if (prev.includes(lessonId)) return prev;
+      return [...prev, lessonId];
+    });
+  }, []);
 
-  const triggerConfetti = () => {
+  const triggerConfetti = useCallback(() => {
     setIsConfettiActive(true);
-    // Reset after animation duration (approx 3s)
-    setTimeout(() => setIsConfettiActive(false), 3000);
-  };
+    const timer = setTimeout(() => setIsConfettiActive(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
-  const getTrackProgress = (trackLessons: { id: string }[]) => {
+  const getTrackProgress = useCallback((trackLessons: { id: string }[]) => {
     if (trackLessons.length === 0) return 0;
     const completedCount = trackLessons.filter(l => completedLessons.includes(l.id)).length;
     return Math.round((completedCount / trackLessons.length) * 100);
-  };
+  }, [completedLessons]);
+
+  const value = React.useMemo(() => ({
+    completedLessons,
+    markAsCompleted,
+    isConfettiActive,
+    triggerConfetti,
+    getTrackProgress
+  }), [completedLessons, isConfettiActive, markAsCompleted, triggerConfetti, getTrackProgress]);
 
   return (
-    <ProgressContext.Provider value={{ 
-      completedLessons, 
-      markAsCompleted, 
-      isConfettiActive, 
-      triggerConfetti,
-      getTrackProgress
-    }}>
+    <ProgressContext.Provider value={value}>
       {children}
     </ProgressContext.Provider>
   );
