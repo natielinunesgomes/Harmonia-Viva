@@ -392,6 +392,124 @@ O sol vai brilhar outra vez!
         </ul>
       </>
     )
+  },
+  {
+    id: 'mastering',
+    trackId: 'creation',
+    title: '8. Masterização e Qualidade de Estúdio',
+    description: 'Como transformar o áudio "flat" da IA em um hit pronto para o Spotify.',
+    duration: '15 min',
+    level: 'Avançado',
+    content: () => (
+      <>
+        <p>
+          O áudio que sai do Suno, embora impressionante, geralmente é "abafado" ou tem frequências conflitantes. 
+          Se você quer competir no Spotify, precisa <strong>Masterizar</strong>.
+        </p>
+
+        <h3 className="text-2xl font-bold text-white mt-8 mb-4">Separação de Faixas (Stems)</h3>
+        <p>
+          O ideal é não aplicar efeitos no arquivo inteiro. Use ferramentas de IA para separar a voz do instrumental.
+        </p>
+        
+        <Step number={1} title="Separe os Stems">
+          Use ferramentas gratuitas como <strong>Fadr.com</strong> ou <strong>Lalal.ai</strong>. 
+          Suba sua música do Suno e baixe dois arquivos separados: <em>Vocals.wav</em> e <em>Instrumental.wav</em>.
+        </Step>
+
+        <Step number={2} title="Tratamento Básico">
+          Leve esses arquivos para uma DAW (como GarageBand, Reaper ou <strong>BandLab</strong> que é grátis e online).
+          <ul className="list-disc list-inside mt-2 text-gray-400">
+            <li><strong>Voz:</strong> Adicione um pouco de Reverb e EQ (aumente os agudos para dar brilho).</li>
+            <li><strong>Instrumental:</strong> Use um Compressor para deixar o som mais "parrudo".</li>
+          </ul>
+        </Step>
+
+        <Step number={3} title="Masterização Automática">
+          Se não quiser mexer com mixagem, use serviços de masterização automática como <strong>BandLab Mastering</strong> ou <strong>Landr</strong>. 
+          Eles equilibram o volume final para o padrão da indústria (-14 LUFS).
+        </Step>
+
+        <TipBox>
+          Músicas masterizadas tocam mais alto e com mais clareza no celular, o que aumenta a retenção do ouvinte.
+        </TipBox>
+      </>
+    )
+  },
+  {
+    id: 'audio_input',
+    trackId: 'creation',
+    title: '9. Audio-to-Audio: Covers e Remixes',
+    description: 'Use sua própria voz ou melodias assobiadas para guiar a IA.',
+    duration: '12 min',
+    level: 'Avançado',
+    content: () => (
+      <>
+        <p>
+          O recurso <strong>Upload Audio</strong> mudou o jogo. Agora você não depende só de texto. 
+          Você pode "cantarolar" uma ideia e pedir para o Suno transformar em uma orquestra.
+        </p>
+
+        <h3 className="text-2xl font-bold text-white mt-8 mb-4">Como Criar a Partir de um Áudio</h3>
+        
+        <Step number={1} title="Grave sua Ideia">
+          Grave um áudio de 15 a 60 segundos no celular. Pode ser você batucando na mesa ou assobiando uma melodia. 
+          Faça upload no Suno (Library {'>'} Upload Audio).
+        </Step>
+
+        <Step number={2} title="Extenda e Transforme">
+          No áudio enviado, clique em <strong>Extend</strong>.
+          No "Style of Music", descreva o que você quer que aquele som vire.
+          <br/><em>Exemplo: Grave um assobio lento e peça "Epic Orchestral Movie Score".</em>
+        </Step>
+
+        <h3 className="text-2xl font-bold text-white mt-8 mb-4">Remixando Músicas (Covers)</h3>
+        <p>Você pode pegar uma música que já gerou no Suno e mudar o estilo dela.</p>
+        <ul className="list-disc list-inside space-y-2 text-gray-300">
+          <li>Baixe sua música (MP3).</li>
+          <li>Faça upload dela de volta.</li>
+          <li>Use o Extend para mudar o gênero. Ex: Transforme seu Rock em Bossa Nova.</li>
+        </ul>
+
+        <WarningBox>
+          Lembre-se: O upload deve ser de conteúdo original. Não faça upload de músicas famosas para tentar fazer "remixes piratas". O sistema detecta copyright.
+        </WarningBox>
+      </>
+    )
+  },
+  {
+    id: 'inpainting',
+    trackId: 'creation',
+    title: '10. Inpainting: Corrigindo Erros Cirurgicamente',
+    description: 'Como corrigir uma palavra errada sem precisar regerar a música toda.',
+    duration: '10 min',
+    level: 'Avançado',
+    content: () => (
+      <>
+        <p>
+          Antigamente, se o Suno errasse uma palavra no final da música, você tinha que gerar tudo de novo e torcer. 
+          Com o <strong>Inpainting</strong>, você corrige apenas o trecho defeituoso.
+        </p>
+
+        <Step number={1} title="Selecione o Erro">
+          Na sua música, clique em (...) e selecione <strong>Edit / Inpaint</strong>.
+          Uma "máscara" (área selecionável) aparecerá na onda sonora.
+        </Step>
+
+        <Step number={2} title="Ajuste o Texto">
+          Arraste a seleção sobre o trecho onde a voz falhou ou a letra está errada.
+          No campo de Lyrics, altere a palavra.
+        </Step>
+
+        <Step number={3} title="Regenerar">
+          A IA vai manter todo o resto da música intacto (instrumental, melodia anterior) e vai "recantar" apenas aquele pedacinho para encaixar a nova palavra.
+        </Step>
+
+        <TipBox>
+          O Inpainting também serve para remover barulhos estranhos. Selecione a área do barulho e deixe o campo Lyrics vazio ou coloque <strong>[Silence]</strong>.
+        </TipBox>
+      </>
+    )
   }
 ];
 
@@ -556,6 +674,232 @@ const MONETIZATION_LESSONS: Lesson[] = [
           2. Poste no YouTube (AdSense). 
           3. Suba no Spotify (Royalties de streaming). 
           4. Se a música viralizar, o Content ID protege você de cópias não autorizadas.
+        </TipBox>
+      </>
+    )
+  },
+  {
+    id: 'shorts_strategy',
+    trackId: 'monetization',
+    title: '5. O Poder dos Shorts: Tráfego Explosivo',
+    description: 'Como usar vídeos curtos para alavancar seu canal e vender músicas.',
+    duration: '15 min',
+    level: 'Business',
+    content: () => (
+      <>
+        <p>
+          O <strong>YouTube Shorts</strong> é a maneira mais rápida de crescer um canal novo hoje. O algoritmo entrega milhões de views mesmo para contas com zero inscritos.
+        </p>
+
+        <h3 className="text-2xl font-bold text-white mt-8 mb-4">A Estratégia do "Gancho"</h3>
+        <p>O Suno cria refrões pegajosos. Use isso! Shorts são loops perfeitos.</p>
+        
+        <Step number={1} title="Corte a Melhor Parte">
+          Não poste a música inteira no Shorts. Pegue os 15-60 segundos mais impactantes (geralmente o Refrão ou o Drop).
+        </Step>
+        
+        <Step number={2} title="O Link para o Vídeo Longo">
+          O Shorts paga pouco AdSense, mas traz muito inscrito. Use a função "Vídeo Relacionado" na hora de postar o Short para linkar para a música completa no seu canal.
+        </Step>
+
+        <Step number={3} title="Tendências (Trends)">
+          Veja o que está viralizando no TikTok. Crie uma versão IA daquela trend.
+          <br/><em>Exemplo: "POV: Você é um vilão de anime" (Com sua música épica de fundo).</em>
+        </Step>
+
+        <TipBox>
+          O Suno tem uma função de gerar músicas de até 2 minutos, o que é perfeito para criar conteúdo rápido. Mas lembre-se: Shorts tem formato 9:16 (vertical).
+        </TipBox>
+      </>
+    )
+  },
+  {
+    id: 'freelancing',
+    trackId: 'monetization',
+    title: '6. Freelancing: Vendendo Músicas Personalizadas',
+    description: 'Ganhe dinheiro rápido no Fiverr e VintePila fazendo músicas sob encomenda.',
+    duration: '20 min',
+    level: 'Business',
+    content: () => (
+      <>
+        <p>
+          Enquanto seu canal do YouTube cresce (o que leva tempo), você pode ganhar dinheiro <strong>hoje</strong> vendendo serviços.
+          Muitas pessoas querem músicas originais mas não sabem usar IA.
+        </p>
+
+        <h3 className="text-2xl font-bold text-white mt-8 mb-4">O Que Vender?</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+          <div className="bg-gray-800 p-4 rounded-xl border-l-4 border-green-500">
+            <h4 className="font-bold text-green-400">Presentes Personalizados</h4>
+            <p className="text-sm text-gray-400 mt-2">"Faço uma música para o aniversário da sua namorada com o nome dela." (Valor médio: R$ 50 - R$ 100)</p>
+          </div>
+          <div className="bg-gray-800 p-4 rounded-xl border-l-4 border-blue-500">
+            <h4 className="font-bold text-blue-400">Jingles para Empresas</h4>
+            <p className="text-sm text-gray-400 mt-2">Pequenos comércios locais precisam de músicas para rádio/Instagram. Crie um jingle cativante em minutos.</p>
+          </div>
+        </div>
+
+        <Step number={1} title="Crie um Portfólio">
+          Use seu canal do YouTube como vitrine. Quando o cliente pedir exemplos, mande o link da sua playlist "Melhores Criações".
+        </Step>
+
+        <Step number={2} title="Ajuste a Letra">
+          O grande valor aqui é a personalização. Peça detalhes ao cliente (nome, história, estilo) e coloque no prompt de letra do Suno.
+        </Step>
+
+        <WarningBox>
+          Seja transparente. Avise que você utiliza ferramentas de IA para composição e produção. O cliente paga pelo <strong>resultado</strong> e pela sua curadoria, não necessariamente pelo esforço braçal.
+        </WarningBox>
+      </>
+    )
+  },
+  {
+    id: 'streaming_strategy',
+    trackId: 'monetization',
+    title: '7. Estratégia de Lançamento: O Método Cascata',
+    description: 'Como lançar no Spotify para agradar o algoritmo e maximizar royalties.',
+    duration: '25 min',
+    level: 'Business',
+    content: () => (
+      <>
+        <p>
+          Jogar um álbum de 12 músicas de uma vez no Spotify é a pior coisa que você pode fazer. Ninguém vai ouvir tudo e o algoritmo vai ignorar.
+        </p>
+
+        <h3 className="text-2xl font-bold text-white mt-8 mb-4">O Método Cascata (Waterfall Strategy)</h3>
+        <p>O objetivo é manter seu perfil sempre ativo com "novidades".</p>
+
+        <ul className="space-y-4 mt-4 mb-8">
+          <li className="bg-gray-900 p-4 rounded-lg border border-gray-800">
+            <strong className="text-pink-400 block mb-1">Mês 1: Single 1</strong>
+            Lance a primeira música. Foque todo o marketing nela.
+          </li>
+          <li className="bg-gray-900 p-4 rounded-lg border border-gray-800">
+            <strong className="text-pink-400 block mb-1">Mês 2: Single 2</strong>
+            Lance a segunda música. O ouvinte que descobrir a 2, vai ouvir a 1 também.
+          </li>
+          <li className="bg-gray-900 p-4 rounded-lg border border-gray-800">
+            <strong className="text-violet-400 block mb-1">Mês 3: O EP (Extended Play)</strong>
+            Lance o EP contendo o Single 1, Single 2 + 3 músicas inéditas. Isso gera um novo "lançamento" para as músicas antigas.
+          </li>
+        </ul>
+
+        <Step number={1} title="Spotify for Artists">
+          Assim que lançar a primeira música, reivindique seu perfil no <em>Spotify for Artists</em>. Lá você pode submeter músicas para playlists editoriais (Pitch).
+        </Step>
+
+        <Step number={2} title="Playlists de Terceiros">
+          Não dependa só do editorial. Procure curadores de playlists independentes (ex: "Música para Estudar", "Academia Rock") e envie suas faixas.
+        </Step>
+
+        <TipBox>
+          Use o Suno para criar versões diferentes da mesma música (Acústica, Remix, Speed Up) e lance como singles separados. O público do TikTok adora versões "Sped Up".
+        </TipBox>
+      </>
+    )
+  },
+  {
+    id: 'visual_identity',
+    trackId: 'monetization',
+    title: '8. Identidade Visual e CTR (A Ciência do Clique)',
+    description: 'Por que a capa vale tanto quanto a música e como criar Thumbnails magnéticas.',
+    duration: '15 min',
+    level: 'Business',
+    content: () => (
+      <>
+        <p>
+          No YouTube, a batalha é vencida antes do play. Se sua taxa de clique (CTR) for baixa, o YouTube para de recomendar seu vídeo, não importa quão boa seja a música.
+        </p>
+
+        <h3 className="text-2xl font-bold text-white mt-8 mb-4">Psicologia das Cores e Vibe</h3>
+        <div className="grid grid-cols-3 gap-2 text-center text-sm mb-6">
+          <div className="bg-purple-900/50 p-2 rounded border border-purple-500/30">
+            <span className="block font-bold text-purple-300">Lofi / Sleep</span>
+            Roxo, Azul Escuro, Noite, Chuva, Neon Suave.
+          </div>
+          <div className="bg-red-900/50 p-2 rounded border border-red-500/30">
+            <span className="block font-bold text-red-300">Phonk / Gym</span>
+            Vermelho, Alto Contraste, Carros, Músculos, Anime Dark.
+          </div>
+          <div className="bg-yellow-900/50 p-2 rounded border border-yellow-500/30">
+            <span className="block font-bold text-yellow-300">Jazz / Café</span>
+            Marrom, Laranja, Aconchego, Livros, Café quente.
+          </div>
+        </div>
+
+        <Step number={1} title="Use IA para Imagens">
+          Use Midjourney, DALL-E 3 ou Leonardo.ai. O prompt da imagem deve ter a mesma "alma" do prompt do Suno.
+          <br/><em>Prompt Imagem: "Cyberpunk city street, rain, neon signs, anime style, 16:9 ratio"</em>
+        </Step>
+
+        <Step number={2} title="Legibilidade no Celular">
+          A maioria das pessoas vê o YouTube no celular. A thumbnail é minúscula.
+          <br/>Evite textos pequenos. Se for colocar texto, use no máximo 3 palavras gigantes e com contorno (Stroke).
+        </Step>
+
+        <Step number={3} title="Consistência">
+          Seu canal deve parecer uma marca. Use sempre a mesma fonte e estilo de filtro. Quando alguém ver a capa, tem que saber que é sua antes de ler o nome.
+        </Step>
+      </>
+    )
+  },
+  {
+    id: 'scaling',
+    trackId: 'monetization',
+    title: '9. Escala Industrial: A Fábrica de Hits',
+    description: 'Como automatizar seu fluxo de trabalho e gerenciar múltiplos canais.',
+    duration: '22 min',
+    level: 'Business',
+    content: () => (
+      <>
+        <p>
+          Para ganhar dinheiro de verdade, você precisa de volume. Um canal com 10 vídeos é hobby. Um canal com 500 vídeos é um ativo imobiliário digital.
+        </p>
+
+        <h3 className="text-2xl font-bold text-white mt-8 mb-4">O Pipeline de Produção</h3>
+        <p>Não faça uma música por dia. Tire um dia da semana para fazer TUDO.</p>
+
+        <div className="space-y-4 my-6">
+          <div className="flex items-center gap-4 bg-gray-800 p-4 rounded-lg">
+            <div className="w-8 h-8 rounded-full bg-pink-600 flex items-center justify-center font-bold">1</div>
+            <div>
+              <h4 className="font-bold text-white">Sessão de Geração (2h)</h4>
+              <p className="text-gray-400 text-sm">Gere 50 músicas no Suno. Selecione as 5 melhores. Descarte o resto sem dó.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 bg-gray-800 p-4 rounded-lg">
+            <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center font-bold">2</div>
+            <div>
+              <h4 className="font-bold text-white">Sessão de Visual (1h)</h4>
+              <p className="text-gray-400 text-sm">Gere 5 capas no Midjourney e crie os 5 vídeos no CapCut/Vizzy.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 bg-gray-800 p-4 rounded-lg">
+            <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center font-bold">3</div>
+            <div>
+              <h4 className="font-bold text-white">Agendamento (1h)</h4>
+              <p className="text-gray-400 text-sm">Suba tudo no YouTube e agende para sair um por dia (Seg-Sex).</p>
+            </div>
+          </div>
+        </div>
+
+        <Step number={1} title="Múltiplos Canais (Canais Dark)">
+          Não misture nichos. Se você faz "Música de Meditação", não poste "Heavy Metal" no mesmo canal.
+          O algoritmo vai ficar confuso. Crie um canal novo para cada nicho.
+        </Step>
+
+        <Step number={2} title="Reutilização de Conteúdo">
+          Uma música de 3 minutos vira:
+          <ul className="list-disc list-inside ml-4 mt-1 text-gray-400 text-sm">
+            <li>1 Vídeo Longo no YouTube</li>
+            <li>3 Shorts (cortes diferentes)</li>
+            <li>1 Áudio no Spotify</li>
+            <li>1 Post no TikTok</li>
+          </ul>
+        </Step>
+
+        <TipBox>
+          <strong>Consistência {'>'} Qualidade (No início):</strong> É melhor ter vídeo todo dia com qualidade nota 7, do que um vídeo nota 10 uma vez por mês. O algoritmo premia frequência.
         </TipBox>
       </>
     )
