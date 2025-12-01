@@ -5,21 +5,15 @@ export const AccessWarningModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Mount the modal
+    // Força a abertura do modal sempre que o componente é montado (page reload)
     setIsOpen(true);
-
-    // Prevent scrolling on mount
-    const originalStyle = window.getComputedStyle(document.body).overflow;
+    // Desabilita o scroll do body enquanto o modal está aberto
     document.body.style.overflow = 'hidden';
-
-    // Cleanup: Restore scrolling when component unmounts or modal closes
-    return () => {
-      document.body.style.overflow = originalStyle;
-    };
   }, []);
 
   const handleClose = () => {
     setIsOpen(false);
+    // Reabilita o scroll
     document.body.style.overflow = 'unset';
   };
 
@@ -27,23 +21,23 @@ export const AccessWarningModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      {/* Background Overlay */}
+      {/* Overlay com Blur pesado e fundo escuro */}
       <div 
-        className="absolute inset-0 bg-black/95 backdrop-blur-md transition-opacity duration-300"
+        className="absolute inset-0 bg-black/95 backdrop-blur-md transition-opacity"
         aria-hidden="true"
       />
 
-      {/* Modal Content */}
+      {/* Modal Card */}
       <div className="relative bg-gray-900 border border-red-500/30 rounded-2xl max-w-lg w-full shadow-2xl shadow-red-900/20 overflow-hidden animate-fade-in transform scale-100">
         
-        {/* Top Accent Line */}
+        {/* Faixa de Topo */}
         <div className="bg-gradient-to-r from-red-900/40 to-transparent p-1">
           <div className="h-1 bg-gradient-to-r from-red-600 to-red-400 w-full rounded-t-full" />
         </div>
 
         <div className="p-8 text-center space-y-6">
           
-          {/* Animated Icon */}
+          {/* Ícone Animado */}
           <div className="relative mx-auto w-20 h-20 flex items-center justify-center">
             <div className="absolute inset-0 bg-red-500/10 rounded-full animate-pulse-slow"></div>
             <div className="relative bg-gray-800 p-4 rounded-full border border-red-500/20">

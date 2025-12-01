@@ -1,9 +1,7 @@
-// Removed reference to vite/client to fix type definition error
-// /// <reference types="vite/client" />
+interface ImportMetaEnv {
+  readonly VITE_API_KEY: string;
+}
 
-declare var process: {
-  env: {
-    API_KEY: string;
-    [key: string]: string | undefined;
-  }
-};
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}

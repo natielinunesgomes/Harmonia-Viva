@@ -1,12 +1,12 @@
-import React, { useReducer, useRef, useEffect, memo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Wand2, Copy, Check, Zap, RefreshCcw, Music2, Mic2, 
-  Guitar, Radio, Drum, Speaker, Settings2, VolumeX, Activity, LucideIcon
+  Guitar, Radio, Drum, Speaker, Settings2, VolumeX, Activity
 } from 'lucide-react';
 import { generateSunoPrompt, generateMagicPrompt } from '../services/geminiService';
 import { PromptResult } from '../types';
 
-// --- DATA ---
+// --- CONFIGURAÇÃO VISUAL DO ESTÚDIO ---
 const GENRES = [
   { id: 'pop', label: 'Pop', icon: Music2, color: 'from-pink-500 to-rose-500' },
   { id: 'rock', label: 'Rock', icon: Guitar, color: 'from-red-600 to-orange-600' },
@@ -21,229 +21,86 @@ const ELEMENTS = [
   'Orchestral', 'Acoustic', 'Fast Pace', 'Slow Burn', 'Bass Boosted'
 ];
 
-// --- STATE MANAGEMENT (REDUCER) ---
-interface GeneratorState {
-  mode: 'guided' | 'free';
-  loading: boolean;
-  result: PromptResult | null;
-  selectedGenre: string;
-  bpm: number;
-  isInstrumental: boolean;
-  selectedElements: string[];
-  extraDetails: string;
-  freeInput: string;
-  copiedId: string | null;
-}
-
-type GeneratorAction = 
-  | { type: 'SET_MODE'; payload: 'guided' | 'free' }
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_RESULT'; payload: PromptResult }
-  | { type: 'SET_GENRE'; payload: string }
-  | { type: 'SET_BPM'; payload: number }
-  | { type: 'SET_INSTRUMENTAL'; payload: boolean }
-  | { type: 'TOGGLE_ELEMENT'; payload: string }
-  | { type: 'SET_DETAILS'; payload: string }
-  | { type: 'SET_FREE_INPUT'; payload: string }
-  | { type: 'SET_COPIED'; payload: string | null };
-
-const initialState: GeneratorState = {
-  mode: 'guided',
-  loading: false,
-  result: null,
-  selectedGenre: '',
-  bpm: 120,
-  isInstrumental: false,
-  selectedElements: [],
-  extraDetails: '',
-  freeInput: '',
-  copiedId: null
-};
-
-function generatorReducer(state: GeneratorState, action: GeneratorAction): GeneratorState {
-  switch (action.type) {
-    case 'SET_MODE': return { ...state, mode: action.payload };
-    case 'SET_LOADING': return { ...state, loading: action.payload };
-    case 'SET_RESULT': return { ...state, result: action.payload, loading: false };
-    case 'SET_GENRE': return { ...state, selectedGenre: action.payload };
-    case 'SET_BPM': return { ...state, bpm: action.payload };
-    case 'SET_INSTRUMENTAL': return { ...state, isInstrumental: action.payload };
-    case 'TOGGLE_ELEMENT': 
-      return { 
-        ...state, 
-        selectedElements: state.selectedElements.includes(action.payload)
-          ? state.selectedElements.filter(e => e !== action.payload)
-          : [...state.selectedElements, action.payload]
-      };
-    case 'SET_DETAILS': return { ...state, extraDetails: action.payload };
-    case 'SET_FREE_INPUT': return { ...state, freeInput: action.payload };
-    case 'SET_COPIED': return { ...state, copiedId: action.payload };
-    default: return state;
-  }
-}
-
-// --- SUB-COMPONENTS ---
-
-const GenreSelector = memo(({ selected, onSelect }: { selected: string; onSelect: (g: string) => void }) => (
-  <div>
-    <label className="text-xs font-bold text-gray-500 uppercase mb-4 block tracking-wider">1. Gênero Principal</label>
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-      {GENRES.map((g) => (
-        <button
-          key={g.id}
-          onClick={() => onSelect(g.label)}
-          className={`relative overflow-hidden group p-4 rounded-xl border transition-all duration-300 text-left ${
-            selected === g.label 
-              ? 'border-transparent ring-2 ring-white/20 shadow-xl scale-[1.02]' 
-              : 'bg-gray-900 border-gray-800 hover:border-gray-600'
-          }`}
-          aria-pressed={selected === g.label}
-        >
-          <div className={`absolute inset-0 bg-gradient-to-br ${g.color} opacity-10 group-hover:opacity-20 transition-opacity`} />
-          {selected === g.label && (
-            <div className={`absolute inset-0 bg-gradient-to-br ${g.color} opacity-20`} />
-          )}
-          
-          <g.icon className={`w-8 h-8 mb-3 ${selected === g.label ? 'text-white' : 'text-gray-400 group-hover:text-white'} transition-colors`} />
-          <span className={`block font-bold ${selected === g.label ? 'text-white' : 'text-gray-400 group-hover:text-white'}`}>
-            {g.label}
-          </span>
-        </button>
-      ))}
-    </div>
-  </div>
-));
-
-const StudioControls = memo(({ 
-  bpm, 
-  onBpmChange, 
-  isInstrumental, 
-  onInstrumentalChange 
-}: { 
-  bpm: number; 
-  onBpmChange: (v: number) => void;
-  isInstrumental: boolean;
-  onInstrumentalChange: (v: boolean) => void;
-}) => (
-  <div className="bg-black/20 rounded-xl p-5 border border-gray-800 grid md:grid-cols-2 gap-8">
-    <div>
-      <div className="flex justify-between mb-3">
-        <label className="text-xs font-bold text-gray-400 uppercase flex items-center gap-2">
-          <Activity className="w-4 h-4" /> Tempo (BPM)
-        </label>
-        <span className="text-xs font-mono text-pink-400 bg-pink-900/20 px-2 py-1 rounded">
-          {bpm} BPM
-        </span>
-      </div>
-      <input
-        type="range"
-        min="60"
-        max="180"
-        step="5"
-        value={bpm}
-        onChange={(e) => onBpmChange(Number(e.target.value))}
-        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500 hover:accent-pink-400"
-      />
-      <div className="flex justify-between text-[10px] text-gray-600 mt-2 font-mono uppercase">
-        <span>Lento</span>
-        <span>Moderado</span>
-        <span>Rápido</span>
-      </div>
-    </div>
-
-    <div>
-      <label className="text-xs font-bold text-gray-400 uppercase flex items-center gap-2 mb-3">
-        <Mic2 className="w-4 h-4" /> Tipo de Faixa
-      </label>
-      <div className="flex gap-2">
-          <button
-            onClick={() => onInstrumentalChange(false)}
-            className={`flex-1 py-3 rounded-lg text-xs font-bold border transition-all flex items-center justify-center gap-2 ${
-              !isInstrumental 
-                ? 'bg-gray-700 text-white border-gray-600' 
-                : 'bg-transparent text-gray-500 border-gray-800 hover:border-gray-700'
-            }`}
-          >
-            <Mic2 className="w-3 h-3" /> Com Voz
-          </button>
-          <button
-            onClick={() => onInstrumentalChange(true)}
-            className={`flex-1 py-3 rounded-lg text-xs font-bold border transition-all flex items-center justify-center gap-2 ${
-              isInstrumental 
-                ? 'bg-violet-600/20 text-violet-300 border-violet-500/50' 
-                : 'bg-transparent text-gray-500 border-gray-800 hover:border-gray-700'
-            }`}
-          >
-            <VolumeX className="w-3 h-3" /> Instrumental
-          </button>
-      </div>
-    </div>
-  </div>
-));
-
-// --- MAIN COMPONENT ---
-
 export const PromptGenerator: React.FC = () => {
-  const [state, dispatch] = useReducer(generatorReducer, initialState);
+  // Estado Principal
+  const [mode, setMode] = useState<'guided' | 'free'>('guided');
+  const [loading, setLoading] = useState(false);
+  const [currentResult, setCurrentResult] = useState<PromptResult | null>(null);
+  
+  // Estado do Estúdio (Guided)
+  const [selectedGenre, setSelectedGenre] = useState<string>('');
+  const [bpm, setBpm] = useState<number>(120);
+  const [isInstrumental, setIsInstrumental] = useState(false);
+  const [selectedElements, setSelectedElements] = useState<string[]>([]);
+  const [extraDetails, setExtraDetails] = useState('');
+
+  // Estado do Modo Livre
+  const [freeInput, setFreeInput] = useState('');
+
+  // UI
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to result on change
   useEffect(() => {
-    if (state.result && resultRef.current) {
+    if (currentResult && resultRef.current) {
       resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [state.result]);
+  }, [currentResult]);
+
+  const toggleElement = (el: string) => {
+    setSelectedElements(prev => 
+      prev.includes(el) ? prev.filter(e => e !== el) : [...prev, el]
+    );
+  };
 
   const constructPrompt = () => {
-    if (state.mode === 'free') return state.freeInput;
+    if (mode === 'free') return freeInput;
     
     const parts = [];
-    if (state.selectedGenre) parts.push(`Genre: ${state.selectedGenre}`);
-    if (state.selectedElements.length > 0) parts.push(`Elements: ${state.selectedElements.join(', ')}`);
-    if (state.extraDetails) parts.push(`Details: ${state.extraDetails}`);
+    if (selectedGenre) parts.push(`Genre: ${selectedGenre}`);
+    if (selectedElements.length > 0) parts.push(`Elements: ${selectedElements.join(', ')}`);
+    if (extraDetails) parts.push(`Details: ${extraDetails}`);
     return parts.join(', ');
   };
 
   const handleGenerate = async () => {
     const input = constructPrompt();
-    if (!input.trim() && state.mode === 'free') return;
-    if (!state.selectedGenre && state.mode === 'guided') return;
+    if (!input.trim() && mode === 'free') return;
+    if (!selectedGenre && mode === 'guided') return;
 
-    dispatch({ type: 'SET_LOADING', payload: true });
+    setLoading(true);
     try {
       const result = await generateSunoPrompt(input, {
-        bpm: state.mode === 'guided' ? state.bpm : undefined,
-        isInstrumental: state.mode === 'guided' ? state.isInstrumental : undefined
+        bpm: mode === 'guided' ? bpm : undefined,
+        isInstrumental: mode === 'guided' ? isInstrumental : undefined
       });
-      dispatch({ type: 'SET_RESULT', payload: result });
-    } catch (e) {
-      console.error(e);
-      dispatch({ type: 'SET_LOADING', payload: false });
+      setCurrentResult(result);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleMagic = async () => {
-    dispatch({ type: 'SET_LOADING', payload: true });
+    setLoading(true);
     try {
       const input = constructPrompt();
       const result = await generateMagicPrompt(input);
-      dispatch({ type: 'SET_RESULT', payload: result });
-    } catch (e) {
-      console.error(e);
-      dispatch({ type: 'SET_LOADING', payload: false });
+      setCurrentResult(result);
+    } finally {
+      setLoading(false);
     }
   };
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
-    dispatch({ type: 'SET_COPIED', payload: id });
-    setTimeout(() => dispatch({ type: 'SET_COPIED', payload: null }), 2000);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8 min-h-[600px]">
       
-      {/* --- STUDIO CONTROLS --- */}
+      {/* --- ESTÚDIO (CONTROLES) --- */}
       <div className="flex-1 space-y-6">
         
         <div className="flex items-center justify-between mb-6">
@@ -253,17 +110,17 @@ export const PromptGenerator: React.FC = () => {
           </h2>
           <div className="bg-gray-800 rounded-lg p-1 flex border border-gray-700">
             <button
-              onClick={() => dispatch({ type: 'SET_MODE', payload: 'guided' })}
+              onClick={() => setMode('guided')}
               className={`px-4 py-2 text-xs font-bold rounded-md transition-all ${
-                state.mode === 'guided' ? 'bg-gray-700 text-white shadow-sm' : 'text-gray-400 hover:text-white'
+                mode === 'guided' ? 'bg-gray-700 text-white shadow-sm' : 'text-gray-400 hover:text-white'
               }`}
             >
               GUIADO
             </button>
             <button
-              onClick={() => dispatch({ type: 'SET_MODE', payload: 'free' })}
+              onClick={() => setMode('free')}
               className={`px-4 py-2 text-xs font-bold rounded-md transition-all ${
-                state.mode === 'free' ? 'bg-gray-700 text-white shadow-sm' : 'text-gray-400 hover:text-white'
+                mode === 'free' ? 'bg-gray-700 text-white shadow-sm' : 'text-gray-400 hover:text-white'
               }`}
             >
               LIVRE
@@ -273,33 +130,109 @@ export const PromptGenerator: React.FC = () => {
 
         <div className="bg-suno-card border border-gray-800 rounded-2xl p-6 shadow-2xl space-y-8 relative overflow-hidden">
           
+          {/* Background decoration */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-pink-500/5 rounded-full blur-3xl -z-10 pointer-events-none" />
 
-          {state.mode === 'guided' ? (
+          {mode === 'guided' ? (
             <div className="space-y-8 animate-fade-in">
               
-              <GenreSelector 
-                selected={state.selectedGenre} 
-                onSelect={(g) => dispatch({ type: 'SET_GENRE', payload: g })} 
-              />
+              {/* 1. Gênero (Visual Cards) */}
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-4 block tracking-wider">1. Gênero Principal</label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {GENRES.map((g) => (
+                    <button
+                      key={g.id}
+                      onClick={() => setSelectedGenre(g.label)}
+                      className={`relative overflow-hidden group p-4 rounded-xl border transition-all duration-300 text-left ${
+                        selectedGenre === g.label 
+                          ? 'border-transparent ring-2 ring-white/20 shadow-xl scale-[1.02]' 
+                          : 'bg-gray-900 border-gray-800 hover:border-gray-600'
+                      }`}
+                    >
+                      <div className={`absolute inset-0 bg-gradient-to-br ${g.color} opacity-10 group-hover:opacity-20 transition-opacity`} />
+                      {selectedGenre === g.label && (
+                        <div className={`absolute inset-0 bg-gradient-to-br ${g.color} opacity-20`} />
+                      )}
+                      
+                      <g.icon className={`w-8 h-8 mb-3 ${selectedGenre === g.label ? 'text-white' : 'text-gray-400 group-hover:text-white'} transition-colors`} />
+                      <span className={`block font-bold ${selectedGenre === g.label ? 'text-white' : 'text-gray-400 group-hover:text-white'}`}>
+                        {g.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-              <StudioControls 
-                bpm={state.bpm} 
-                onBpmChange={(v) => dispatch({ type: 'SET_BPM', payload: v })}
-                isInstrumental={state.isInstrumental}
-                onInstrumentalChange={(v) => dispatch({ type: 'SET_INSTRUMENTAL', payload: v })}
-              />
+              {/* 2. Mesa de Controle (BPM & Instrumental) */}
+              <div className="bg-black/20 rounded-xl p-5 border border-gray-800 grid md:grid-cols-2 gap-8">
+                
+                {/* BPM Slider */}
+                <div>
+                  <div className="flex justify-between mb-3">
+                    <label className="text-xs font-bold text-gray-400 uppercase flex items-center gap-2">
+                      <Activity className="w-4 h-4" /> Tempo (BPM)
+                    </label>
+                    <span className="text-xs font-mono text-pink-400 bg-pink-900/20 px-2 py-1 rounded">
+                      {bpm} BPM
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="60"
+                    max="180"
+                    step="5"
+                    value={bpm}
+                    onChange={(e) => setBpm(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500 hover:accent-pink-400"
+                  />
+                  <div className="flex justify-between text-[10px] text-gray-600 mt-2 font-mono uppercase">
+                    <span>Lento</span>
+                    <span>Moderado</span>
+                    <span>Rápido</span>
+                  </div>
+                </div>
 
-              {/* Technical Elements */}
+                {/* Instrumental Toggle */}
+                <div>
+                  <label className="text-xs font-bold text-gray-400 uppercase flex items-center gap-2 mb-3">
+                    <Mic2 className="w-4 h-4" /> Tipo de Faixa
+                  </label>
+                  <div className="flex gap-2">
+                     <button
+                        onClick={() => setIsInstrumental(false)}
+                        className={`flex-1 py-3 rounded-lg text-xs font-bold border transition-all flex items-center justify-center gap-2 ${
+                          !isInstrumental 
+                            ? 'bg-gray-700 text-white border-gray-600' 
+                            : 'bg-transparent text-gray-500 border-gray-800 hover:border-gray-700'
+                        }`}
+                     >
+                       <Mic2 className="w-3 h-3" /> Com Voz
+                     </button>
+                     <button
+                        onClick={() => setIsInstrumental(true)}
+                        className={`flex-1 py-3 rounded-lg text-xs font-bold border transition-all flex items-center justify-center gap-2 ${
+                          isInstrumental 
+                            ? 'bg-violet-600/20 text-violet-300 border-violet-500/50' 
+                            : 'bg-transparent text-gray-500 border-gray-800 hover:border-gray-700'
+                        }`}
+                     >
+                       <VolumeX className="w-3 h-3" /> Instrumental
+                     </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Elementos Técnicos */}
               <div>
                 <label className="text-xs font-bold text-gray-500 uppercase mb-3 block tracking-wider">3. Elementos & Atmosfera</label>
                 <div className="flex flex-wrap gap-2">
                   {ELEMENTS.map((el) => (
                     <button
                       key={el}
-                      onClick={() => dispatch({ type: 'TOGGLE_ELEMENT', payload: el })}
+                      onClick={() => toggleElement(el)}
                       className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all ${
-                        state.selectedElements.includes(el)
+                        selectedElements.includes(el)
                           ? 'bg-gray-100 text-black border-white shadow-lg'
                           : 'bg-gray-900 text-gray-400 border-gray-800 hover:border-gray-600'
                       }`}
@@ -310,12 +243,12 @@ export const PromptGenerator: React.FC = () => {
                 </div>
               </div>
 
-              {/* Extra Details */}
+              {/* 4. Extra Input */}
               <div className="relative">
                 <input 
                   type="text"
-                  value={state.extraDetails}
-                  onChange={(e) => dispatch({ type: 'SET_DETAILS', payload: e.target.value })}
+                  value={extraDetails}
+                  onChange={(e) => setExtraDetails(e.target.value)}
                   placeholder="Detalhes extras... (Ex: Solo de saxofone, clima de chuva)"
                   className="w-full bg-black/30 border border-gray-700 rounded-lg pl-4 pr-12 py-4 text-white placeholder-gray-600 focus:ring-1 focus:ring-pink-500 focus:border-pink-500 outline-none text-sm transition-all"
                 />
@@ -333,8 +266,8 @@ export const PromptGenerator: React.FC = () => {
                  </p>
               </div>
               <textarea
-                value={state.freeInput}
-                onChange={(e) => dispatch({ type: 'SET_FREE_INPUT', payload: e.target.value })}
+                value={freeInput}
+                onChange={(e) => setFreeInput(e.target.value)}
                 placeholder="Ex: Quero um heavy metal misturado com ópera, muito rápido, com vocais femininos líricos e bateria agressiva..."
                 className="w-full h-64 bg-black/30 border border-gray-700 rounded-xl p-5 text-white placeholder-gray-600 focus:ring-1 focus:ring-pink-500 outline-none resize-none text-base leading-relaxed"
               />
@@ -345,16 +278,16 @@ export const PromptGenerator: React.FC = () => {
           <div className="pt-4 flex gap-3 border-t border-gray-800/50">
             <button
               onClick={handleGenerate}
-              disabled={state.loading || (state.mode === 'free' && !state.freeInput.trim()) || (state.mode === 'guided' && !state.selectedGenre)}
+              disabled={loading || (mode === 'free' && !freeInput.trim()) || (mode === 'guided' && !selectedGenre)}
               className="flex-1 h-14 bg-gradient-to-r from-pink-600 to-violet-600 hover:from-pink-500 hover:to-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold flex items-center justify-center gap-3 transition-all shadow-lg hover:shadow-pink-500/20 active:scale-[0.98]"
             >
-              {state.loading ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5 fill-current" />}
+              {loading ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5 fill-current" />}
               <span className="tracking-wide">GERAR PROMPT</span>
             </button>
             
             <button
               onClick={handleMagic}
-              disabled={state.loading}
+              disabled={loading}
               className="h-14 w-16 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-violet-400 rounded-xl flex items-center justify-center transition-all active:scale-[0.98]"
               title="Surpreenda-me"
             >
@@ -365,7 +298,7 @@ export const PromptGenerator: React.FC = () => {
         </div>
       </div>
 
-      {/* --- RESULTS SIDEBAR --- */}
+      {/* --- RESULTADOS (SIDEBAR) --- */}
       <div className="w-full lg:w-[380px] lg:sticky lg:top-8 h-fit space-y-6">
         
         <div ref={resultRef} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-2xl relative">
@@ -374,7 +307,7 @@ export const PromptGenerator: React.FC = () => {
             <h3 className="font-bold text-white text-sm flex items-center gap-2">
               <Music2 className="w-4 h-4 text-green-400" /> RESULTADO OTIMIZADO
             </h3>
-            {state.result && (
+            {currentResult && (
                <span className="text-[10px] font-mono text-gray-400 uppercase">
                  Suno v3.5 Ready
                </span>
@@ -382,7 +315,7 @@ export const PromptGenerator: React.FC = () => {
           </div>
           
           <div className="p-6 min-h-[250px] flex flex-col justify-center relative">
-             {state.loading ? (
+             {loading ? (
                <div className="text-center space-y-4">
                  <div className="relative w-16 h-16 mx-auto">
                     <div className="absolute inset-0 border-4 border-gray-700 rounded-full"></div>
@@ -392,7 +325,7 @@ export const PromptGenerator: React.FC = () => {
                    MASTERIZANDO PROMPT...
                  </p>
                </div>
-             ) : state.result ? (
+             ) : currentResult ? (
                <div className="space-y-6 animate-fade-in">
                  
                  {/* Main Prompt Box */}
@@ -400,28 +333,27 @@ export const PromptGenerator: React.FC = () => {
                     <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 to-violet-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
                     <div className="relative bg-black rounded-xl p-5 border border-gray-800">
                       <p className="text-green-400 font-mono text-sm leading-relaxed break-words">
-                        {state.result.stylePrompt}
+                        {currentResult.stylePrompt}
                       </p>
                     </div>
                     
                     <button
-                      onClick={() => copyToClipboard(state.result!.stylePrompt, 'main')}
+                      onClick={() => copyToClipboard(currentResult.stylePrompt, 'main')}
                       className="absolute top-2 right-2 p-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg shadow-lg transition-all z-10 opacity-0 group-hover:opacity-100"
-                      aria-label="Copy Prompt"
                     >
-                      {state.copiedId === 'main' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                      {copiedId === 'main' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                     </button>
                  </div>
 
                  {/* Explanation / Tip */}
-                 {state.result.explanation && (
+                 {currentResult.explanation && (
                    <div className="flex gap-3 bg-gray-800/50 p-3 rounded-lg border border-gray-700/50">
                       <div className="mt-1">
                         <Wand2 className="w-4 h-4 text-violet-400" />
                       </div>
                       <p className="text-xs text-gray-400 leading-relaxed">
                         <span className="font-bold text-violet-300 block mb-1">Dica da IA:</span>
-                        {state.result.explanation}
+                        {currentResult.explanation}
                       </p>
                    </div>
                  )}
