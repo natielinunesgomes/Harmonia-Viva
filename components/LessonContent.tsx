@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ArrowRight, AlertCircle, Sparkles, CheckCircle, ExternalLink, Check } from 'lucide-react';
+import { ArrowRight, AlertCircle, Sparkles, CheckCircle, ExternalLink, Check, Lightbulb } from 'lucide-react';
 import { Lesson } from '../types';
 import { ALL_LESSONS } from '../constants';
 import { useProgress } from '../contexts/ProgressContext';
@@ -38,7 +38,7 @@ export const LessonContent: React.FC<Props> = ({ lesson, onComplete }) => {
       <div className="border-b border-gray-800 pb-6">
         <div className="flex items-center gap-3 text-sm text-pink-500 font-semibold mb-2">
           <span className="bg-pink-500/10 px-3 py-1 rounded-full uppercase tracking-wider text-xs flex items-center gap-2">
-            {lesson.trackId === 'creation' ? 'Criação' : 'Business'}
+            {lesson.trackId === 'creation' ? 'Masterclass v5' : 'Business'}
             {isCompleted && <Check className="w-3 h-3" />}
           </span>
           <span className="text-gray-500">•</span>
@@ -47,7 +47,7 @@ export const LessonContent: React.FC<Props> = ({ lesson, onComplete }) => {
           <span className="text-gray-400">{lesson.duration}</span>
         </div>
         <h1 className="text-4xl font-bold text-white mb-4">{lesson.title}</h1>
-        <p className="text-xl text-gray-400">{lesson.description}</p>
+        <p className="text-xl text-gray-400 leading-relaxed">{lesson.description}</p>
       </div>
 
       {/* Content Body */}
@@ -87,44 +87,48 @@ export const LessonContent: React.FC<Props> = ({ lesson, onComplete }) => {
 };
 
 // Reusable UI Components for Lessons
-export const TipBox: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="bg-violet-900/20 border-l-4 border-violet-500 p-5 my-8 rounded-r-lg shadow-sm">
+export const TipBox: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
+  <div className="bg-gradient-to-r from-violet-900/30 to-violet-800/10 border-l-4 border-violet-500 p-6 my-8 rounded-r-2xl shadow-sm hover:bg-violet-900/20 transition-colors">
     <div className="flex items-start gap-4">
-      <Sparkles className="w-6 h-6 text-violet-400 shrink-0 mt-1" />
+      <div className="bg-violet-500/20 p-2 rounded-full shrink-0">
+        <Lightbulb className="w-6 h-6 text-violet-300" />
+      </div>
       <div className="text-gray-200 leading-relaxed">{children}</div>
     </div>
   </div>
 );
 
-export const WarningBox: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="bg-yellow-900/20 border-l-4 border-yellow-500 p-5 my-8 rounded-r-lg shadow-sm">
+export const WarningBox: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
+  <div className="bg-gradient-to-r from-red-900/20 to-orange-900/10 border-l-4 border-orange-500 p-6 my-8 rounded-r-2xl shadow-sm">
     <div className="flex items-start gap-4">
-      <AlertCircle className="w-6 h-6 text-yellow-500 shrink-0 mt-1" />
+      <div className="bg-orange-500/20 p-2 rounded-full shrink-0">
+        <AlertCircle className="w-6 h-6 text-orange-400" />
+      </div>
       <div className="text-gray-200 leading-relaxed">{children}</div>
     </div>
   </div>
 );
 
-export const Step: React.FC<{ number: number; title: string; children: React.ReactNode }> = ({ number, title, children }) => (
-  <div className="flex gap-5 my-10 p-6 rounded-2xl border border-gray-800 bg-gray-900/40 hover:bg-gray-800/60 transition-colors">
-    <div className="shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-pink-600 to-violet-600 flex items-center justify-center text-xl font-bold text-white shadow-lg shadow-purple-900/20">
+export const Step: React.FC<{ number: number; title: string; children?: React.ReactNode }> = ({ number, title, children }) => (
+  <div className="flex gap-5 my-10 p-6 rounded-2xl border border-gray-800 bg-gray-900/40 hover:bg-gray-800/60 transition-colors group">
+    <div className="shrink-0 w-12 h-12 rounded-full bg-gray-800 group-hover:bg-pink-600 transition-colors flex items-center justify-center text-xl font-bold text-white shadow-lg border border-gray-700 group-hover:border-pink-500">
       {number}
     </div>
     <div>
-      <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
+      <h3 className="text-xl font-bold text-white mb-3 group-hover:text-pink-300 transition-colors">{title}</h3>
       <div className="text-gray-300 leading-relaxed space-y-2">{children}</div>
     </div>
   </div>
 );
 
-export const LinkBtn: React.FC<{ href: string; children: React.ReactNode }> = ({ href, children }) => (
+export const LinkBtn: React.FC<{ href: string; children?: React.ReactNode }> = ({ href, children }) => (
   <a 
     href={href} 
     target="_blank" 
     rel="noopener noreferrer"
-    className="inline-flex items-center gap-1.5 text-pink-400 hover:text-pink-300 font-medium hover:underline decoration-pink-500/30 underline-offset-4 transition-all"
+    className="inline-flex items-center gap-1.5 text-pink-400 hover:text-pink-300 font-bold hover:underline decoration-pink-500/30 underline-offset-4 transition-all"
   >
     {children}
-    <ExternalLink className="w-3 h-3" />
+    <ExternalLink className="w-4 h-4" />
   </a>
 );

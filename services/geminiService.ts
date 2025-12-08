@@ -18,7 +18,7 @@ if (apiKey && apiKey.length > 0) {
 }
 
 // --- SISTEMA DE CACHE AVANÇADO (TTL + Size Limit) ---
-const CACHE_KEY = 'harmonia_prompt_cache_v3';
+const CACHE_KEY = 'harmonia_prompt_cache_v5'; // Updated cache key version
 const MAX_CACHE_SIZE = 100;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas
 
@@ -84,33 +84,34 @@ const saveCache = () => {
   }
 };
 
-// --- ENGENHARIA DE PROMPT (SUNO GOD MODE) ---
+// --- ENGENHARIA DE PROMPT (SUNO V5 OPTIMIZED - PROFESSIONAL TONE) ---
 
 const SYSTEM_INSTRUCTION = `
-You are an elite Audio Engineer and Music Producer, specialized in "Suno AI v3.5 God Mode".
-Your goal is to construct acoustically dense, high-fidelity style prompts.
+You are an expert Audio Engineer specializing in "Suno AI v5 Beta".
+Suno v5 understands natural language better but still thrives on specific "Anchor Tags" for genre and vibe.
 
-CORE PHILOSOPHY: "SONIC ARCHITECTURE"
-Do not just list genres. You must build the sound layer by layer.
+YOUR GOAL: Create high-fidelity, photorealistic audio prompts using professional terminology.
 
-STRUCTURE REQUIRED (Comma separated):
-1. [META]: Genre, Sub-genre, BPM (if specified), Key (e.g., C Minor).
-2. [FOUNDATION]: Drums (e.g., "Thunderous 808", "Brush Snare"), Bass (e.g., "Reese Bass", "Upright Bass").
-3. [TEXTURE]: Instruments (e.g., "Glassy Synths", "Distorted Stratocaster"), Atmosphere (e.g., "Smoky", "Ethereal").
-4. [LEAD/VOCAL]: 
-   - IF INSTRUMENTAL: Define the lead melody instrument (e.g., "Soaring Saxophone Solo Lead", "Melodic Piano Lead").
-   - IF VOCAL: Define vocal texture (e.g., "Gritty Male Vocals", "Breathy Female Vocals", "Auto-tuned Flow").
-5. [PRODUCTION]: Mixing keywords (e.g., "Panoramic Stereo", "Warm Tape Saturation", "Crisp Highs", "Wall of Sound").
+STRATEGY (THE V5 HYBRID METHOD):
+Mix strict genre tags with descriptive atmospheric phrases.
+
+STRUCTURE REQUIRED:
+1. [CORE GENRE]: Main style + Sub-genre (e.g., "Future Bass, Neo-Soul").
+2. [VIBE/ATMOSPHERE]: Descriptive adjectives (e.g., "Ethereal, Smoky atmosphere, Late night drive feeling").
+3. [SOUND DESIGN]: Specific instruments or textures (e.g., "Crisp 808s, Glassy Synths, Warm Analog Tape Saturation").
+4. [VOCAL FIDELITY]: v5 specific vocal tags (e.g., "Intimate breathy vocals, High-fidelity recording, Raw emotional performance").
+5. [TECHNICAL]: (e.g., "Wide Stereo, Studio Quality, 4k Audio").
 
 RULES:
-- EXPAND: If user says "Rock", output "Arena Rock, High-gain distortion, Power Drums, Stadium Reverb".
-- BRAZILIAN LOCALIZATION: For Brazilian styles, use native terms mixed with English production terms (e.g., "Cavaquinho", "Surdo Pattern", "Favela Funk Beat").
-- NO SENTENCES. Only tags.
+- FOR PORTUGUESE INPUTS: Adapt the style to fit the cultural context but keep technical terms in English (e.g., "Sertanejo Universitário, Acoustic Guitar, Stadium Reverb").
+- INSTRUMENTAL: If instrumental, emphasize "Lead Instrument" (e.g., "Soaring Electric Guitar Solo").
+- NO SENTENCES IN THE OUTPUT PROMPT. Comma-separated tags only.
+- EXPLANATION TONE: Professional, concise, and technical. Avoid playful or childish language.
 
 OUTPUT JSON:
 {
   "stylePrompt": "The optimized tag string",
-  "explanation": "A 10-word strategic audio tip in Portuguese (PT-BR)."
+  "explanation": "A short, technical explanation (in PT-BR) of the prompt engineering choices."
 }
 `;
 
@@ -119,11 +120,11 @@ const responseSchema: Schema = {
   properties: {
     stylePrompt: { 
       type: Type.STRING,
-      description: "The optimized string of tags for Suno AI." 
+      description: "The optimized string of tags for Suno AI v5." 
     },
     explanation: { 
       type: Type.STRING, 
-      description: "Short strategic tip in Portuguese."
+      description: "Technical tip in Portuguese."
     },
   },
   required: ["stylePrompt", "explanation"],
@@ -135,12 +136,12 @@ const generateFallback = (input: string, options?: PromptOptions): PromptResult 
   const isPortuguese = /[ãéíóúç]/i.test(input);
   const baseInput = input && input.trim() !== "" ? input : "Pop";
   
-  let result = `${baseInput}, studio quality, radio ready, panoramic stereo`;
+  let result = `${baseInput}, High Fidelity, 4k Audio, Studio Quality`;
   
   if (options?.isInstrumental) {
-    result = `Instrumental, ${result}, melodic lead instrument`;
+    result = `Instrumental, ${result}, virtuosic lead melody`;
   } else {
-    result += ", clear vocals, high fidelity";
+    result += ", Clear Vocals, Raw Emotion";
   }
   
   if (options?.bpm) {
@@ -148,10 +149,10 @@ const generateFallback = (input: string, options?: PromptOptions): PromptResult 
   }
   
   return {
-    stylePrompt: `${result}, professional mastering (Offline Mode)`,
+    stylePrompt: `${result}, Masterpiece`,
     explanation: isPortuguese 
-      ? "Modo Offline: Verifique sua API Key ou conexão." 
-      : "Offline Mode: Check your API Key or connection."
+      ? "Modo Offline: Verifique sua API Key. Gerando prompt técnico v5." 
+      : "Offline Mode: Technical v5 prompt generated."
   };
 };
 
@@ -174,7 +175,7 @@ export const generateSunoPrompt = async (userInput: string, options?: PromptOpti
   const cleanInput = userInput.trim().toLowerCase();
   const bpmKey = options?.bpm ? `_${options.bpm}` : '';
   const instrKey = options?.isInstrumental ? '_instr' : '';
-  const cacheKey = `${cleanInput}${bpmKey}${instrKey}_godmode`; // Changed key to force refresh for new logic
+  const cacheKey = `${cleanInput}${bpmKey}${instrKey}_v5_pro`; 
   const now = Date.now();
 
   // 1. Cache Check
@@ -193,25 +194,25 @@ export const generateSunoPrompt = async (userInput: string, options?: PromptOpti
 
   try {
     // Construct Context
-    let promptContext = `User Input: "${userInput}".\n`;
+    let promptContext = `User Idea: "${userInput}".\n`;
     if (options?.isInstrumental) {
-      promptContext += "CONSTRAINT: This MUST be an INSTRUMENTAL track. You MUST define a 'Lead Instrument' for the melody (e.g., Piano Solo, Guitar Riff) or it will be boring.\n";
+      promptContext += "CONSTRAINT: INSTRUMENTAL TRACK. Focus on 'Musical Narrative' and 'Lead Instruments'.\n";
     } else {
-      promptContext += "CONSTRAINT: Include specific Vocal Texture tags (Male/Female/Choir/etc).\n";
+      promptContext += "CONSTRAINT: Define Vocal Type (e.g., Male/Female, Gritty/Soft).\n";
     }
     
     if (options?.bpm) {
-      promptContext += `CONSTRAINT: Target Tempo is ${options.bpm} BPM.\n`;
+      promptContext += `CONSTRAINT: Tempo ${options.bpm} BPM.\n`;
     }
 
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
-      contents: promptContext + "Task: Construct a 'God Mode' Suno AI style string.",
+      contents: promptContext + "Task: Create a professional Suno v5 Beta style string.",
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
         responseMimeType: "application/json",
         responseSchema: responseSchema,
-        temperature: 0.75, // Slightly higher for creativity within structure
+        temperature: 0.7, // Slightly lower temp for more consistent/professional results
       }
     });
 
@@ -237,15 +238,15 @@ export const generateMagicPrompt = async (currentInput: string): Promise<PromptR
     const isRandom = !currentInput || currentInput.trim() === "";
     
     const magicPrompt = isRandom
-      ? "Create a 'Suno God Mode' style for a completely unique, experimental music genre fusion that sounds expensive."
-      : `User Input: "${currentInput}". Task: Remix this concept into a 'Grammy Winning' production. Change the genre but keep the emotion. Make it sound HD.`;
+      ? "Create a 'Suno v5' style for a sophisticated, avant-garde genre fusion suitable for commercial production."
+      : `User Idea: "${currentInput}". Task: Upgrade this to a v5 'Audio Masterpiece'. Add professional textures and sound design.`;
 
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
       contents: magicPrompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 1.1, // High creativity
+        temperature: 1.1, 
         responseMimeType: "application/json",
         responseSchema: responseSchema,
       }

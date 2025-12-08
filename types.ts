@@ -1,7 +1,7 @@
 import React from 'react';
 
 export type TrackId = 'creation' | 'monetization';
-export type DifficultyLevel = 'Iniciante' | 'Intermediário' | 'Avançado' | 'Business';
+export type DifficultyLevel = 'Iniciante' | 'Intermediário' | 'Avançado' | 'Business' | 'Profissional';
 
 export interface Lesson {
   id: string;
