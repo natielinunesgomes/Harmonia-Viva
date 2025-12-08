@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ArrowRight, AlertCircle, Sparkles, CheckCircle, ExternalLink, Check, Lightbulb } from 'lucide-react';
+import { ArrowRight, AlertCircle, CheckCircle, ExternalLink, Check, Lightbulb } from 'lucide-react';
 import { Lesson } from '../types';
 import { ALL_LESSONS } from '../constants';
 import { useProgress } from '../contexts/ProgressContext';

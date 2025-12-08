@@ -1,14 +1,13 @@
 import React from 'react';
 import { Lesson, Track } from './types';
-import { TipBox, WarningBox, Step, LinkBtn } from './components/LessonContent';
+import { TipBox, WarningBox, Step } from './components/LessonContent';
 import { 
-  Music, DollarSign, Sparkles, Zap, Layers, Globe, Video, Lock, 
-  Mic2, Settings, BarChart3, Share2, FileAudio, Scale, Database, 
-  Radio, Headphones, Cpu, Anchor, Activity, Server, Shield, 
-  FileText, Play, Repeat, CheckCircle2, XCircle, Terminal, 
-  LayoutTemplate, Palette, Copyright, UserCheck, Key, Youtube, 
-  TrendingUp, Users, ShoppingBag, Eye, MousePointer2, Baby, 
-  Moon, Dumbbell, Smartphone, Briefcase, BarChart4, Target, Globe2
+  Music, DollarSign, Layers, Mic2, Database, 
+  Cpu, Activity, 
+  CheckCircle2, XCircle, 
+  Palette, Youtube, 
+  Users, ShoppingBag, Baby, 
+  Dumbbell, Briefcase, BarChart4, Target, Globe2
 } from 'lucide-react';
 
 /* 
@@ -18,11 +17,6 @@ import {
 */
 
 // --- COMPONENTES VISUAIS INLINE ---
-const ProBadge = () => (
-  <span className="bg-gradient-to-r from-pink-600 to-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ml-2 border border-white/20">
-    Pro Insight
-  </span>
-);
 
 const CodeBlock = ({ children }: { children?: React.ReactNode }) => (
   <div className="bg-[#0d1117] border border-gray-700 rounded-lg p-4 font-mono text-sm text-gray-300 overflow-x-auto my-4 shadow-inner leading-relaxed">
