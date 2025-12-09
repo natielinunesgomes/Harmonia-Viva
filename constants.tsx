@@ -5,9 +5,9 @@ import {
   Music, Youtube, Star, 
   CheckCircle2, XCircle, 
   PenTool, Speaker, ShieldCheck, Zap, Activity,
-  Mic2, Database, Globe2, Play, Cpu, Layers, Palette, Search,
-  Users, DollarSign, BarChart4, Briefcase, Flame, MousePointer2, MonitorPlay,
-  LogIn, LayoutDashboard, Sliders, Repeat
+  Mic2, Database, Globe2, Palette, Search,
+  Users, DollarSign, Briefcase, MousePointer2, MonitorPlay,
+  LogIn, LayoutDashboard
 } from 'lucide-react';
 
 // --- COMPONENTES VISUAIS INLINE (PREMIUM DESIGN) ---
