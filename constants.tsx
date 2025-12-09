@@ -556,7 +556,7 @@ export const CREATION_LESSONS: Lesson[] = [
         </p>
 
         <Step number={1} title="Selecionando o Ponto de Corte">
-           Vá na música que você gostou > Três pontos (...) > <strong>Extend</strong>.
+           Vá na música que você gostou &gt; Três pontos (...) &gt; <strong>Extend</strong>.
            <br/>Uma timeline vai aparecer. Ouça e pause EXATAMENTE onde a música ficou boa (antes de ficar ruim ou acabar). Ex: 01:50.
         </Step>
 
@@ -588,7 +588,7 @@ export const CREATION_LESSONS: Lesson[] = [
         </div>
 
         <Step number={1} title="Pintando o Erro">
-           Vá em Edit > <strong>Inpaint (Beta)</strong>.
+           Vá em Edit &gt; <strong>Inpaint (Beta)</strong>.
            <br/>Use o mouse para "pintar" a área da onda sonora onde está a palavra errada. Seja preciso. Pinte apenas o erro.
         </Step>
 
@@ -894,7 +894,7 @@ export const ADVANCED_BUSINESS_LESSONS: Lesson[] = [
         
         <Step number={2} title="O Movimento (O Pulo do Gato)">
            O YouTube odeia imagens estáticas (parece slide de powerpoint). 
-           No CapCut, adicione "Effects > Nature > Snow/Rain" ou "Particles". Adicione uma leve animação de "Zoom In" (Keyframes) bem lenta. Isso engana o algoritmo e conta como vídeo real.
+           No CapCut, adicione "Effects &gt; Nature &gt; Snow/Rain" ou "Particles". Adicione uma leve animação de "Zoom In" (Keyframes) bem lenta. Isso engana o algoritmo e conta como vídeo real.
         </Step>
         
         <Step number={3} title="O Áudio em Loop">
@@ -1226,7 +1226,7 @@ export const ADVANCED_BUSINESS_LESSONS: Lesson[] = [
         </p>
 
         <ConceptCard title="Tradução Nativa do YouTube" icon={Globe2} color="amber">
-           Vá em Detalhes do Vídeo > Legendas > Adicionar Idioma.
+           Vá em Detalhes do Vídeo &gt; Legendas &gt; Adicionar Idioma.
            <br/>Você pode adicionar traduções oficiais do Título e Descrição.
            <br/><br/>
            Se um usuário do Japão buscar por "música para dormir" (em japonês), o YouTube mostrará SEU vídeo com o título traduzido automaticamente. Isso triplica seu alcance potencial.
@@ -1310,7 +1310,7 @@ export const ADVANCED_BUSINESS_LESSONS: Lesson[] = [
         </div>
 
         <Step number={1} title="Crie um SOP (Standard Operating Procedure)">
-           Grave a tela do seu computador fazendo o processo inteiro de um vídeo (Gerar Suno -> Midjourney -> CapCut -> Upload). Fale explicando.
+           Grave a tela do seu computador fazendo o processo inteiro de um vídeo (Gerar Suno -&gt; Midjourney -&gt; CapCut -&gt; Upload). Fale explicando.
         </Step>
 
         <Step number={2} title="Contrate Barato">
@@ -1533,7 +1533,7 @@ export const BONUS_LESSONS: Lesson[] = [
            1. Baixe o <strong>Audacity</strong> (Software gratuito de áudio).
            <br/>2. Importe sua música do Suno.
            <br/>3. Selecione a faixa inteira (Ctrl + A).
-           <br/>4. Vá em <strong>Efeitos > Alterar Tom (Change Pitch)</strong>.
+           <br/>4. Vá em <strong>Efeitos &gt; Alterar Tom (Change Pitch)</strong>.
            <br/>5. Na caixa "Frequência (Hz)", mude de <strong>440</strong> para <strong>432</strong>.
            <br/>6. Aplique. A música ficará levemente mais grave e muito mais relaxante.
         </Step>
