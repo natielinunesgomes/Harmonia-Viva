@@ -5,6 +5,7 @@ import { Loading } from './components/Loading';
 import { AccessWarningModal } from './components/AccessWarningModal';
 import { ProgressProvider } from './contexts/ProgressContext';
 import { Confetti } from './components/Confetti';
+import { GraduationCelebration } from './components/GraduationCelebration';
 
 // Eager load core pages for instant navigation
 import Home from './pages/Home';
@@ -17,6 +18,7 @@ function App() {
   return (
     <ProgressProvider>
       <Confetti />
+      <GraduationCelebration />
       <AccessWarningModal />
       <Routes>
         <Route path="/" element={<Layout />}>

@@ -1,26 +1,24 @@
 import React from 'react';
 import { Lesson, Track } from './types';
-import { TipBox, WarningBox, Step } from './components/LessonContent';
+import { TipBox, WarningBox, Step, LinkBtn } from './components/LessonContent';
 import { 
-  Music, DollarSign, Layers, Mic2, Database, 
-  Cpu, Activity, 
+  Music, Youtube, Star, 
   CheckCircle2, XCircle, 
-  Palette, Youtube, 
-  Users, ShoppingBag, Baby, 
-  Dumbbell, Briefcase, BarChart4, Target, Globe2
+  PenTool, Speaker, ShieldCheck, Zap, Activity,
+  Mic2, Database, Globe2, Play, Cpu, Layers, Palette, Search,
+  Users, DollarSign, BarChart4, Briefcase, Flame, MousePointer2, MonitorPlay,
+  LogIn, LayoutDashboard, Sliders, Repeat
 } from 'lucide-react';
 
-/* 
-  CURRICULUM DESIGN: PROFESSIONAL MASTERCLASS (ENRICHED & TEXT-HEAVY)
-  Total: 40 Lessons (20 Creation, 20 Business - YouTube Empire Focused)
-  Tone: Technical, Deep Dive, Visually Rich.
-*/
-
-// --- COMPONENTES VISUAIS INLINE ---
+// --- COMPONENTES VISUAIS INLINE (PREMIUM DESIGN) ---
 
 const CodeBlock = ({ children }: { children?: React.ReactNode }) => (
-  <div className="bg-[#0d1117] border border-gray-700 rounded-lg p-4 font-mono text-sm text-gray-300 overflow-x-auto my-4 shadow-inner leading-relaxed">
-    {children}
+  <div className="relative group my-6">
+    <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+    <div className="relative bg-[#0d1117] border border-gray-700 rounded-lg p-6 font-mono text-sm text-gray-300 overflow-x-auto shadow-2xl leading-relaxed select-text">
+      <div className="absolute top-2 right-4 text-xs font-bold text-gray-600 uppercase tracking-widest">Suno Prompt</div>
+      {children}
+    </div>
   </div>
 );
 
@@ -31,25 +29,29 @@ const ComparisonTable = ({ title, leftTitle, rightTitle, leftItems, rightItems }
   leftItems: string[];
   rightItems: string[];
 }) => (
-  <div className="my-8 border border-gray-700 rounded-xl overflow-hidden shadow-lg">
-    <div className="bg-gray-800 p-4 text-center font-bold text-gray-200 border-b border-gray-700 uppercase tracking-widest text-sm">{title}</div>
-    <div className="grid grid-cols-2">
-      <div className="bg-red-900/10 p-6 border-r border-gray-700">
-        <h5 className="font-bold text-red-400 mb-4 text-center uppercase text-xs tracking-wider border-b border-red-500/20 pb-2">{leftTitle}</h5>
+  <div className="my-10 border border-gray-800 rounded-2xl overflow-hidden shadow-2xl bg-black/40 backdrop-blur-sm">
+    <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4 text-center font-bold text-gray-100 border-b border-gray-700 uppercase tracking-[0.2em] text-xs shadow-lg">{title}</div>
+    <div className="grid grid-cols-1 md:grid-cols-2">
+      <div className="p-6 md:border-r border-gray-800 bg-red-900/5 hover:bg-red-900/10 transition-colors">
+        <h5 className="font-extrabold text-red-400 mb-6 text-center uppercase text-xs tracking-wider flex items-center justify-center gap-2">
+           <XCircle className="w-4 h-4" /> {leftTitle}
+        </h5>
         <ul className="space-y-4 text-sm text-gray-400">
           {leftItems.map((item: string, i: number) => (
-            <li key={i} className="flex gap-3 items-start leading-snug">
-              <XCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" /> 
+            <li key={i} className="flex gap-3 items-start leading-relaxed bg-red-500/5 p-3 rounded-lg border border-red-500/10">
+              <span className="text-red-500/50 font-mono text-xs mt-0.5">0{i+1}.</span>
               <span>{item}</span>
             </li>
           ))}
         </ul>
       </div>
-      <div className="bg-green-900/10 p-6">
-        <h5 className="font-bold text-green-400 mb-4 text-center uppercase text-xs tracking-wider border-b border-green-500/20 pb-2">{rightTitle}</h5>
+      <div className="p-6 bg-green-900/5 hover:bg-green-900/10 transition-colors">
+        <h5 className="font-extrabold text-green-400 mb-6 text-center uppercase text-xs tracking-wider flex items-center justify-center gap-2">
+           <CheckCircle2 className="w-4 h-4" /> {rightTitle}
+        </h5>
         <ul className="space-y-4 text-sm text-gray-300">
           {rightItems.map((item: string, i: number) => (
-            <li key={i} className="flex gap-3 items-start leading-snug">
+            <li key={i} className="flex gap-3 items-start leading-relaxed bg-green-500/5 p-3 rounded-lg border border-green-500/10 shadow-sm">
               <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" /> 
               <span>{item}</span>
             </li>
@@ -60,1543 +62,1494 @@ const ComparisonTable = ({ title, leftTitle, rightTitle, leftItems, rightItems }
   </div>
 );
 
-// --- TRILHA 1: ENGENHARIA DE ÁUDIO GENERATIVO (SUNO V5) ---
-// (Mantida intacta)
+const ConceptCard = ({ title, icon: Icon, children, color = "blue" }: any) => {
+  const colorClasses: Record<string, string> = {
+    blue: "from-blue-500/10 to-cyan-500/10 border-blue-500/20 text-blue-400",
+    purple: "from-purple-500/10 to-pink-500/10 border-purple-500/20 text-purple-400",
+    amber: "from-amber-500/10 to-orange-500/10 border-amber-500/20 text-amber-400",
+    green: "from-emerald-500/10 to-green-500/10 border-emerald-500/20 text-emerald-400",
+  };
+  const current = colorClasses[color] || colorClasses.blue;
 
-const CREATION_LESSONS: Lesson[] = [
-  // FASE 1: FUNDAMENTOS
+  return (
+    <div className={`bg-gradient-to-br ${current} border rounded-xl p-6 my-6 hover:scale-[1.01] transition-transform duration-300 shadow-xl`}>
+      <h4 className={`text-lg font-bold mb-3 flex items-center gap-2 ${current.split(" ").pop()}`}>
+        <Icon className="w-5 h-5" /> {title}
+      </h4>
+      <div className="text-gray-300 leading-relaxed text-sm">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// --- TRILHA 1: FUNDAMENTOS & ENGENHARIA DE ÁUDIO (SUNO V5) ---
+// Total: 20 Aulas (10 Iniciante/Fundamentos + 10 Avançado)
+
+export const CREATION_LESSONS: Lesson[] = [
+  // --- FASE 1: FUNDAMENTOS E PRIMEIROS PASSOS (AULAS 1-10) ---
   {
-    id: 'c1_architecture',
+    id: 'c1_access_intro',
     trackId: 'creation',
-    title: '1. Arquitetura de Áudio Neural',
-    description: 'Deep Learning: Como modelos Autoregressivos e de Difusão esculpem som.',
-    duration: '8 min',
-    level: 'Iniciante',
-    content: () => (
-      <>
-        <div className="bg-gray-800 p-6 rounded-xl border-l-4 border-pink-500 mb-6">
-          <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2"><Cpu className="w-5 h-5"/> O Motor Sob o Capô</h3>
-          <p>
-            O Suno v5 opera utilizando uma arquitetura híbrida de <strong>Transformers</strong> (similar ao GPT-4 para texto) e modelos de <strong>Difusão</strong>. Ao contrário de sintetizadores tradicionais que usam osciladores, o Suno prediz "tokens de áudio" em um espaço latente.
-          </p>
-        </div>
-
-        <h3 className="text-2xl font-bold text-white mt-8 mb-4">O Processo de Inferência (4 Etapas)</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div className="bg-gray-900 border border-gray-800 p-4 rounded-lg">
-            <span className="text-pink-500 font-bold text-xl">01.</span>
-            <h4 className="font-bold text-gray-200">Tokenização Semântica</h4>
-            <p className="text-sm text-gray-400 mt-1">A IA converte seu texto ("Jazz triste") em vetores matemáticos que representam "tristeza" e "jazz".</p>
-          </div>
-          <div className="bg-gray-900 border border-gray-800 p-4 rounded-lg">
-             <span className="text-pink-500 font-bold text-xl">02.</span>
-            <h4 className="font-bold text-gray-200">Geração Autoregressiva</h4>
-            <p className="text-sm text-gray-400 mt-1">O modelo começa a prever o áudio milissegundo por milissegundo, decidindo a próxima frequência baseada na anterior.</p>
-          </div>
-          <div className="bg-gray-900 border border-gray-800 p-4 rounded-lg">
-             <span className="text-pink-500 font-bold text-xl">03.</span>
-            <h4 className="font-bold text-gray-200">Refinamento (Difusão)</h4>
-            <p className="text-sm text-gray-400 mt-1">Uma camada de difusão remove o ruído estático, transformando o chiado digital em som limpo (Hi-Fi).</p>
-          </div>
-          <div className="bg-gray-900 border border-gray-800 p-4 rounded-lg">
-             <span className="text-pink-500 font-bold text-xl">04.</span>
-            <h4 className="font-bold text-gray-200">Upscaling Neural</h4>
-            <p className="text-sm text-gray-400 mt-1">O áudio final é renderizado em 44.1kHz ou 48kHz para clareza estéreo.</p>
-          </div>
-        </div>
-
-        <Step number={1} title="Temperatura e Variância">
-          Todo modelo de IA possui um parâmetro oculto chamado "Temperatura". 
-          <br/>
-          • <strong>Prompt Vago:</strong> Alta temperatura (IA alucina, cria estruturas caóticas).
-          <br/>
-          • <strong>Prompt Específico:</strong> Baixa temperatura (IA segue ordens estritas).
-          <br/>
-          <em>Dica: Se você quer algo experimental, seja vago. Se quer um produto comercial, seja cirúrgico.</em>
-        </Step>
-      </>
-    )
-  },
-  {
-    id: 'c2_dashboard',
-    trackId: 'creation',
-    title: '2. Interface e Configuração Pro',
-    description: 'Dominando o Create Mode (Custom) e gerenciamento de Library.',
+    title: '1. O Portal da Criação: Acesso e Cadastro',
+    description: 'Seu primeiro contato com a ferramenta que vai mudar sua vida musical.',
     duration: '10 min',
     level: 'Iniciante',
     content: () => (
       <>
-        <p className="lead">
-          Amadores usam o "Simple Mode" (apenas descrição). Profissionais vivem no <strong>Custom Mode</strong>. Vamos dissecar cada controle do painel.
-        </p>
-
-        <div className="my-8 space-y-4">
-           <div className="flex items-start gap-4 p-4 bg-gray-800/50 border border-gray-700 rounded-xl">
-              <div className="bg-pink-600 p-2 rounded text-white font-bold shrink-0">Switch</div>
-              <div>
-                <h4 className="font-bold text-white">v3.5 vs v5</h4>
-                <p className="text-sm text-gray-400">
-                  Sempre verifique o seletor de versão no topo. O v5 é superior em qualidade de áudio, mas o v3.5 ainda é útil para ideias abstratas ou glitch art.
-                </p>
-              </div>
-           </div>
-
-           <div className="flex items-start gap-4 p-4 bg-gray-800/50 border border-gray-700 rounded-xl">
-              <div className="bg-blue-600 p-2 rounded text-white font-bold shrink-0">Toggle</div>
-              <div>
-                <h4 className="font-bold text-white">Instrumental Mode</h4>
-                <p className="text-sm text-gray-400">
-                  Ao ativar isso, o campo "Lyrics" desaparece. Use isso para criar Backing Tracks, Beats de Lo-fi ou Trilhas Sonoras de fundo.
-                </p>
-              </div>
-           </div>
+        <div className="mb-8">
+           <p className="text-lg text-gray-200 leading-relaxed">
+             Bem-vindo ao <strong>Suno AI</strong>. Diferente de outras ferramentas complexas que exigem instalação no computador, o Suno roda 100% na nuvem. Isso significa que você pode criar obras-primas usando um PC gamer superpotente ou um celular básico no ônibus.
+           </p>
         </div>
 
-        <h3 className="text-2xl font-bold text-white mt-8 mb-4">Gestão de Assets (Library)</h3>
-        <p>Após gerar 100 músicas, seu dashboard virará um caos. Siga este protocolo:</p>
-        
-        <ul className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
-           <li className="bg-black border border-gray-800 p-3 rounded text-center hover:border-pink-500 transition-colors">
-              <Database className="w-6 h-6 mx-auto mb-2 text-gray-500"/>
-              <strong className="block text-white">Trash Imediato</strong>
-              <span className="text-xs text-gray-500">Ouça 5s. Se for ruim, delete na hora. Não acumule lixo.</span>
-           </li>
-           <li className="bg-black border border-gray-800 p-3 rounded text-center hover:border-pink-500 transition-colors">
-              <Database className="w-6 h-6 mx-auto mb-2 text-gray-500"/>
-              <strong className="block text-white">Public vs Private</strong>
-              <span className="text-xs text-gray-500">Mantenha privado o que for comercial. Publique o que for portfólio.</span>
-           </li>
-           <li className="bg-black border border-gray-800 p-3 rounded text-center hover:border-pink-500 transition-colors">
-              <Database className="w-6 h-6 mx-auto mb-2 text-gray-500"/>
-              <strong className="block text-white">Folders</strong>
-              <span className="text-xs text-gray-500">Crie Playlists por Gênero ou Projeto (ex: "Álbum Rock 2025").</span>
-           </li>
-        </ul>
+        <Step number={1} title="Acessando a Plataforma">
+           Abra seu navegador e digite <LinkBtn href="https://suno.com">suno.com</LinkBtn>. 
+           <br/>Você verá uma interface moderna, parecida com o Spotify, cheia de músicas criadas por outras pessoas. Essa é a página "Explore".
+        </Step>
+
+        <Step number={2} title="O Cadastro (Sign Up)">
+           No canto inferior esquerdo (ou superior direito no mobile), clique em <strong>"Sign Up"</strong>.
+           <br/><br/>
+           <span className="text-pink-400 font-bold">Recomendação:</span> Use sua conta <strong>Google</strong>, <strong>Discord</strong> ou <strong>Microsoft</strong>. É mais rápido e seguro do que criar um login com senha do zero.
+        </Step>
+
+        <ConceptCard title="Por que preciso de conta?" icon={LogIn} color="blue">
+           O Suno precisa salvar suas criações na sua "Library" (Biblioteca) pessoal. Sem uma conta, você não consegue salvar, baixar ou reivindicar a autoria das suas músicas.
+        </ConceptCard>
       </>
     )
   },
   {
-    id: 'c3_economy',
+    id: 'c2_credits_economy',
     trackId: 'creation',
-    title: '3. Economia de Créditos (ROI)',
-    description: 'Matemática dos créditos: Custo por geração e maximização de recursos.',
-    duration: '5 min',
+    title: '2. A Economia de Créditos (Grátis vs Pro)',
+    description: 'Entenda como funciona o sistema de "moedas" do Suno para não ficar zerado.',
+    duration: '12 min',
     level: 'Iniciante',
     content: () => (
       <>
-        <div className="flex items-center justify-between bg-gradient-to-r from-gray-900 to-gray-800 p-6 rounded-2xl border border-gray-700">
-           <div>
-             <h2 className="text-3xl font-bold text-white">10 Créditos</h2>
-             <p className="text-gray-400 uppercase text-xs tracking-widest mt-1">Custo por Ação</p>
-           </div>
-           <div className="text-right">
-             <span className="text-2xl font-bold text-green-400">= 2 Músicas</span>
-             <p className="text-gray-500 text-xs">Geração A + Geração B</p>
-           </div>
-        </div>
+        <p className="mb-6 text-gray-300">
+          O Suno opera com um sistema de créditos. Cada vez que você pede para a IA "trabalhar", você gasta créditos. Entender isso é vital para não desperdiçar recursos.
+        </p>
 
-        <h3 className="text-2xl font-bold text-white mt-8 mb-4">Tabela de Planos vs. Capacidade</h3>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-400 border border-gray-700 rounded-lg">
-            <thead className="bg-gray-800 text-xs uppercase text-gray-200">
-              <tr>
-                <th className="px-4 py-3">Plano</th>
-                <th className="px-4 py-3">Créditos/Mês</th>
-                <th className="px-4 py-3">Músicas (aprox)</th>
-                <th className="px-4 py-3 text-right">Direito Comercial</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-gray-800">
-                <td className="px-4 py-3 font-bold">Free</td>
-                <td className="px-4 py-3">50 (diários)</td>
-                <td className="px-4 py-3">10/dia</td>
-                <td className="px-4 py-3 text-right text-red-500 font-bold">NÃO</td>
-              </tr>
-              <tr className="border-b border-gray-800 bg-gray-800/20">
-                <td className="px-4 py-3 font-bold text-pink-400">Pro</td>
-                <td className="px-4 py-3">2.500</td>
-                <td className="px-4 py-3">500</td>
-                <td className="px-4 py-3 text-right text-green-500 font-bold">SIM</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-3 font-bold text-purple-400">Premier</td>
-                <td className="px-4 py-3">10.000</td>
-                <td className="px-4 py-3">2.000</td>
-                <td className="px-4 py-3 text-right text-green-500 font-bold">SIM</td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+           <div className="bg-gray-900/50 p-6 rounded-xl border border-gray-700">
+              <strong className="text-blue-400 block mb-2 text-xl">Plano Gratuito (Basic)</strong>
+              <ul className="space-y-3 text-sm text-gray-400">
+                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-blue-500"/> <strong>50 Créditos/Dia:</strong> Renovam todo dia.</li>
+                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-blue-500"/> <strong>~10 Músicas/Dia:</strong> Dá para brincar bastante.</li>
+                <li className="flex gap-2"><XCircle className="w-4 h-4 text-red-500"/> <strong>Sem Uso Comercial:</strong> Você não é dono da música.</li>
+              </ul>
+           </div>
+           <div className="bg-gradient-to-br from-pink-900/20 to-purple-900/20 p-6 rounded-xl border border-pink-500/30">
+              <strong className="text-pink-400 block mb-2 text-xl">Planos Pagos (Pro/Premier)</strong>
+              <ul className="space-y-3 text-sm text-gray-300">
+                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-pink-500"/> <strong>2.500+ Créditos/Mês:</strong> Acumulativos no mês.</li>
+                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-pink-500"/> <strong>Propriedade Comercial:</strong> A música é 100% sua. Pode vender no Spotify.</li>
+                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-pink-500"/> <strong>Gerações Simultâneas:</strong> Cria mais rápido.</li>
+              </ul>
+           </div>
         </div>
 
         <TipBox>
-          <strong>Dica de Ouro:</strong> Créditos mensais (pagos) acumulam se não usados? <strong>Não todos.</strong> A renovação geralmente reseta o montante, embora existam "top-ups" permanentes. Verifique sempre o ToS atualizado, mas trate seus créditos mensais como "use ou perca".
+           <strong>Matemática do Custo:</strong> 1 Clique em "Create" custa <strong>10 Créditos</strong>. Esse clique gera <strong>2 variações</strong> de música. Ou seja, cada música custa 5 créditos.
         </TipBox>
       </>
     )
   },
   {
-    id: 'c4_versions',
+    id: 'c3_interface_tour',
     trackId: 'creation',
-    title: '4. Análise de Frequência: v3.5 vs v5',
-    description: 'Entendendo a fidelidade de áudio, mixagem estéreo e artefatos.',
+    title: '3. Tour Pela Interface: Onde Clicar?',
+    description: 'Navegando pelo painel de controle sem se perder.',
     duration: '10 min',
     level: 'Iniciante',
     content: () => (
       <>
-        <p>
-          A diferença entre as versões não é apenas "estilo", é puramente engenharia de sinal.
+        <p className="mb-4 text-gray-300">
+          A interface do Suno é dividida em três áreas principais. Vamos focar no menu lateral esquerdo.
         </p>
 
-        <ComparisonTable 
-          title="Batalha de Engenharia: v3.5 vs v5"
-          leftTitle="Motor v3.5 (Legacy)"
-          rightTitle="Motor v5 (Beta/New)"
-          leftItems={[
-            "Frequência de corte em 16kHz (som abafado)",
-            "Imagem estéreo estreita (quase mono)",
-            "Vozes robóticas em notas altas",
-            "Limite rígido de 2 minutos"
-          ]}
-          rightItems={[
-            "Espectro completo até 22kHz (som cristalino)",
-            "Mixagem Wide Stereo real",
-            "Respiração e nuances humanas",
-            "Gerações de até 4 minutos contínuos"
-          ]}
-        />
+        <div className="space-y-4">
+           <div className="flex items-start gap-4 bg-gray-900 p-4 rounded-lg border border-gray-800 hover:border-white transition-colors">
+             <div className="bg-gray-800 p-3 rounded-full"><Search className="w-5 h-5 text-white"/></div>
+             <div>
+               <strong className="text-white block">Explore</strong>
+               <p className="text-sm text-gray-400">Onde você ouve o que está "bombando" no mundo. Ótimo para ter inspiração de prompts.</p>
+             </div>
+           </div>
 
-        <Step number={1} title="Quando usar o v3.5?">
-           Use o v3.5 para estilos propositalmente "Lo-Fi", "Glitchcore", "Vaporwave" ou quando quiser que a música soe como uma transmissão de rádio antiga. A "falha" do v3.5 é sua característica estética.
-        </Step>
+           <div className="flex items-start gap-4 bg-gray-900 p-4 rounded-lg border border-gray-800 hover:border-pink-500 transition-colors">
+             <div className="bg-pink-600 p-3 rounded-full"><Zap className="w-5 h-5 text-white"/></div>
+             <div>
+               <strong className="text-pink-400 block">Create (O Mais Importante)</strong>
+               <p className="text-sm text-gray-400">É aqui que a mágica acontece. Clicar aqui abre o painel de criação onde digitaremos nossos comandos.</p>
+             </div>
+           </div>
 
-        <Step number={2} title="O Salto do v5">
-           O v5 entende <strong>espaço acústico</strong>. Se você pedir "Cantor em uma catedral", ele simulará o reverb de convolução real de uma catedral. No v3.5, isso seria apenas um eco genérico.
-        </Step>
+           <div className="flex items-start gap-4 bg-gray-900 p-4 rounded-lg border border-gray-800 hover:border-white transition-colors">
+             <div className="bg-gray-800 p-3 rounded-full"><Database className="w-5 h-5 text-white"/></div>
+             <div>
+               <strong className="text-white block">Library</strong>
+               <p className="text-sm text-gray-400">Onde ficam <strong>suas</strong> músicas. Se você criou, estará aqui para sempre (ou até você apagar).</p>
+             </div>
+           </div>
+        </div>
       </>
     )
   },
-
-  // FASE 2: ENGENHARIA DE PROMPT
   {
-    id: 'c5_prompt_logic',
+    id: 'c4_create_simple',
     trackId: 'creation',
-    title: '5. Engenharia de Prompt Semântico',
-    description: 'Como estruturar comandos para o modelo de linguagem natural (NLP).',
-    duration: '12 min',
-    level: 'Intermediário',
+    title: '4. Sua Primeira Música (Simple Mode)',
+    description: 'Criando algo rápido apenas com uma descrição de texto.',
+    duration: '15 min',
+    level: 'Iniciante',
     content: () => (
       <>
-        <p className="lead">
-          Esqueça o "Keyword Stuffing" (jogar palavras aleatórias). O v5 quer entender a intenção e a física do som.
+        <Step number={1} title="Ativando o Modo Criar">
+           Clique em <strong>"Create"</strong> no menu lateral.
+           <br/>Por padrão, o Suno pode abrir no "Custom Mode" (Modo Personalizado). Verifique se há um botão ("toggle") no topo escrito <strong>Custom Mode</strong>. Se estiver ativado (colorido), <strong>desative-o</strong> por enquanto.
+        </Step>
+
+        <ConceptCard title="O que é o Simple Mode?" icon={MousePointer2} color="green">
+           No Simple Mode, existe apenas uma caixa de texto: <strong>"Song Description"</strong>.
+           <br/>Aqui você descreve o tema e o estilo juntos. A IA vai escrever a letra, escolher o título e compor a música sozinha. É o "piloto automático".
+        </ConceptCard>
+
+        <Step number={2} title="O Prompt de Teste">
+           Digite na caixa:
+           <code className="block mt-2 bg-black p-3 rounded text-green-400 font-mono text-sm">
+             A happy pop song about learning how to use artificial intelligence, upbeat tempo, female vocals
+           </code>
+        </Step>
+
+        <TipBox>
+           Note a opção <strong>Instrumental</strong> abaixo da caixa de texto. Se marcada, a IA criará apenas a melodia, sem voz. Deixe desmarcada para este teste.
+        </TipBox>
+      </>
+    )
+  },
+  {
+    id: 'c5_generating_analyzing',
+    trackId: 'creation',
+    title: '5. Gerando e Analisando Resultados',
+    description: 'O que fazer depois de clicar no botão "Create".',
+    duration: '10 min',
+    level: 'Iniciante',
+    content: () => (
+      <>
+        <p className="mb-4 text-gray-300">
+          Ao clicar no botão amarelo <strong>Create</strong>, a mágica começa. O Suno vai gerar <strong>duas versões</strong> diferentes do seu pedido (Geralmente chamadas de V1 e V2).
         </p>
 
-        <h3 className="text-2xl font-bold text-white mt-8 mb-4">A Fórmula Híbrida</h3>
-        <p>A estrutura perfeita de prompt no v5 segue esta ordem lógica:</p>
+        <div className="bg-gray-900 border-l-4 border-yellow-500 p-6 rounded-r-xl my-6">
+           <h4 className="text-yellow-400 font-bold mb-2 flex items-center gap-2"><Activity className="w-5 h-5"/> Tempo de Espera</h4>
+           <p className="text-gray-300 text-sm">
+             A geração leva entre 30 segundos a 2 minutos. Enquanto isso, você verá as capas dos álbuns sendo criadas e o status "Generating...". <strong>Não atualize a página.</strong>
+           </p>
+        </div>
 
-        <div className="flex flex-col gap-2 my-6 font-mono text-sm">
-           <div className="bg-gray-900 p-3 rounded border-l-4 border-blue-500">
-             <span className="text-blue-400 font-bold">[BASE GENRE]</span>
-             <span className="text-gray-500 mx-2">+</span>
-             <span className="text-gray-300">"Delta Blues, Acoustic"</span>
+        <Step number={1} title="O Julgamento">
+           Quando terminar, aperte o <strong>Play</strong> em cada uma.
+           <br/>Raramente as duas serão boas. Geralmente uma acerta a melodia e a outra acerta a letra. Ou as duas são ruins. Ou as duas são incríveis.
+           <br/>Essa variabilidade é normal em IA Generativa.
+        </Step>
+
+        <p className="text-gray-400 text-sm mt-4">
+           Gostou de uma? Clique nos três pontinhos (...) ao lado dela e selecione <strong>"Download Video"</strong> para compartilhar no WhatsApp.
+        </p>
+      </>
+    )
+  },
+  {
+    id: 'c6_custom_mode_intro',
+    trackId: 'creation',
+    title: '6. A Chave do Poder: Custom Mode',
+    description: 'Por que você deve abandonar o Simple Mode agora mesmo.',
+    duration: '15 min',
+    level: 'Iniciante',
+    content: () => (
+      <>
+        <WarningBox>
+           O Simple Mode é divertido, mas limitado. Ele mistura letra e estilo, e a IA frequentemente se confunde. Se você quer ser um criador sério, ative o <strong>Custom Mode</strong>.
+        </WarningBox>
+
+        <Step number={1} title="Ativando o Custom Mode">
+           No topo da aba Create, clique no interruptor <strong>Custom Mode</strong>.
+           <br/>A interface vai mudar. Agora você tem controle total.
+        </Step>
+
+        <div className="grid md:grid-cols-2 gap-6 mt-6">
+           <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+              <strong className="text-white block mb-1">Campo: Lyrics (Letra)</strong>
+              <p className="text-xs text-gray-400">Aqui você cola sua própria poesia, ou pede pra IA gerar uma sobre um tema específico.</p>
            </div>
-           <div className="bg-gray-900 p-3 rounded border-l-4 border-pink-500">
-             <span className="text-pink-400 font-bold">[EMOTIONAL VIBE]</span>
-             <span className="text-gray-500 mx-2">+</span>
-             <span className="text-gray-300">"Melancholic, late night longing, introspective"</span>
+           <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+              <strong className="text-white block mb-1">Campo: Style of Music</strong>
+              <p className="text-xs text-gray-400">Aqui definimos Gênero, Instrumentos e Vibe. Sem misturar com o tema da letra.</p>
            </div>
-           <div className="bg-gray-900 p-3 rounded border-l-4 border-green-500">
-             <span className="text-green-400 font-bold">[TECHNICAL SPECS]</span>
-             <span className="text-gray-500 mx-2">+</span>
-             <span className="text-gray-300">"Raw recording, room reverb, vinyl crackle texture"</span>
+           <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+              <strong className="text-white block mb-1">Campo: Title</strong>
+              <p className="text-xs text-gray-400">Nome da música. Afeta a geração da capa do álbum.</p>
            </div>
         </div>
+      </>
+    )
+  },
+  {
+    id: 'c7_custom_lyrics',
+    trackId: 'creation',
+    title: '7. Custom Mode: Dominando a Letra',
+    description: 'Escrevendo ou gerando letras que a IA consegue cantar.',
+    duration: '20 min',
+    level: 'Iniciante',
+    content: () => (
+      <>
+        <ConceptCard title="Estrutura é Tudo" icon={LayoutDashboard} color="purple">
+           A IA lê a formatação do texto. Blocos de texto juntos são cantados rápido. Linhas puladas são pausas.
+           <br/>Use "Tags" entre colchetes para guiar a IA.
+        </ConceptCard>
 
         <CodeBlock>
-          Input Final: "Delta Blues, Acoustic, Melancholic, late night longing, introspective, Raw recording, room reverb, vinyl crackle texture"
+          [Verse 1]
+          Hoje o dia amanheceu cinza
+          (Pausa curta na linha de baixo)
+          Mas eu sinto o sol dentro de mim
+          
+          [Chorus]
+          VAMOS VOAR! (Maiúsculas indicam grito/energia)
+          Para longe daqui...
         </CodeBlock>
 
-        <WarningBox>
-           <strong>Atenção com Adjetivos:</strong> Adjetivos como "Intense", "Soft", "Heavy" têm mais peso para a IA do que substantivos. "Heavy Drums" funciona melhor que apenas "Drums".
-        </WarningBox>
+        <Step number={1} title="Botão 'Generate Lyrics'">
+           Está sem criatividade? No Custom Mode, há um botão "Generate Lyrics". Clique nele e descreva "Um amor perdido em Paris". A IA vai preencher o campo de letra com uma estrutura perfeita de Verso/Refrão para você editar.
+        </Step>
       </>
     )
   },
   {
-    id: 'c6_genre_taxonomy',
+    id: 'c8_custom_style',
     trackId: 'creation',
-    title: '6. Alquimia de Gêneros (Fusion)',
-    description: 'Combinando estilos opostos para criar novos nichos de mercado.',
+    title: '8. Custom Mode: Definindo o Estilo',
+    description: 'Como pedir exatamente o som que você imagina.',
     duration: '15 min',
-    level: 'Intermediário',
+    level: 'Iniciante',
     content: () => (
       <>
-        <p>
-          O algoritmo de difusão não tem preconceitos. Ele tenta matematicamente interpolar qualquer coisa. A inovação vem da fusão de opostos.
+        <p className="mb-6 text-gray-300">
+          O campo <strong>Style of Music</strong> é onde a engenharia de áudio acontece. O Suno não entende frases longas aqui. Ele entende <strong>palavras-chave (Tags)</strong> separadas por vírgula.
         </p>
 
-        <h3 className="text-2xl font-bold text-white mt-8 mb-4">Receitas de Fusão Testadas</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-           <div className="bg-gradient-to-br from-purple-900/40 to-black p-4 rounded-xl border border-purple-500/30">
-              <h4 className="font-bold text-white mb-2">Cyber-Orchestral</h4>
-              <p className="text-xs text-gray-300 mb-2">Prompt: <em>"Dubstep, Heavy Bass Drops, Symphony Orchestra, Violin Solo, Epic Cinematic"</em></p>
-              <div className="flex gap-2 text-[10px] uppercase text-purple-300 font-bold">
-                 <span>Hans Zimmer</span>
-                 <span>+</span>
-                 <span>Skrillex</span>
-              </div>
-           </div>
-
-           <div className="bg-gradient-to-br from-yellow-900/40 to-black p-4 rounded-xl border border-yellow-500/30">
-              <h4 className="font-bold text-white mb-2">Bossa-Trap</h4>
-              <p className="text-xs text-gray-300 mb-2">Prompt: <em>"Bossa Nova Guitar, Soft Jazz Vocals, Trap 808 beats, Hi-hat rolls, Rio de Janeiro vibe"</em></p>
-              <div className="flex gap-2 text-[10px] uppercase text-yellow-300 font-bold">
-                 <span>João Gilberto</span>
-                 <span>+</span>
-                 <span>Travis Scott</span>
-              </div>
-           </div>
-        </div>
-
-        <Step number={1} title="A Regra da Dominância">
-           O primeiro gênero listado tende a dominar a estrutura rítmica.
-           <br/>
-           <em>"Rock + Techno"</em> = Bateria de Rock com sintetizadores.
-           <br/>
-           <em>"Techno + Rock"</em> = Batida eletrônica 4/4 com guitarras.
-        </Step>
-      </>
-    )
-  },
-  {
-    id: 'c7_atmosphere',
-    trackId: 'creation',
-    title: '7. Sound Design e Texturas',
-    description: 'Saindo do som "padrão IA" com ruídos, ambientes e efeitos.',
-    duration: '10 min',
-    level: 'Intermediário',
-    content: () => (
-      <>
-        <p>
-          O "Som de IA" geralmente é limpo demais ou digitalmente plástico. Adicionar <strong>ruído de fundo</strong> traz realismo orgânico e disfarça artefatos.
-        </p>
-
-        <h3 className="text-xl font-bold text-white mt-6 mb-3">Lista de Texturas Essenciais</h3>
-        <ul className="space-y-3">
-           <li className="flex items-center justify-between p-3 bg-gray-800 rounded border border-gray-700">
-              <span className="font-mono text-pink-400">Vinyl Crackle / Hiss</span>
-              <span className="text-sm text-gray-400">Adiciona calor analógico e preenche silêncios digitais.</span>
-           </li>
-           <li className="flex items-center justify-between p-3 bg-gray-800 rounded border border-gray-700">
-              <span className="font-mono text-pink-400">Rain / Thunderstorm</span>
-              <span className="text-sm text-gray-400">Ótimo para Lo-Fi e faixas relaxantes.</span>
-           </li>
-           <li className="flex items-center justify-between p-3 bg-gray-800 rounded border border-gray-700">
-              <span className="font-mono text-pink-400">Crowd Noise / Live</span>
-              <span className="text-sm text-gray-400">Faz a música soar como uma gravação de show ao vivo.</span>
-           </li>
-           <li className="flex items-center justify-between p-3 bg-gray-800 rounded border border-gray-700">
-              <span className="font-mono text-pink-400">Cassette Tape</span>
-              <span className="text-sm text-gray-400">Introduz leve distorção e instabilidade de pitch (Warble).</span>
-           </li>
-        </ul>
-
-        <TipBox>
-           Use o termo <strong>"Wall of Sound"</strong> para criar mixagens densas e cheias, onde todos os instrumentos tocam juntos no volume máximo (estilo Phil Spector / Shoegaze).
-        </TipBox>
-      </>
-    )
-  },
-  {
-    id: 'c8_instrumentation',
-    trackId: 'creation',
-    title: '8. Instrumentação Cirúrgica',
-    description: 'Como convocar instrumentos específicos e evitar a "banda genérica".',
-    duration: '12 min',
-    level: 'Avançado',
-    content: () => (
-      <>
-        <p>Se você pede apenas "Rock", a IA lhe dá guitarra, baixo e bateria genéricos. Especifique o <strong>timbre</strong>.</p>
-
-        <div className="grid md:grid-cols-2 gap-8 my-6">
-           <div>
-              <h4 className="font-bold text-white mb-4 border-b border-pink-500 inline-block">Guitarra</h4>
-              <ul className="text-sm space-y-2 text-gray-300">
-                <li>• <strong>"Fender Stratocaster Clean"</strong>: Som brilhante e funky.</li>
-                <li>• <strong>"Palm Muted Distortion"</strong>: Som de metal abafado.</li>
-                <li>• <strong>"Slide Guitar"</strong>: Som de blues country.</li>
-              </ul>
-           </div>
-           <div>
-              <h4 className="font-bold text-white mb-4 border-b border-blue-500 inline-block">Sintetizadores</h4>
-              <ul className="text-sm space-y-2 text-gray-300">
-                <li>• <strong>"Roland 808 Bass"</strong>: Grave profundo de Trap.</li>
-                <li>• <strong>"Sawtooth Lead"</strong>: Som rasgado de EDM.</li>
-                <li>• <strong>"Arpeggiated Plucks"</strong>: Notas rápidas sequenciais.</li>
-              </ul>
-           </div>
-        </div>
-
-        <Step number={1} title="A Regra da Exclusão">
-           Às vezes, é sobre o que você <strong>não</strong> quer. 
-           <br/>Prompt: <em>"Acoustic Pop, No Drums, Piano Only"</em>.
-           <br/>O v5 respeita comandos negativos ("No Drums") melhor que versões anteriores, mas ainda pode falhar. Reforce com "Piano Solo" ou "A cappella".
-        </Step>
-      </>
-    )
-  },
-  {
-    id: 'c9_vocals',
-    trackId: 'creation',
-    title: '9. Vocal Persona & Flow',
-    description: 'Controlando sotaque, idade, gênero e estilo de entrega vocal.',
-    duration: '12 min',
-    level: 'Intermediário',
-    content: () => (
-      <>
-        <p>A voz é o elemento mais humano. Tags vagas geram vozes "padrão americano". Use descritores físicos.</p>
-
-        <h3 className="text-xl font-bold text-white mt-6 mb-3">Matriz de Vocais</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-400 border border-gray-700">
-             <thead className="bg-gray-800 text-gray-200">
-               <tr>
-                 <th className="p-3">Tipo</th>
-                 <th className="p-3">Tags Sugeridas</th>
-                 <th className="p-3">Resultado Sonoro</th>
-               </tr>
-             </thead>
-             <tbody>
-               <tr className="border-b border-gray-800">
-                 <td className="p-3 font-bold">Pop Diva</td>
-                 <td className="p-3"><code>Powerful, Belting, High-Pitch, Vibrato</code></td>
-                 <td className="p-3">Voz estilo Adele/Ariana Grande.</td>
-               </tr>
-               <tr className="border-b border-gray-800">
-                 <td className="p-3 font-bold">Indie Girl</td>
-                 <td className="p-3"><code>Whispery, Breathy, Soft, Mumbled</code></td>
-                 <td className="p-3">Voz estilo Billie Eilish.</td>
-               </tr>
-               <tr className="border-b border-gray-800">
-                 <td className="p-3 font-bold">Old Soul</td>
-                 <td className="p-3"><code>Raspy, Gravelly, Baritone, Aged</code></td>
-                 <td className="p-3">Voz estilo Louis Armstrong / Johnny Cash.</td>
-               </tr>
-               <tr>
-                 <td className="p-3 font-bold">Rap</td>
-                 <td className="p-3"><code>Fast Flow, Staccato, Aggressive, Triplet Flow</code></td>
-                 <td className="p-3">Ritmo percussivo e rápido.</td>
-               </tr>
-             </tbody>
-          </table>
-        </div>
-
-        <TipBox>
-           <strong>Para Músicas em Português:</strong> Adicione tags regionais como <em>"Brazilian Accent"</em>, <em>"MPB Style"</em> ou <em>"Sertanejo Vocals"</em> para evitar que a IA cante português com sotaque gringo.
-        </TipBox>
-      </>
-    )
-  },
-  {
-    id: 'c10_bpm_key',
-    trackId: 'creation',
-    title: '10. BPM e Teoria Musical',
-    description: 'Controlando o andamento e a tonalidade para mixagem profissional.',
-    duration: '8 min',
-    level: 'Avançado',
-    content: () => (
-      <>
-        <div className="flex gap-4 mb-6">
-           <div className="flex-1 bg-gray-900 p-4 rounded-xl border border-gray-800 text-center">
-              <Activity className="w-8 h-8 text-pink-500 mx-auto mb-2" />
-              <h4 className="font-bold text-white">BPM (Tempo)</h4>
-              <p className="text-xs text-gray-400 mt-1">O v5 aceita números exatos. Use "128 BPM" para House, "90 BPM" para Hip Hop.</p>
-           </div>
-           <div className="flex-1 bg-gray-900 p-4 rounded-xl border border-gray-800 text-center">
-              <Music className="w-8 h-8 text-blue-500 mx-auto mb-2" />
-              <h4 className="font-bold text-white">Key (Tonalidade)</h4>
-              <p className="text-xs text-gray-400 mt-1">"C Minor" para triste/épico. "G Major" para feliz/pop. Essencial para DJs.</p>
-           </div>
-        </div>
-
-        <Step number={1} title="Mudança de Tempo (Metatags)">
-           Você pode alterar o BPM no meio da música usando tags na letra:
-           <br/>
-           <code>[Tempo Change: Fast]</code> ou <code>[Double Time]</code>.
-           <br/>
-           Isso é arriscado e pode causar alucinações, mas quando funciona, cria drops incríveis.
-        </Step>
-      </>
-    )
-  },
-
-  // FASE 3: ESTRUTURA E ARRANJO
-  {
-    id: 'c11_metatags_basic',
-    trackId: 'creation',
-    title: '11. A Gramática das Metatags',
-    description: 'Controle estrutural absoluto: [Intro], [Verse], [Chorus], [Outro].',
-    duration: '10 min',
-    level: 'Intermediário',
-    content: () => (
-      <>
-        <p className="lead">
-          Sem metatags, o Suno é um fluxo de consciência. Com metatags, ele é um engenheiro estrutural.
-        </p>
-
-        <div className="space-y-4 my-6">
-           <div className="bg-gray-800 border-l-4 border-blue-500 p-4">
-              <div className="flex justify-between items-center mb-1">
-                 <code className="bg-black/30 px-2 py-1 rounded text-blue-300 font-bold">[Intro]</code>
-                 <span className="text-xs text-gray-500">0:00 - 0:15</span>
-              </div>
-              <p className="text-sm text-gray-300">Estabelece o tema instrumental. Dica: Use <code>[Short Intro]</code> para TikTok (retenção rápida).</p>
-           </div>
-
-           <div className="bg-gray-800 border-l-4 border-gray-500 p-4">
-              <div className="flex justify-between items-center mb-1">
-                 <code className="bg-black/30 px-2 py-1 rounded text-gray-300 font-bold">[Verse]</code>
-                 <span className="text-xs text-gray-500">Narrativa</span>
-              </div>
-              <p className="text-sm text-gray-300">Baixa energia, foco na história. Instrumentação mais esparsa.</p>
-           </div>
-
-           <div className="bg-gray-800 border-l-4 border-pink-500 p-4">
-              <div className="flex justify-between items-center mb-1">
-                 <code className="bg-black/30 px-2 py-1 rounded text-pink-300 font-bold">[Chorus]</code>
-                 <span className="text-xs text-gray-500">O Gancho</span>
-              </div>
-              <p className="text-sm text-gray-300">Alta energia, melodia repetitiva e memorável (Earworm).</p>
-           </div>
-        </div>
-
-        <WarningBox>
-           <strong>A Regra dos Colchetes:</strong> Tags devem estar SEMPRE em linhas separadas. 
-           <br/>Errado: <code>[Chorus] Hoje eu vou...</code>
-           <br/>Certo: 
-           <br/><code>[Chorus]</code>
-           <br/><code>Hoje eu vou...</code>
-        </WarningBox>
-      </>
-    )
-  },
-  {
-    id: 'c12_metatags_adv',
-    trackId: 'creation',
-    title: '12. Metatags de Dinâmica Avançada',
-    description: 'Criando tensão e liberação com Pre-Chorus, Bridge e Drops.',
-    duration: '15 min',
-    level: 'Avançado',
-    content: () => (
-      <>
-        <p>Músicas profissionais respiram. Elas sobem e descem. Use estas tags para evitar monotonia.</p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-           <div className="bg-[#0f1115] p-4 rounded border border-gray-700 hover:border-violet-500 transition-colors">
-              <code className="text-violet-400 block mb-2 font-bold">[Pre-Chorus]</code>
-              <p className="text-xs text-gray-400">O "Build-up". Aumenta a tensão, sobe o tom ou a intensidade da bateria para preparar o refrão.</p>
-           </div>
-           <div className="bg-[#0f1115] p-4 rounded border border-gray-700 hover:border-yellow-500 transition-colors">
-              <code className="text-yellow-400 block mb-2 font-bold">[Bridge]</code>
-              <p className="text-xs text-gray-400">A "Ponte". Geralmente após o segundo refrão. Muda a melodia e a progressão de acordes para limpar o paladar.</p>
-           </div>
-           <div className="bg-[#0f1115] p-4 rounded border border-gray-700 hover:border-red-500 transition-colors">
-              <code className="text-red-400 block mb-2 font-bold">[Drop]</code>
-              <p className="text-xs text-gray-400">Exclusivo para eletrônica. Onde o baixo e o bumbo batem com força máxima.</p>
-           </div>
-           <div className="bg-[#0f1115] p-4 rounded border border-gray-700 hover:border-blue-500 transition-colors">
-              <code className="text-blue-400 block mb-2 font-bold">[Hook]</code>
-              <p className="text-xs text-gray-400">Uma frase melódica curta e repetitiva, instrumental ou vocal, que define a identidade da música.</p>
-           </div>
-        </div>
-      </>
-    )
-  },
-  {
-    id: 'c13_instrumental_tags',
-    trackId: 'creation',
-    title: '13. Controlando Solos e Pausas',
-    description: 'Forçando a IA a calar a voz e tocar instrumentos.',
-    duration: '8 min',
-    level: 'Avançado',
-    content: () => (
-      <>
-        <p>
-          O modelo tem um viés forte para vocais. Ele tenta cantar o tempo todo. Para criar respiros instrumentais, você precisa "gritar" com ele via tags.
-        </p>
-
-        <Step number={1} title="A Técnica do Espaço Vazio">
-           Não coloque apenas a tag. Coloque a tag e deixe espaço para a IA "pensar".
-           <br/><br/>
-           <CodeBlock>
-             [Verse 1]<br/>
-             Texto cantado...<br/>
-             <br/>
-             [Guitar Solo]<br/>
-             (Deixe esta área vazia, ou use pontuação como "..." para forçar tempo)<br/>
-             <br/>
-             [Chorus]
-           </CodeBlock>
-        </Step>
-
-        <TipBox>
-           Se a IA insistir em alucinar vozes durante o solo (cantando "guitar solo" ou palavras sem sentido), tente usar tags mais descritivas: <code>[Instrumental Break: Electric Guitar Shredding]</code>.
-        </TipBox>
-      </>
-    )
-  },
-  {
-    id: 'c14_lyrics_prosody',
-    trackId: 'creation',
-    title: '14. Prosódia: Ensinando a IA a Cantar',
-    description: 'Como a métrica do texto afeta o ritmo e a melodia (Flow).',
-    duration: '15 min',
-    level: 'Avançado',
-    content: () => (
-      <>
-        <p>
-          Prosódia é o ritmo natural da fala. A IA tenta encaixar suas palavras em compassos musicais (4/4). Se você escrever um testamento sem pausas, ela vai "rapear" atropelado.
-        </p>
-
-        <h3 className="text-xl font-bold text-white mt-6 mb-3">Contagem de Sílabas</h3>
         <ComparisonTable 
-          title="Simetria Lírica"
-          leftTitle="Assimétrico (Caótico)"
-          rightTitle="Simétrico (Melódico)"
-          leftItems={[
-            "Eu fui na rua ontem (5)",
-            "E comprei um monte de coisas legais pra gente comer em casa (18)",
-            "(A IA vai correr desesperadamente na segunda linha)"
-          ]}
-          rightItems={[
-            "Fui na rua ontem cedo (7)",
-            "Comprei tudo sem medo (7)",
-            "(A IA cria uma melodia estável e agradável)"
-          ]}
+          title="Como Escrever Estilos"
+          leftTitle="Errado (Frase)"
+          rightTitle="Certo (Tags)"
+          leftItems={["Uma musica triste de piano tocada na chuva tipo Adele"]}
+          rightItems={["Sad Pop Ballad, Emotional Piano, Rain Texture, Strong Female Vocals, Slow BPM"]}
         />
 
-        <Step number={1} title="Hifenação Forçada">
-           Para esticar uma palavra (Melisma), use hifens:
-           <br/>
-           <code>Aaaa - mor, eu quero vo - cê</code>
+        <TipBox>
+           <strong>Segredo do v5:</strong> O Suno foi treinado majoritariamente em inglês. Mesmo que sua música seja em português, escreva o estilo em <strong>INGLÊS</strong> para melhor qualidade. Ex: Use "Acoustic Guitar" em vez de "Violão".
+        </TipBox>
+      </>
+    )
+  },
+  {
+    id: 'c9_versions_model',
+    trackId: 'creation',
+    title: '9. Versões do Modelo (v3.5 vs v4 vs v5)',
+    description: 'Escolhendo o motor certo para sua Ferrari.',
+    duration: '10 min',
+    level: 'Iniciante',
+    content: () => (
+      <>
+        <p className="mb-4 text-gray-300">
+          No painel de criação, você verá um seletor de versão (geralmente v3.5, v4 ou v5). Qual usar?
+        </p>
+
+        <div className="space-y-4">
+           <div className="bg-gray-900/50 p-4 rounded-lg border-l-4 border-blue-500">
+              <strong className="text-white block">v3.5 (O Clássico)</strong>
+              <p className="text-sm text-gray-400">Excelente para músicas mais estruturadas (Pop, Rock). Tende a seguir a letra muito bem. Máximo de 2 minutos por geração (depois precisa estender).</p>
+           </div>
+           <div className="bg-gray-900/50 p-4 rounded-lg border-l-4 border-pink-500">
+              <strong className="text-white block">v4 / v5 (A Nova Geração)</strong>
+              <p className="text-sm text-gray-400">Qualidade de áudio superior (48kHz). Entende estruturas complexas. Consegue gerar músicas de até 4 minutos de uma vez só. Porém, às vezes "alucina" mais na letra.</p>
+           </div>
+        </div>
+
+        <Step number={1} title="Recomendação">
+           Comece sempre com a versão mais recente (v5) selecionada. Se ela estiver ignorando seus comandos, tente voltar para a v3.5.
         </Step>
       </>
     )
   },
   {
-    id: 'c15_rhyme_schemes',
+    id: 'c10_library_management',
     trackId: 'creation',
-    title: '15. Estruturas de Rima (AABB, ABAB)',
-    description: 'Padrões de rima que ajudam a IA a resolver melodias.',
+    title: '10. Organização e Biblioteca',
+    description: 'Mantendo a casa limpa e suas criações salvas.',
     duration: '10 min',
-    level: 'Intermediário',
+    level: 'Iniciante',
     content: () => (
       <>
-        <p>
-          A IA usa a rima como uma "dica" de que a frase musical acabou. Rimas fortes ajudam a criar cadências perfeitas (resolução harmônica).
+        <p className="mb-6 text-gray-300">
+          Depois de um dia criando, sua Library estará uma bagunça. Aprenda a organizar.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6 text-sm">
-           <div className="bg-gray-800 p-4 rounded border-t-4 border-pink-500">
-              <strong className="block text-white text-lg mb-2">AABB</strong>
-              <p className="text-gray-400 mb-2">Padrão simples de Pop/Funk.</p>
-              <div className="font-mono text-gray-300 bg-black/20 p-2 rounded">
-                 Coração (A)<br/>
-                 Paixão (A)<br/>
-                 Você (B)<br/>
-                 Viver (B)
-              </div>
+        <div className="grid md:grid-cols-3 gap-4 text-center">
+           <div className="p-4 bg-gray-800 rounded-lg">
+             <div className="text-red-400 font-bold mb-2">Trash (Lixeira)</div>
+             <p className="text-xs text-gray-400">Não tenha dó. Se a música ficou ruim, delete. Isso limpa sua mente para focar nas boas.</p>
            </div>
-           <div className="bg-gray-800 p-4 rounded border-t-4 border-blue-500">
-              <strong className="block text-white text-lg mb-2">ABAB</strong>
-              <p className="text-gray-400 mb-2">Padrão de Baladas/Rock.</p>
-              <div className="font-mono text-gray-300 bg-black/20 p-2 rounded">
-                 Escuro (A)<br/>
-                 Medo (B)<br/>
-                 Muro (A)<br/>
-                 Cedo (B)
-              </div>
+           <div className="p-4 bg-gray-800 rounded-lg">
+             <div className="text-pink-400 font-bold mb-2">Public vs Private</div>
+             <p className="text-xs text-gray-400">Por padrão, suas músicas são públicas no link. Você pode mudar para Private se for um projeto secreto.</p>
            </div>
-           <div className="bg-gray-800 p-4 rounded border-t-4 border-green-500">
-              <strong className="block text-white text-lg mb-2">AAAA</strong>
-              <p className="text-gray-400 mb-2">Padrão de Rap/Drill (Monorima).</p>
-              <div className="font-mono text-gray-300 bg-black/20 p-2 rounded">
-                 Forte (A)<br/>
-                 Norte (A)<br/>
-                 Sorte (A)<br/>
-                 Corte (A)
-              </div>
+           <div className="p-4 bg-gray-800 rounded-lg">
+             <div className="text-blue-400 font-bold mb-2">Playlists</div>
+             <p className="text-xs text-gray-400">Crie playlists como "Ideias de Rock", "Para YouTube", "Falhas Engraçadas".</p>
            </div>
+        </div>
+
+        <div className="mt-8 bg-gradient-to-r from-pink-900 to-purple-900 p-6 rounded-2xl text-center border border-pink-500/30">
+           <h2 className="text-2xl font-bold text-white mb-2">Parabéns! 🎓</h2>
+           <p className="text-pink-200">
+             Você completou o módulo básico. Você já sabe operar a máquina. 
+             Nas próximas 10 aulas, vamos deixar de ser operadores e virar <strong>Engenheiros de Áudio</strong>.
+           </p>
         </div>
       </>
     )
   },
 
-  // FASE 4: PÓS-PROCESSAMENTO E WORKFLOW
+  // --- FASE 2: ENGENHARIA AVANÇADA (AULAS 11-20) ---
+  
   {
-    id: 'c16_extend',
+    id: 'c11_advanced_metatags',
     trackId: 'creation',
-    title: '16. O Workflow "Extend" (Modular)',
-    description: 'Nunca tente gerar uma música inteira de uma vez. Construa em blocos.',
+    title: '11. Metatags: A Partitura Invisível',
+    description: 'Controlando a estrutura da música com comandos profissionais.',
     duration: '20 min',
     level: 'Avançado',
     content: () => (
       <>
-        <p className="lead">
-          A chance de a IA acertar uma música de 4 minutos inteira é baixa. A chance de acertar 60 segundos é alta. Use isso.
+        <p className="text-gray-300 mb-6">
+          Você já usou [Verse] e [Chorus]. Agora vamos para a liga profissional. Metatags são comandos que dizem <strong>COMO</strong> cantar e tocar, não O QUE cantar.
         </p>
 
-        <h3 className="text-2xl font-bold text-white mt-8 mb-4">O Protocolo de Extensão</h3>
-        <ol className="relative border-l border-gray-700 ml-4 space-y-6">
-           <li className="mb-10 ml-6">
-              <span className="absolute flex items-center justify-center w-8 h-8 bg-pink-600 rounded-full -left-4 ring-4 ring-gray-900 font-bold text-white">1</span>
-              <h4 className="font-bold text-white">A Semente</h4>
-              <p className="text-sm text-gray-400">Gere apenas o <code>[Verse 1]</code> e <code>[Chorus]</code>. Nada mais.</p>
-           </li>
-           <li className="mb-10 ml-6">
-              <span className="absolute flex items-center justify-center w-8 h-8 bg-gray-700 rounded-full -left-4 ring-4 ring-gray-900 font-bold text-white">2</span>
-              <h4 className="font-bold text-white">A Seleção</h4>
-              <p className="text-sm text-gray-400">Escolha a melhor versão. Clique nos três pontinhos (...) {'>'} <strong>Extend</strong>.</p>
-           </li>
-           <li className="mb-10 ml-6">
-              <span className="absolute flex items-center justify-center w-8 h-8 bg-gray-700 rounded-full -left-4 ring-4 ring-gray-900 font-bold text-white">3</span>
-              <h4 className="font-bold text-white">A Continuação</h4>
-              <p className="text-sm text-gray-400">Limpe o campo de Style (ou mantenha se quiser consistência). No campo Lyrics, coloque APENAS o <code>[Verse 2]</code> e o próximo <code>[Chorus]</code>. Mude a tag de tempo (timestamp) para começar no final da parte boa.</p>
-           </li>
-           <li className="ml-6">
-              <span className="absolute flex items-center justify-center w-8 h-8 bg-green-600 rounded-full -left-4 ring-4 ring-gray-900 font-bold text-white">4</span>
-              <h4 className="font-bold text-white">O Final</h4>
-              <p className="text-sm text-gray-400">Repita até chegar no <code>[Outro]</code>. Depois, use "Get Whole Song" para colar tudo.</p>
-           </li>
-        </ol>
+        <CodeBlock>
+          [Intro]
+          (Synthwave buildup, slow tempo)
+          
+          [Verse 1]
+          Caminhando na chuva...
+          
+          [Pre-Chorus] 
+          (Building tension, drums entering)
+          Sinto que algo vai mudar...
+          
+          [Chorus]
+          (Explosion of sound, anthemic)
+          AGORA VAI!
+          
+          [Bridge]
+          (Slow down, emotional piano only)
+          Mas se você não vier...
+          
+          [Guitar Solo]
+          
+          [Outro]
+          (Fade out to silence)
+        </CodeBlock>
+
+        <TipBox>
+           Tags descritivas como <code>(Whispering)</code> ou <code>(Screaming)</code> dentro dos parênteses funcionam muito bem no v5 para mudar a intenção vocal.
+        </TipBox>
       </>
     )
   },
   {
-    id: 'c17_inpainting',
+    id: 'c12_style_engineering',
     trackId: 'creation',
-    title: '17. In-painting: Cirurgia de Áudio',
-    description: 'Corrigindo erros específicos sem perder o resto da música.',
+    title: '12. A Fórmula da Vibe (Style Engineering)',
+    description: 'Como combinar gêneros improváveis para criar sons únicos.',
     duration: '15 min',
     level: 'Avançado',
     content: () => (
       <>
-        <p>
-          O cantor errou a letra? A bateria atravessou? Não jogue a música fora. Use o <strong>In-painting</strong> (disponível no v5 Pro).
+        <p className="mb-6 text-gray-300">
+          Um prompt "Rock" gera um rock genérico. Um prompt de engenharia gera um hit. 
+          Use a <strong>Fórmula Vibe</strong>:
         </p>
 
-        <Step number={1} title="Como Funciona">
-           O In-painting permite que você "mascare" uma área do espectrograma de áudio e peça para a IA "re-imaginar" apenas aquele trecho, mantendo o contexto anterior e posterior intacto.
+        <div className="bg-black/30 p-6 rounded-xl border border-gray-800 flex flex-col gap-4 text-center md:flex-row md:text-left items-center justify-between">
+           <div className="flex-1">
+             <span className="text-xs text-gray-500 uppercase font-bold">Base</span>
+             <div className="text-xl text-white font-bold">Gênero Principal</div>
+           </div>
+           <div className="text-gray-600 text-2xl">+</div>
+           <div className="flex-1">
+             <span className="text-xs text-gray-500 uppercase font-bold">Atmosfera</span>
+             <div className="text-xl text-blue-400 font-bold">Adjetivos</div>
+           </div>
+           <div className="text-gray-600 text-2xl">+</div>
+           <div className="flex-1">
+             <span className="text-xs text-gray-500 uppercase font-bold">Técnica</span>
+             <div className="text-xl text-pink-400 font-bold">Instrumentos</div>
+           </div>
+        </div>
+
+        <Step number={1} title="Exemplo Prático: Cyber-Sertanejo">
+           <strong>Prompt:</strong> "Brazilian Sertanejo, Cyberpunk Atmosphere, Neon Synthwave textures, Acoustic Guitar mixed with 808 bass, Auto-tuned Vocals, Sad but energetic"
+           <br/>Resultado: Algo único que não existe no rádio, mas o Suno cria.
         </Step>
+      </>
+    )
+  },
+  {
+    id: 'c13_instrumental_control',
+    trackId: 'creation',
+    title: '13. Controlando o Silêncio e Solos',
+    description: 'A arte de fazer a IA calar a boca e tocar.',
+    duration: '20 min',
+    level: 'Avançado',
+    content: () => (
+      <>
+        <ConceptCard title="O Horror ao Vazio" icon={Music} color="blue">
+           A IA tenta preencher cada segundo com voz. Se você quer um instrumental longo, precisa "reservar" o espaço na caixa de Lyrics.
+        </ConceptCard>
+
+        <CodeBlock>
+          [Chorus]
+          Cantando o refrão...
+          
+          [Instrumental Interlude]
+          ........................
+          ........................
+          (Os pontos ajudam a IA a entender o tempo de duração)
+          
+          [Saxophone Solo]
+          
+          [Verse 2]
+        </CodeBlock>
 
         <WarningBox>
-           <strong>Limitação:</strong> O In-painting funciona melhor para corrigir letras ou mudar a melodia vocal. É difícil remover um instrumento específico (ex: "tirar só a bateria") se ele estiver mixado no fundo, pois a IA gera o áudio mixado (downmixed).
+          Não escreva "Solo de Guitarra" (em português) dentro dos colchetes se o prompt de estilo estiver em inglês. Mantenha a consistência: <code>[Guitar Solo]</code>.
         </WarningBox>
       </>
     )
   },
   {
-    id: 'c18_audio_input',
+    id: 'c14_extend_feature',
     trackId: 'creation',
-    title: '18. Audio Input: Colaboração Humana',
-    description: 'Transformando batucadas e cantaroladas em obras primas.',
-    duration: '12 min',
+    title: '14. A Função Extend (O Segredo das Músicas Longas)',
+    description: 'Como transformar um clipe de 2 minutos em uma saga de 5 minutos.',
+    duration: '25 min',
     level: 'Avançado',
     content: () => (
       <>
-        <div className="flex items-center gap-4 bg-gradient-to-r from-blue-900/20 to-transparent p-6 rounded-xl border border-blue-500/30">
+        <p className="text-gray-300 mb-6">
+          O Suno gera blocos de até 2 minutos (na v3.5) ou 4 (na v5). Se sua música acabou no meio do refrão, não chore. Use o <strong>Extend</strong>.
+        </p>
+
+        <Step number={1} title="Selecionando o Ponto de Corte">
+           Vá na música que você gostou > Três pontos (...) > <strong>Extend</strong>.
+           <br/>Uma timeline vai aparecer. Ouça e pause EXATAMENTE onde a música ficou boa (antes de ficar ruim ou acabar). Ex: 01:50.
+        </Step>
+
+        <Step number={2} title="Continuando a História">
+           O campo de Lyrics vai esvaziar (ou mostrar a parte antiga). Apague o que já foi cantado e coloque <strong>apenas a continuação</strong> da letra.
+           <br/>Adicione novas tags como <code>[Verse 3]</code> ou <code>[Outro]</code>.
+        </Step>
+
+        <TipBox>
+           <strong>Mudança de Gênero:</strong> Você pode mudar o Style Prompt no Extend! Comece com "Acoustic Ballad" e estenda mudando para "Heavy Metal". A IA fará uma transição gradual épica.
+        </TipBox>
+      </>
+    )
+  },
+  {
+    id: 'c15_inpainting',
+    trackId: 'creation',
+    title: '15. Inpainting: Cirurgia Corretiva',
+    description: 'Corrigindo uma palavra errada sem perder a música perfeita.',
+    duration: '20 min',
+    level: 'Masterclass',
+    content: () => (
+      <>
+        <div className="bg-amber-900/20 border border-amber-500/30 p-6 rounded-xl mb-8">
+           <h3 className="text-amber-400 font-bold flex items-center gap-2 text-xl"><PenTool className="w-5 h-5"/> O Bisturi da IA</h3>
+           <p className="text-gray-300 mt-2">
+             Imagine que a música ficou perfeita, mas a IA cantou "coração" como "curação". Antigamente, você perdia a música. Agora, usamos o Inpainting.
+           </p>
+        </div>
+
+        <Step number={1} title="Pintando o Erro">
+           Vá em Edit > <strong>Inpaint (Beta)</strong>.
+           <br/>Use o mouse para "pintar" a área da onda sonora onde está a palavra errada. Seja preciso. Pinte apenas o erro.
+        </Step>
+
+        <Step number={2} title="Reescrevendo">
+           Na caixa de texto do Inpaint, mude a letra ou tente escrever foneticamente (ex: "Co-ra-ção") para forçar a pronúncia correta. O Suno vai regenerar apenas aquele pedacinho, mantendo o resto da música intacto.
+        </Step>
+      </>
+    )
+  },
+  {
+    id: 'c16_audio_input',
+    trackId: 'creation',
+    title: '16. Audio Input: Você é o Instrumento',
+    description: 'Usando sua voz, batucada ou assobio como base.',
+    duration: '15 min',
+    level: 'Avançado',
+    content: () => (
+      <>
+        <div className="flex items-center gap-4 bg-blue-900/20 p-6 rounded-xl mb-6 border border-blue-500/30">
            <Mic2 className="w-12 h-12 text-blue-400" />
            <div>
-             <h3 className="text-xl font-bold text-white">Do Caos à Ordem</h3>
-             <p className="text-gray-300">
-               O Suno pode usar um áudio de até 60s como "seed" (semente). Ele analisará o ritmo e o pitch.
-             </p>
+              <h3 className="text-white font-bold text-lg">Colaboração Humano-IA</h3>
+              <p className="text-gray-300 text-sm">O Suno permite upload de áudio (até 60s). Ele usará o ritmo e a melodia do seu áudio, mas mudará o timbre.</p>
            </div>
         </div>
 
-        <h3 className="text-2xl font-bold text-white mt-8 mb-4">Aplicações Criativas</h3>
+        <h4 className="text-white font-bold mb-3">Ideias de Uso:</h4>
+        <ul className="space-y-3 text-gray-300 text-sm">
+           <li className="flex gap-2"><CheckCircle2 className="text-green-500 w-4 h-4"/> <strong>Beatbox to Drums:</strong> Faça um beatbox tosco com a boca. Peça estilo "Heavy Metal Drums". O Suno transforma em bateria real.</li>
+           <li className="flex gap-2"><CheckCircle2 className="text-green-500 w-4 h-4"/> <strong>Assobio para Violino:</strong> Assobie uma melodia linda. Peça "Orchestral Violin".</li>
+           <li className="flex gap-2"><CheckCircle2 className="text-green-500 w-4 h-4"/> <strong>Rascunho de Violão:</strong> Grave um áudio ruim no celular tocando violão e peça para a IA transformar em "Studio Quality Guitar".</li>
+        </ul>
+      </>
+    )
+  },
+  {
+    id: 'c17_v5_fidelity',
+    trackId: 'creation',
+    title: '17. Segredos do Modelo v5 (Alta Fidelidade)',
+    description: 'Como extrair o som cristalino de 48kHz.',
+    duration: '15 min',
+    level: 'Avançado',
+    content: () => (
+      <>
+        <p className="text-gray-300 mb-6">
+          O modelo v5 não é apenas "mais inteligente". Ele tem uma taxa de amostragem (Sample Rate) maior. Ele consegue produzir agudos cristalinos e graves profundos que a v3 não conseguia.
+        </p>
+
+        <CodeBlock>
+          Tags Obrigatórias para v5:
+          "High Fidelity, 48kHz, Studio Master, Wide Stereo, Crisp Vocals, Deep Sub-bass"
+        </CodeBlock>
+        
+        <p className="text-gray-300 text-sm mt-4">
+           Essas tags não funcionavam bem na v3, mas na v5 elas realmente mudam a equalização da música. Se sua música soar abafada, adicione "Bright Mix".
+        </p>
+      </>
+    )
+  },
+  {
+    id: 'c18_covers_remix',
+    trackId: 'creation',
+    title: '18. Covers e Remixes: O Multiverso',
+    description: 'Transformando sua música em 10 gêneros diferentes.',
+    duration: '15 min',
+    level: 'Avançado',
+    content: () => (
+      <>
+        <p className="text-gray-300 mb-6">
+          Você criou uma letra incrível, mas a música ficou "méh". Não jogue fora a letra. Use o recurso <strong>Cover</strong> (ou Reuse Prompt).
+        </p>
+
+        <Step number={1} title="Estratégia de Remix">
+           Pegue sua música original. Vá em Reuse Prompt.
+           <br/>Mantenha a letra.
+           <br/>Apague o Style completamente e mude radicalmente. De "Reggae" para "Cyberpunk Industrial".
+           <br/>Clique em Create.
+        </Step>
+
+        <TipBox>
+           Artistas famosos lançam versões "Acoustic", "Remix" e "Sped Up" da mesma música. Faça o mesmo. Crie um EP com 3 versões da sua melhor música. Isso aumenta suas chances de agradar públicos diferentes.
+        </TipBox>
+      </>
+    )
+  },
+  {
+    id: 'c19_download_quality',
+    trackId: 'creation',
+    title: '19. Exportação e Qualidade (WAV vs MP3)',
+    description: 'Preparando o arquivo para o mundo real.',
+    duration: '10 min',
+    level: 'Profissional',
+    content: () => (
+      <>
+        <div className="flex gap-4 items-center bg-gray-900 p-6 rounded-xl border border-gray-800 mb-6">
+           <Database className="w-10 h-10 text-blue-500" />
+           <div>
+             <h3 className="text-white font-bold">MP3 vs WAV</h3>
+             <p className="text-gray-400 text-sm">A diferença entre amador e profissional.</p>
+           </div>
+        </div>
+
         <ul className="space-y-4">
-           <li className="bg-gray-800 p-4 rounded-lg">
-             <strong>1. O Compositor de Chuveiro:</strong> Grave você cantando a melodia (mesmo desafinado). Use o prompt <em>"Professional Singer, Pitch Corrected"</em>. A IA manterá sua melodia mas corrigirá a afinação e mudará o timbre.
+           <li className="bg-black/20 p-4 rounded-lg">
+             <strong className="text-pink-400 block">MP3 (Grátis/Basic)</strong>
+             <span className="text-gray-400 text-sm">Arquivo comprimido. O Suno corta as frequências mais altas para economizar espaço. Bom para mandar no WhatsApp, ruim para Spotify ou edição de vídeo.</span>
            </li>
-           <li className="bg-gray-800 p-4 rounded-lg">
-             <strong>2. Beatmaker de Mesa:</strong> Batuque um ritmo na mesa com canetas. Use o prompt <em>"Complex Drum and Bass beat, high studio quality"</em>. A IA transformará o som da caneta em caixas e bumbos reais.
+           <li className="bg-black/20 p-4 rounded-lg">
+             <strong className="text-green-400 block">WAV (Pro/Premier)</strong>
+             <span className="text-gray-400 text-sm">Lossless (Sem perda). É o áudio puro que saiu do servidor. Essencial se você vai editar no CapCut, Premiere ou masterizar depois.</span>
            </li>
         </ul>
       </>
     )
   },
   {
-    id: 'c19_covers',
+    id: 'c20_final_workflow',
     trackId: 'creation',
-    title: '19. Covers & Remixes (Style Transfer)',
-    description: 'Mudando o gênero radicalmente mantendo a composição.',
-    duration: '10 min',
-    level: 'Avançado',
-    content: () => (
-      <>
-        <p>
-          A ferramenta de Cover é essencialmente uma transferência de estilo neural. Ela preserva a sequência melódica e harmônica, mas re-renderiza a instrumentação.
-        </p>
-
-        <TipBox>
-           <strong>Use para A/B Testing:</strong> Crie uma música em versão "Piano Ballad". Se a letra for boa, faça um Cover em "Pop Punk" e outro em "EDM". Veja qual versão engaja mais no TikTok sem ter que reescrever a música.
-        </TipBox>
-
-        <Step number={1} title="Remasterização via AI">
-           Tem uma música velha do Suno v3 com qualidade ruim? Faça upload dela no v5 e use a função Cover com o <strong>mesmo prompt</strong> e tags como <em>"High Fidelity, Remastered"</em>. A IA limpará o áudio "recriando-o" com o motor novo.
-        </Step>
-      </>
-    )
-  },
-  {
-    id: 'c20_polish',
-    trackId: 'creation',
-    title: '20. Exportação e Stems',
-    description: 'Preparando arquivos para mixagem externa (DAW).',
-    duration: '10 min',
+    title: '20. O Workflow Completo (Resumo)',
+    description: 'Do zero ao Spotify: O checklist do Engenheiro de Áudio.',
+    duration: '15 min',
     level: 'Profissional',
     content: () => (
       <>
-        <p>
-          Para uso comercial sério, o arquivo MP3 direto do Suno não é suficiente. Você precisa pós-processar.
-        </p>
+        <div className="mt-4 p-8 bg-gradient-to-r from-green-900 to-emerald-900 rounded-3xl text-center border border-green-500/30 shadow-2xl relative overflow-hidden group">
+           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+           <h2 className="text-3xl font-bold text-white mb-4 relative z-10">Você Concluiu a Engenharia de Áudio! 🏆</h2>
+           <p className="text-green-200 text-lg relative z-10 max-w-2xl mx-auto mb-8">
+             Você agora domina a ferramenta mais poderosa da música atual.
+           </p>
 
-        <h3 className="text-xl font-bold text-white mt-6 mb-3">Workflow Profissional</h3>
-        <div className="space-y-4">
-           <div className="flex gap-4">
-              <div className="w-8 flex flex-col items-center">
-                 <div className="w-8 h-8 rounded-full bg-gray-700 text-white flex items-center justify-center font-bold">1</div>
-                 <div className="h-full w-0.5 bg-gray-700 my-1"></div>
-              </div>
-              <div className="pb-4">
-                 <h4 className="font-bold text-white">Download Stems (Separados)</h4>
-                 <p className="text-sm text-gray-400">Seja assinante Pro. Baixe a opção "Stems". Isso separa Voz e Instrumental em arquivos WAV diferentes.</p>
-              </div>
+           <div className="text-left bg-black/40 p-6 rounded-xl max-w-lg mx-auto backdrop-blur-md border border-green-500/20">
+              <h4 className="text-green-400 font-bold mb-4 uppercase text-xs tracking-widest border-b border-green-500/30 pb-2">Seu Checklist Final:</h4>
+              <ul className="space-y-2 text-sm text-gray-300">
+                 <li>✅ 1. Ideia Inicial + Custom Mode</li>
+                 <li>✅ 2. Style Prompt (Fórmula Vibe) + Metatags</li>
+                 <li>✅ 3. Geração (v5) + Curadoria (Lixo vs Ouro)</li>
+                 <li>✅ 4. Extensão (Extend) até finalizar a música</li>
+                 <li>✅ 5. Inpainting (Correção de erros)</li>
+                 <li>✅ 6. Download em WAV</li>
+                 <li>✅ 7. (Opcional) Masterização Externa</li>
+              </ul>
            </div>
            
-           <div className="flex gap-4">
-              <div className="w-8 flex flex-col items-center">
-                 <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">2</div>
-                 <div className="h-full w-0.5 bg-gray-700 my-1"></div>
-              </div>
-              <div className="pb-4">
-                 <h4 className="font-bold text-white">Limpeza Espectral</h4>
-                 <p className="text-sm text-gray-400">Leve o vocal para uma DAW (Reaper/Ableton). Use um EQ para cortar frequências abaixo de 100Hz (remove "mud") e acima de 16kHz (remove chiado digital).</p>
-              </div>
-           </div>
-
-           <div className="flex gap-4">
-              <div className="w-8 flex flex-col items-center">
-                 <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">3</div>
-              </div>
-              <div>
-                 <h4 className="font-bold text-white">Masterização Externa</h4>
-                 <p className="text-sm text-gray-400">Use o BandLab Mastering ou Ozone para "colar" as faixas novamente com compressão multibanda.</p>
-              </div>
-           </div>
+           <p className="text-gray-400 text-xs mt-6 italic relative z-10">
+             Próxima parada: Como ganhar dinheiro com esses arquivos WAV na trilha "Business".
+           </p>
         </div>
       </>
     )
   }
 ];
 
-// --- TRILHA 2: NEGÓCIOS - YOUTUBE EMPIRE & CASH COW CHANNELS ---
-// Foco: Estratégias validadas, dados de mercado, tutoriais técnicos de software e psicologia de retenção.
+// --- TRILHA 2: NEGÓCIOS & YOUTUBE ---
+// Total: 20 Aulas (10 Iniciante + 10 Avançado)
 
-const ADVANCED_BUSINESS_LESSONS: Lesson[] = [
-  // FASE 1: A ESTRATÉGIA "CASH COW"
+export const ADVANCED_BUSINESS_LESSONS: Lesson[] = [
+  // --- FASE 1: FUNDAMENTOS DO CANAL (AULAS 1-10) ---
   {
-    id: 'b1_mindset',
+    id: 'b1_faceless_model',
     trackId: 'monetization',
-    title: '1. O Mindset de Império: Artista vs Ativo',
-    description: 'Transforme seu canal em Imobiliária Digital. Dados sobre o valor de revenda de canais.',
-    duration: '20 min',
-    level: 'Business',
+    title: '1. O Império Invisível (Faceless Channels)',
+    description: 'A revolução dos canais Dark e por que a sua "falta de fama" é seu maior ativo.',
+    duration: '15 min',
+    level: 'Iniciante',
     content: () => (
       <>
-        <div className="bg-gradient-to-r from-gray-900 to-black border border-gray-700 p-6 rounded-xl mb-6">
-          <h3 className="text-xl font-bold text-white flex items-center gap-2">
-             <Briefcase className="w-6 h-6 text-blue-500"/> "Digital Real Estate"
+        <div className="bg-black border border-gray-800 p-8 rounded-2xl mb-8 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+          <h3 className="text-2xl font-bold text-white flex items-center gap-3 mb-4">
+             <Briefcase className="w-8 h-8 text-blue-500"/> Influenciador vs. Produtor
           </h3>
-          <p className="text-gray-300 mt-4 leading-relaxed">
-             Para ter sucesso com IA, você precisa abandonar o ego de "Artista" e adotar a mentalidade de "Gestor de Ativos". Um vídeo no YouTube não é apenas conteúdo; é um <strong>imóvel digital</strong>. Uma vez publicado, ele ocupa um espaço no servidor do Google e pode gerar renda passiva (aluguel via AdSense) por anos, sem que você precise trabalhar nele novamente.
-          </p>
-          <p className="text-gray-300 mt-4 leading-relaxed">
-             Diferente de um post no Instagram que "morre" em 24 horas, um vídeo de "Música para Dormir" ganha relevância com o tempo. Quanto mais tempo as pessoas assistem (Watchtime), mais o algoritmo entende que aquele "imóvel" é valioso e manda mais "inquilinos" (espectadores) para lá.
+          <p className="text-gray-300 leading-relaxed">
+             O modelo antigo do YouTube exigia carisma, beleza e exposição. Você virava escravo da sua imagem.
+             O modelo <strong>Faceless (Canal Dark)</strong> trata o vídeo como um ativo imobiliário. O vídeo trabalha 24h por dia, sem férias, sem burnout e sem mostrar seu rosto.
           </p>
         </div>
 
         <ComparisonTable 
-          title="Mentalidade de Artista vs Mentalidade de Império"
-          leftTitle="O Artista (Ego)"
-          rightTitle="O CEO (Dados)"
-          leftItems={[
-            "Foca na perfeição musical e complexidade harmônica",
-            "Métricas de vaidade (Likes, Fama, Reconhecimento)",
-            "Posta quando sente 'inspiração' (inconsistente)",
-            "Renda imprevisível (Shows/Streaming)"
-          ]}
-          rightItems={[
-            "Foca na utilidade (Ajudar a dormir/focar/treinar)",
-            "Métricas de caixa (CPM, RPM, CTR, Retenção)",
-            "Posta com consistência industrial (3x/semana)",
-            "Renda Passiva e Escalável (Múltiplos Canais)"
-          ]}
+          title="Modelo de Negócio"
+          leftTitle="YouTuber Tradicional"
+          rightTitle="Império de Mídia (Você)"
+          leftItems={["Vende o Ego", "Se parar de postar, a renda zera", "Difícil de vender o canal"]}
+          rightItems={["Vende Utilidade (Música/Foco)", "Renda Passiva de vídeos antigos", "Ativo vendável (Exit Strategy)"]}
         />
         
-        <div className="bg-blue-900/10 border border-blue-500/20 p-4 rounded-lg mt-6">
-           <h4 className="text-blue-400 font-bold mb-2 flex items-center gap-2"><BarChart4 className="w-4 h-4"/> Dado de Mercado Real</h4>
-           <p className="text-sm text-gray-300 leading-relaxed">
-             Canais monetizados de 'Faceless Music' são vendidos em marketplaces como o Flippa por um multiplicador de <strong>24x a 36x o lucro mensal</strong>. Isso significa que se você construir um canal que gera apenas $500/mês (aprox. R$ 2.500), esse canal é um ativo que vale entre <strong>$12.000 e $18.000</strong> (R$ 60.000 a R$ 90.000) se você decidir vendê-lo à vista.
-           </p>
+        <p className="text-gray-400 text-sm mt-4 text-center">
+           A Lofi Girl (canal Lofi hip hop radio) é o maior exemplo. Ninguém sabe quem é o dono, mas o canal vale milhões.
+        </p>
+      </>
+    )
+  },
+  {
+    id: 'b2_niches',
+    trackId: 'monetization',
+    title: '2. Oceano Azul: Escolhendo Nichos Lucrativos',
+    description: 'Saindo do genérico e encontrando tribos famintas por conteúdo.',
+    duration: '20 min',
+    level: 'Iniciante',
+    content: () => (
+      <>
+        <p className="mb-6 text-gray-300">
+          "Música Relaxante" é um Oceano Vermelho (saturado). Você precisa <strong>nichar para baixo</strong> (Sub-nichar).
+        </p>
+
+        <div className="grid md:grid-cols-3 gap-6">
+           <div className="bg-gray-900 p-5 rounded-xl border border-gray-700 hover:-translate-y-2 transition-transform duration-300 cursor-default">
+             <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center mb-4"><MonitorPlay className="text-purple-400 w-5 h-5"/></div>
+             <strong className="text-purple-400 text-lg">Gamer Focus</strong>
+             <p className="text-xs text-gray-400 mt-2">Synthwave agressivo para jogar League of Legends/CS:GO. Público fiel e engajado.</p>
+           </div>
+           <div className="bg-gray-900 p-5 rounded-xl border border-gray-700 hover:-translate-y-2 transition-transform duration-300 cursor-default">
+             <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center mb-4"><Zap className="text-green-400 w-5 h-5"/></div>
+             <strong className="text-green-400 text-lg">Gym Phonk</strong>
+             <p className="text-xs text-gray-400 mt-2">Música ultra agressiva para bater PR na academia. Viraliza muito no TikTok/Shorts.</p>
+           </div>
+           <div className="bg-gray-900 p-5 rounded-xl border border-gray-700 hover:-translate-y-2 transition-transform duration-300 cursor-default">
+             <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center mb-4"><Globe2 className="text-blue-400 w-5 h-5"/></div>
+             <strong className="text-blue-400 text-lg">Solfeggio/Cura</strong>
+             <p className="text-xs text-gray-400 mt-2">Frequências específicas (528Hz, 432Hz) para cura espiritual e meditação. CPM altíssimo.</p>
+           </div>
         </div>
       </>
     )
   },
   {
-    id: 'b2_kids_market',
+    id: 'b3_visual_identity',
     trackId: 'monetization',
-    title: '2. O Oceano Bilionário Infantil (Nursery Rhymes)',
-    description: 'Estratégias para entrar no nicho mais visualizado da história do YouTube.',
-    duration: '25 min',
-    level: 'Business',
+    title: '3. Branding: Pareça uma Gravadora',
+    description: 'Como usar IA de imagem para criar uma marca de R$ 10.000,00 com zero custo.',
+    duration: '15 min',
+    level: 'Iniciante',
     content: () => (
       <>
-        <p className="lead text-gray-300 leading-relaxed">
-          Cocomelon e Galinha Pintadinha não são sorte. São ciência de retenção aplicada a cérebros em desenvolvimento. O nicho infantil é, de longe, o maior volume de tráfego da internet. Enquanto um adulto assiste a um tutorial uma vez, uma criança assiste ao mesmo vídeo de "Cinco Patinhos" cinquenta vezes no mesmo dia. Isso gera uma métrica de "Replay Rate" absurda que o algoritmo do YouTube ama.
+        <p className="mb-4 text-gray-300">
+          O usuário julga o livro pela capa em milissegundos. Se seu canal tem foto de anime pixelada e banner torto, você perdeu.
+        </p>
+        
+        <Step number={1} title="O Nome (Naming)">
+           Evite: "Canal do Pedrinho Games".
+           <br/>Use: Conceitos Abstratos em Inglês (passa autoridade global).
+           <br/>Exemplos: <em>Ethereal Mind, Bass Nation, Focus Flow, Zen Sanctuary</em>.
+        </Step>
+
+        <Step number={2} title="O Logo e Banner (Midjourney/Bing)">
+           Use este prompt no Bing Image Creator:
+           <code className="block bg-black p-3 rounded mt-2 text-green-400 text-xs font-mono">
+             Minimalist vector logo for a music channel called "Zen Flow", lotus flower icon, cyan and white color palette, flat design, vector art --no text
+           </code>
+        </Step>
+      </>
+    )
+  },
+  {
+    id: 'b4_free_tools',
+    trackId: 'monetization',
+    title: '4. O Arsenal Gratuito (Ferramentas)',
+    description: 'Softwares profissionais que não custam nada para começar.',
+    duration: '12 min',
+    level: 'Iniciante',
+    content: () => (
+      <>
+        <ul className="grid gap-4">
+           <li className="flex items-start gap-4 bg-gray-900 p-4 rounded-lg border border-gray-800">
+             <div className="bg-gray-800 p-2 rounded text-white font-bold">CapCut PC</div>
+             <div>
+               <p className="text-white font-bold">Edição de Vídeo</p>
+               <p className="text-sm text-gray-400">Melhor que Premiere para iniciantes. Tem legendas automáticas e efeitos prontos.</p>
+             </div>
+           </li>
+           <li className="flex items-start gap-4 bg-gray-900 p-4 rounded-lg border border-gray-800">
+             <div className="bg-gray-800 p-2 rounded text-white font-bold">Canva</div>
+             <div>
+               <p className="text-white font-bold">Thumbnails</p>
+               <p className="text-sm text-gray-400">Use os templates de "YouTube Thumbnail". A versão grátis é suficiente.</p>
+             </div>
+           </li>
+           <li className="flex items-start gap-4 bg-gray-900 p-4 rounded-lg border border-gray-800">
+             <div className="bg-gray-800 p-2 rounded text-white font-bold">Audacity</div>
+             <div>
+               <p className="text-white font-bold">Edição de Áudio</p>
+               <p className="text-sm text-gray-400">Para fazer loops perfeitos (crossfade) e mudar a frequência (432Hz).</p>
+             </div>
+           </li>
+        </ul>
+      </>
+    )
+  },
+  {
+    id: 'b5_first_video',
+    trackId: 'monetization',
+    title: '5. Pipeline de Produção: Do Zero ao Upload',
+    description: 'Passo a passo técnico da montagem do vídeo.',
+    duration: '20 min',
+    level: 'Iniciante',
+    content: () => (
+      <>
+        <p className="mb-4 text-gray-300">A fórmula de um vídeo de música de sucesso é: <strong>Ambiente Imersivo + Áudio Consistente</strong>.</p>
+        
+        <Step number={1} title="A Imagem Base">
+           Gere uma imagem Wide (16:9) no Midjourney. "Cozy bedroom raining outside lo-fi aesthetic --ar 16:9".
+        </Step>
+        
+        <Step number={2} title="O Movimento (O Pulo do Gato)">
+           O YouTube odeia imagens estáticas (parece slide de powerpoint). 
+           No CapCut, adicione "Effects > Nature > Snow/Rain" ou "Particles". Adicione uma leve animação de "Zoom In" (Keyframes) bem lenta. Isso engana o algoritmo e conta como vídeo real.
+        </Step>
+        
+        <Step number={3} title="O Áudio em Loop">
+           Pegue sua música do Suno (2-4 min). Duplique ela na timeline até dar 1 hora. Use uma transição de "Dissolve" entre os clipes para não dar um tranco no ouvido.
+        </Step>
+      </>
+    )
+  },
+  {
+    id: 'b6_thumbnails',
+    trackId: 'monetization',
+    title: '6. Psicologia da Thumbnail (CTR)',
+    description: 'Como ganhar o clique em um mar de concorrência.',
+    duration: '15 min',
+    level: 'Iniciante',
+    content: () => (
+      <>
+        <ConceptCard title="A Regra dos 3 Elementos" icon={Palette} color="purple">
+           O cérebro processa imagens rápido. Sua thumb deve ter no MÁXIMO 3 pontos de foco:
+           <br/>1. Um Fundo Contrastante.
+           <br/>2. Um Elemento Emocional Claro (Rosto triste, Paisagem linda).
+           <br/>3. Texto Gigante (Máx 3 palavras).
+        </ConceptCard>
+
+        <div className="grid grid-cols-2 gap-4 mt-6 text-center">
+           <div className="p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
+             <strong className="text-red-400 block mb-2">Thumb Ruim</strong>
+             <p className="text-xs text-gray-400">Texto pequeno, cores pastéis, muita informação, captura de tela aleatória.</p>
+           </div>
+           <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
+             <strong className="text-green-400 block mb-2">Thumb Viral</strong>
+             <p className="text-xs text-gray-400">Saturação alta, brilho (Glow), fonte Sans-Serif Bold, rosto expressivo ou cenário onírico.</p>
+           </div>
+        </div>
+      </>
+    )
+  },
+  {
+    id: 'b7_seo_titles',
+    trackId: 'monetization',
+    title: '7. SEO e Palavras-Chave de Cauda Longa',
+    description: 'Como ser encontrado por quem procura exatamente o que você fez.',
+    duration: '20 min',
+    level: 'Iniciante',
+    content: () => (
+      <>
+        <p className="text-gray-300 mb-6">
+          Não tente competir por "Música para Dormir" (Cauda Curta). Os canais gigantes já dominam isso.
+          Vá para a <strong>Cauda Longa</strong> (Long Tail).
         </p>
 
-        <div className="bg-yellow-900/20 border border-yellow-500/30 p-6 rounded-xl my-6">
-           <h4 className="text-yellow-400 font-bold mb-4 flex items-center gap-2 text-lg"><Baby className="w-6 h-6"/> A Fórmula de Retenção Infantil</h4>
-           <ul className="space-y-4 text-gray-300">
-             <li className="leading-relaxed">• <strong>Repetição Cíclica:</strong> Crianças gostam de prever o que vai acontecer. A música deve ter uma estrutura simples (AABB) e repetir o refrão 4-6 vezes. A previsibilidade gera conforto e dopamina no cérebro infantil.</li>
-             <li className="leading-relaxed">• <strong>Prompt Suno Vencedor:</strong> Use sempre: <code>"Nursery rhyme, xylophone, glockenspiel, simple major melody, female vocals, enthusiastic, 120bpm, kids bop style, educational lyrics"</code>. A voz feminina aguda ou de outra criança funciona melhor.</li>
-             <li className="leading-relaxed">• <strong>Visual Hipnótico:</strong> Use cores primárias saturadas (Vermelho, Amarelo, Azul) com alto contraste. Use IA (Midjourney com o parâmetro <code>--niji 6</code>) para gerar personagens fofos com olhos grandes (proporção neotênica).</li>
-           </ul>
+        <ComparisonTable 
+          title="Estratégia de Palavras-Chave"
+          leftTitle="Genérico (Impossível ranquear)"
+          rightTitle="Específico (Fácil ranquear)"
+          leftItems={["Relaxing Music", "Study Music", "Gym Music"]}
+          rightItems={["Relaxing Music for Anxiety and Overthinking", "Lofi Hip Hop for Late Night Study raining", "Aggressive Phonk for Deadlift PR"]}
+        />
+
+        <TipBox>
+           Use a barra de pesquisa do YouTube. Comece a digitar "music for..." e veja o que o autocompletar sugere. Aquilo são buscas reais. Use exatamente aquelas frases no seu título.
+        </TipBox>
+      </>
+    )
+  },
+  {
+    id: 'b8_upload_checklist',
+    trackId: 'monetization',
+    title: '8. O Ritual de Upload Perfeito',
+    description: 'Checklist técnico para garantir que o algoritmo entenda seu vídeo.',
+    duration: '10 min',
+    level: 'Iniciante',
+    content: () => (
+      <>
+        <div className="space-y-3">
+           <div className="flex items-center gap-3 bg-gray-800 p-3 rounded-lg">
+             <CheckCircle2 className="text-green-500"/>
+             <span className="text-gray-300 text-sm"><strong>Nome do Arquivo:</strong> Renomeie o arquivo final. Nada de <code>video_final_02.mp4</code>. Use <code>musica_para_dormir_chuva.mp4</code>. O Google lê isso.</span>
+           </div>
+           <div className="flex items-center gap-3 bg-gray-800 p-3 rounded-lg">
+             <CheckCircle2 className="text-green-500"/>
+             <span className="text-gray-300 text-sm"><strong>Descrição (Primeiras 2 linhas):</strong> Repita a palavra-chave principal do título de forma natural.</span>
+           </div>
+           <div className="flex items-center gap-3 bg-gray-800 p-3 rounded-lg">
+             <CheckCircle2 className="text-green-500"/>
+             <span className="text-gray-300 text-sm"><strong>Tags:</strong> Misture amplas (#music) com específicas (#lofirain).</span>
+           </div>
+           <div className="flex items-center gap-3 bg-gray-800 p-3 rounded-lg">
+             <CheckCircle2 className="text-green-500"/>
+             <span className="text-gray-300 text-sm"><strong>Cards e Tela Final:</strong> Sempre linke para outro vídeo do seu canal para criar um "Binge Watching Loop".</span>
+           </div>
         </div>
+      </>
+    )
+  },
+  {
+    id: 'b9_monetization_rules',
+    trackId: 'monetization',
+    title: '9. Regras do Jogo (YPP)',
+    description: 'Entendendo os requisitos de 1.000 inscritos e 4.000 horas.',
+    duration: '10 min',
+    level: 'Iniciante',
+    content: () => (
+      <>
+        <div className="grid grid-cols-2 gap-4 text-center mt-4 mb-8">
+           <div className="bg-gradient-to-br from-blue-900 to-blue-800 p-6 rounded-2xl shadow-lg border border-blue-500/20">
+              <strong className="text-4xl text-white font-black block mb-2">1K</strong>
+              <p className="text-blue-200 text-xs uppercase tracking-widest">Inscritos</p>
+           </div>
+           <div className="bg-gradient-to-br from-pink-900 to-pink-800 p-6 rounded-2xl shadow-lg border border-pink-500/20">
+              <strong className="text-4xl text-white font-black block mb-2">4K</strong>
+              <p className="text-pink-200 text-xs uppercase tracking-widest">Horas</p>
+           </div>
+        </div>
+        
+        <p className="text-gray-300 text-sm">
+           Em canais de música (vídeos longos), as 4.000 horas são fáceis. Se uma pessoa ouve sua playlist de 1 hora para dormir, você só precisa de 4.000 views. O desafio real são os inscritos.
+        </p>
 
         <WarningBox>
-           <strong>Regulamentação COPPA (Crucial):</strong>
-           <br/>Ao fazer upload, você é obrigado por lei a marcar a opção <strong>"Sim, é conteúdo para crianças"</strong>.
-           <br/><br/>
-           <strong>O que muda?</strong>
-           <br/>❌ Você perde: Comentários, Tela Final, Notificações, e anúncios personalizados (o que reduz o CPM).
-           <br/>✅ Você ganha: Recomendação infinita no aplicativo dedicado <strong>YouTube Kids</strong>. O volume de views compensa o valor menor do anúncio. É um jogo de escala massiva.
+           <strong>Cuidado com Shorts:</strong> As horas assistidas no Feed de Shorts <strong>NÃO CONTAM</strong> para as 4.000 horas de monetização de vídeos longos. Use Shorts apenas para pescar inscritos.
         </WarningBox>
       </>
     )
   },
   {
-    id: 'b3_healing_niche',
+    id: 'b10_mindset',
     trackId: 'monetization',
-    title: '3. Frequências de Cura (O Nicho de Ouro)',
-    description: 'Tutorial técnico: Convertendo áudio para 432Hz, 528Hz e Tons Isocrônicos.',
-    duration: '20 min',
-    level: 'Profissional',
+    title: '10. O Vale da Morte e a Consistência',
+    description: 'Sobrevivendo aos primeiros 30 dias sem visualizações.',
+    duration: '12 min',
+    level: 'Iniciante',
     content: () => (
       <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          Este nicho tem o público mais fiel (retorno diário) e maior tempo de exibição (dormem ouvindo). Diferente do nicho infantil, aqui buscamos o público adulto com insônia, ansiedade ou que pratica meditação. A chave não é a música em si, mas a <strong>promessa da frequência</strong>.
-        </p>
-
-        <h3 className="text-xl font-bold text-white mt-6 mb-4">Tabela de Frequências Lucrativas (SEO Keywords)</h3>
-        <p className="text-gray-400 text-sm mb-4">Use estes termos exatos nos seus títulos para capturar tráfego de busca:</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-center">
-           <div className="bg-gray-800 p-4 rounded border border-purple-500/30">
-             <strong className="text-purple-300 text-lg block mb-1">432 Hz</strong>
-             <span className="text-gray-400 text-sm">A "Frequência do Universo". Promete paz interior e desbloqueio emocional.</span>
-           </div>
-           <div className="bg-gray-800 p-4 rounded border border-blue-500/30">
-             <strong className="text-blue-300 text-lg block mb-1">528 Hz</strong>
-             <span className="text-gray-400 text-sm">A "Frequência do Amor" ou Reparo de DNA. Muito buscada para cura física.</span>
-           </div>
-           <div className="bg-gray-800 p-4 rounded border border-green-500/30">
-             <strong className="text-green-300 text-lg block mb-1">963 Hz</strong>
-             <span className="text-gray-400 text-sm">A "Frequência de Deus" ou Ativação Pineal. Nicho espiritual forte.</span>
-           </div>
+        <div className="bg-gray-900 p-6 rounded-xl border-l-4 border-yellow-500 my-6">
+           <h4 className="text-yellow-500 font-bold text-lg mb-2">A Regra dos 30 Vídeos</h4>
+           <p className="text-gray-300 text-sm italic">
+             "O YouTube não sabe quem você é. Os primeiros 30 vídeos não são para ganhar views, são para treinar a IA do YouTube sobre qual é o seu público."
+           </p>
         </div>
 
-        <Step number={1} title="Tutorial: Conversão Real no Audacity">
-           O Suno gera em 440Hz (Padrão da indústria musical). O público "Healing" odeia 440Hz e considera "artificial". Você precisa converter.
-           <br/><br/><strong>Passo a Passo (Audacity Grátis):</strong>
-           <br/>1. Importe o áudio do Suno (WAV).
-           <br/>2. Selecione toda a faixa (Ctrl+A).
-           <br/>3. Vá no menu <em>Efeitos {'>'} Alterar Altura (Change Pitch)</em>.
-           <br/>4. Na caixa "Frequência de", digite <strong>440</strong>. Na caixa "para", digite <strong>432</strong> (ou a frequência desejada).
-           <br/>5. Clique em OK. O áudio ficará levemente mais grave e lento, o que aumenta o efeito relaxante.
-           <br/>6. Exporte como WAV. No título do YouTube, coloque "[432Hz]" bem grande no início. Isso é o seu principal diferencial de SEO.
-        </Step>
-      </>
-    )
-  },
-  {
-    id: 'b4_phonk_gym',
-    trackId: 'monetization',
-    title: '4. Phonk & Gym: O Combustível do TikTok',
-    description: 'O nicho de alta energia. Subgêneros (Drift, House) e estética visual.',
-    duration: '15 min',
-    level: 'Business',
-    content: () => (
-      <>
-        <div className="flex gap-4 items-center bg-gray-900 p-6 rounded-xl border border-gray-800 mb-6">
-           <Dumbbell className="w-12 h-12 text-red-500" />
-           <div>
-             <h4 className="font-bold text-white text-lg">Aggressive Phonk / Sigma Grindset</h4>
-             <p className="text-gray-300 text-sm mt-2 leading-relaxed">
-               Este é um gênero viral dominado por clipes de carros tunados (JDM), animes de luta e fisiculturismo. O público é jovem, masculino e engajado. O CPM é médio ($3-$5), mas o potencial viral via Shorts/TikTok é explosivo, o que traz inscritos muito rápido para o canal.
-             </p>
-           </div>
-        </div>
-
-        <h3 className="text-xl font-bold text-white mt-6 mb-4">A Estética Sonora do Phonk</h3>
-        <p className="text-gray-300 leading-relaxed mb-4">
-          O Phonk não é limpo. Ele deve soar "sujo", distorcido e agressivo. O Suno v5 consegue criar isso se você usar as palavras certas. O segredo está no "Cowbell" (aquele sino metálico) e no baixo distorcido (808).
+        <p className="text-gray-300 mb-4">
+           A maioria desiste no vídeo 10. O crescimento é exponencial, não linear. Você fica no zero por meses, e de repente um vídeo estoura e puxa todos os outros.
         </p>
 
-        <TipBox>
-           <strong>Prompt de Ouro Suno v5:</strong> 
-           <br/><code>"Drift Phonk, Aggressive, Distorted 808 cowbell melody, High bpm, energetic, memphis vocal samples, dark atmosphere, lo-fi texture, compression heavy"</code>.
-        </TipBox>
-
-        <p className="mt-6 text-sm text-gray-300 leading-relaxed bg-black/20 p-4 rounded-lg border border-gray-800">
-           <strong>Estratégia Visual:</strong> Use vídeos de bancos gratuitos como Pexels ou Pixabay com tags "Gym", "Workout", "Neon Car", "Drift". A edição deve ser rápida, com cortes secos exatamente na batida do cowbell ou do bumbo da bateria. Sincronia é tudo nesse nicho.
-        </p>
-      </>
-    )
-  },
-  {
-    id: 'b5_lofi_brand',
-    trackId: 'monetization',
-    title: '5. Branding: Criando sua "Lo-Fi Girl"',
-    description: 'Como usar consistência de personagem para criar comunidade e identidade.',
-    duration: '18 min',
-    level: 'Business',
-    content: () => (
-      <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          Canais genéricos com fotos de bancos de imagem aleatórias morrem rápido. Canais com "Mascotes" ou Personagens criam fãs leais. A "Lofi Girl" é icônica não pela música, mas pela personagem estudando. As pessoas criam uma <strong>relação parassocial</strong> com o personagem; elas sentem que estão estudando "junto com ela". Crie a sua versão.
-        </p>
-        
-        <h3 className="text-xl font-bold text-white mt-6 mb-4">Workflow de Personagem Consistente (Midjourney)</h3>
-        <p className="text-gray-300 text-sm mb-4">
-          O maior desafio da IA de imagem era manter o rosto igual em várias fotos. Com o parâmetro <code>--cref</code> (Character Reference), isso foi resolvido.
-        </p>
-
-        <CodeBlock>
-           /imagine prompt: [DESCRIÇÃO DO PERSONAGEM] wearing headphones, studying at a desk near a rainy window, cozy room full of plants, night time, lo-fi aesthetic style, studio ghibli inspired --ar 16:9 --cref [URL_DA_SUA_IMAGEM_BASE] --cw 100
-        </CodeBlock>
-        
-        <Step number={1} title="Estratégia de Identidade">
-           1. Gere um personagem base que você ame.
-           <br/>2. Dê um nome a ele(a). Ex: "Coding Kyle", "Study with Sarah".
-           <br/>3. Coloque o nome do personagem no nome do canal.
-           <br/>4. Use o <code>--cref</code> para gerar esse mesmo personagem em situações diferentes: lendo na biblioteca, tomando café na chuva, dormindo no sofá.
-           <br/>5. Isso cria uma "vida" para o canal. Os inscritos comentam: "Onde o Kyle está hoje?". Isso é ouro para o engajamento.
-        </Step>
-      </>
-    )
-  },
-
-  // FASE 2: PRODUÇÃO TÉCNICA AVANÇADA
-  {
-    id: 'b6_visual_looping',
-    trackId: 'monetization',
-    title: '6. Engenharia Visual: Loops Infinitos',
-    description: 'Tutorial de ferramentas para animar imagens estáticas (Motionleap, Wallpaper Engine).',
-    duration: '20 min',
-    level: 'Profissional',
-    content: () => (
-      <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          O YouTube penaliza imagens 100% estáticas (o vídeo parece um slide de PowerPoint quebrado). Para monetizar sem problemas de "Conteúdo Reutilizado", você precisa de <strong>"Micro-movimentos"</strong>. O algoritmo precisa detectar pixels mudando de lugar para classificar aquilo como vídeo real.
-        </p>
-
-        <div className="grid md:grid-cols-2 gap-6 mt-6">
-           <div className="bg-black border border-gray-800 p-6 rounded-xl shadow-lg">
-              <h4 className="text-pink-400 font-bold mb-3 text-lg">Nível 1: Motionleap (Mobile)</h4>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Opção Grátis/Barata. Baixe o app no celular. Importe sua imagem do Midjourney. Adicione elementos de sobreposição (Overlay) como: <strong>Chuva, Fumaça de Café, Brilho de Velas ou Partículas de Poeira</strong>. Exporte como vídeo 1080p de 6 segundos. É simples, mas funciona para começar.
-              </p>
-           </div>
-           <div className="bg-black border border-gray-800 p-6 rounded-xl shadow-lg">
-              <h4 className="text-blue-400 font-bold mb-3 text-lg">Nível 2: Wallpaper Engine / OBS</h4>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Opção Pro. Compre o software Wallpaper Engine no Steam ($4). Lá existem milhares de wallpapers animados em 4K de altíssima qualidade (Cyberpunk, Anime, Natureza). Configure para rodar na sua tela, esconda os ícones e grave a tela usando o <strong>OBS Studio</strong>. É a forma mais barata de ter visuais de nível Hollywood.
-              </p>
-           </div>
-        </div>
-        
-        <Step number={1} title="A Técnica do Cross-Dissolve">
-           No editor de vídeo, você terá um clipe curto (ex: 10 segundos) e um áudio longo (1 hora).
-           <br/>1. Coloque o clipe de vídeo na timeline.
-           <br/>2. Copie e cole ele centenas de vezes até cobrir o áudio.
-           <br/>3. O problema: O corte entre o fim do clipe e o começo do próximo será visível (pulo seco).
-           <br/>4. A solução: Adicione uma transição de <strong>"Cross Dissolve"</strong> (Dissolver) de 1 segundo entre CADA repetição do vídeo. Isso mistura o final de um com o começo do outro, tornando o loop visualmente "infinito" e suave.
-        </Step>
-      </>
-    )
-  },
-  {
-    id: 'b7_audio_stitching',
-    trackId: 'monetization',
-    title: '7. Costura de Áudio (Zero Crossing)',
-    description: 'Tutorial: Transformando 2 minutos em 1 hora sem "cliques" ou cortes perceptíveis.',
-    duration: '25 min',
-    level: 'Profissional',
-    content: () => (
-      <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          Se o ouvinte perceber quando a música acaba e recomeça, a "hipnose" quebra e ele fecha o vídeo. O "Loop" deve ser invisível (Seamless). Em música ambiente, um corte seco gera um "clique" audível ou uma mudança brusca na respiração da música. Isso destrói a retenção.
-        </p>
-
-        <h3 className="text-xl font-bold text-white mt-6 mb-4">O Conceito de Zero Crossing</h3>
-        <p className="text-gray-400 text-sm mb-4">
-           O som é uma onda. Se você corta a onda no ponto alto e cola em um ponto baixo, o alto-falante dá um estalo (pop). O corte ideal é onde a onda cruza a linha zero (silêncio absoluto), mas isso é difícil de achar. Por isso usamos o Crossfade.
-        </p>
-
-        <Step number={1} title="Workflow no Editor (Premiere/DaVinci/CapCut)">
-           <br/>1. Coloque a música original do Suno na timeline (Track 1).
-           <br/>2. Duplique-a e coloque na faixa de baixo (Track 2).
-           <br/>3. Arraste a Cópia da Track 2 para que ela comece <strong>antes</strong> da música da Track 1 terminar. Crie uma sobreposição grande (de 10 a 15 segundos).
-           <br/>4. Aplique uma transição de áudio chamada <strong>"Constant Power"</strong> (ou Crossfade) nessa área de sobreposição em ambas as faixas.
-           <br/>5. Ajuste o ponto de encontro para que as batidas (bumbos) fiquem sincronizadas. Se for música sem bateria (Ambient), é só misturar.
-           <br/>6. Ouça de olhos fechados. Se você não conseguir notar onde a música mudou, está perfeito.
-           <br/>7. Agora selecione esses dois blocos, agrupe (Nest) e duplique esse "bloco costurado" até dar 1 hora.
-        </Step>
-      </>
-    )
-  },
-  {
-    id: 'b8_ctr_masterclass',
-    trackId: 'monetization',
-    title: '8. Thumbnails: Psicologia das Cores',
-    description: 'Como aumentar seu CTR (Click-Through Rate) usando contraste e emoção.',
-    duration: '15 min',
-    level: 'Business',
-    content: () => (
-      <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          A Thumbnail é responsável por 70% do sucesso do vídeo. Se ninguém clicar, ninguém ouve sua música. Não faça "arte", faça "isca". O cérebro humano escaneia o YouTube muito rápido. Você tem milissegundos para chamar a atenção.
-        </p>
-
-        <ComparisonTable 
-          title="Thumbnails que Falham vs Que Funcionam"
-          leftTitle="Amador (Baixo CTR)"
-          rightTitle="Pro (Alto CTR)"
-          leftItems={[
-            "Texto pequeno, fonte fina ou cursiva (ilegível)",
-            "Cores pastéis ou lavadas (Baixo contraste)",
-            "Muitos elementos bagunçados (poluição visual)",
-            "Sem ponto focal claro (o olho não sabe onde olhar)"
-          ]}
-          rightItems={[
-            "Texto GIGANTE e Sans-Serif (máx 3 palavras: 'DEEP SLEEP')",
-            "Saturação e Contraste aumentados no editor (+20%)",
-            "Brilho/Glow em objetos específicos (janela, fogo, neon)",
-            "Regra dos Terços (Foco claro no rosto ou objeto)"
-          ]}
-        />
-        
-        <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 mt-6">
-           <h4 className="text-white font-bold mb-4 flex items-center gap-2"><Palette className="w-5 h-5 text-pink-500"/> Psicologia das Cores por Nicho</h4>
-           <ul className="space-y-3 text-gray-300 text-sm">
-             <li>• <strong>Sono/Meditação:</strong> Use Azul Escuro, Roxo Profundo e Preto. Essas cores sinalizam "noite", "calma" e "profundidade". Evite branco ou amarelo forte.</li>
-             <li>• <strong>Foco/Estudo (Lo-Fi):</strong> Use Laranja, Amarelo Quente e Marrom. Sinalizam "conforto", "café", "luz de abajur" e "outono".</li>
-             <li>• <strong>Phonk/Gym:</strong> Use Vermelho Sangue, Neon Pink e Preto. Sinalizam "perigo", "agressividade", "energia" e "poder".</li>
-           </ul>
-        </div>
-      </>
-    )
-  },
-  {
-    id: 'b9_seo_stacking',
-    trackId: 'monetization',
-    title: '9. SEO Stacking: Dominando a Busca',
-    description: 'Como usar o Tubebuddy/VidIQ para encontrar palavras-chave de cauda longa.',
-    duration: '20 min',
-    level: 'Business',
-    content: () => (
-      <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          Não tente ranquear para a palavra "Jazz". É impossível competir com canais de 10 milhões de inscritos nessa palavra genérica. O segredo é o <strong>Long Tail SEO</strong> (Palavras-chave de cauda longa). Você quer ranquear para frases específicas que têm menos concorrência mas intenção de busca muito alta.
-        </p>
-        
-        <h3 className="text-xl font-bold text-white mt-6 mb-3">A Técnica do "Keyword Stacking"</h3>
-        <p className="text-gray-300 text-sm mb-4">
-           O YouTube lê metadados em camadas. Você deve repetir sua palavra-chave principal (ex: "432Hz Healing") em todos os níveis:
-        </p>
-        
-        <ul className="list-decimal list-inside space-y-2 text-gray-300 mb-6 ml-4">
-           <li><strong>Nome do Arquivo Bruto:</strong> Antes de subir o vídeo, renomeie o arquivo de <code>video_final.mp4</code> para <code>432hz_healing_sleep_music.mp4</code>. O YouTube lê isso.</li>
-           <li><strong>Começo do Título:</strong> As primeiras 3 palavras têm mais peso.</li>
-           <li><strong>Primeira linha da descrição:</strong> Repita o título na primeira frase de forma natural.</li>
-           <li><strong>Tags do Canal:</strong> Não apenas tags do vídeo, mas nas configurações do canal.</li>
+        <ul className="space-y-2 text-gray-400 text-sm">
+           <li>✅ Poste 2 a 3 vezes por semana (Horário fixo).</li>
+           <li>✅ Não apague vídeos com poucas views (eles podem viralizar meses depois).</li>
+           <li>✅ Foque em melhorar 1% a cada vídeo (melhor thumb, melhor áudio).</li>
         </ul>
-
-        <CodeBlock>
-          Exemplo de Título Otimizado (Stacking):
-          "Instant Relief from Anxiety - Deep Healing Frequency 432Hz for Sleep & Insomnia"
-        </CodeBlock>
-        <p className="text-xs text-gray-400 mt-2">
-           Note que neste título atacamos 5 nichos diferentes em uma frase: "Relief from Anxiety" (Dor), "Deep Healing" (Solução), "432Hz" (Método), "Sleep" (Uso), "Insomnia" (Problema). Isso triplica suas chances de ser encontrado.
-        </p>
-      </>
-    )
-  },
-  {
-    id: 'b10_shorts_strategy',
-    trackId: 'monetization',
-    title: '10. Shorts como Isca (Funil de Tráfego)',
-    description: 'A configuração técnica "Related Video" para explodir seu canal.',
-    duration: '15 min',
-    level: 'Business',
-    content: () => (
-      <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          Shorts pagam muito mal (centavos), mas trazem inscritos muito rápido. O erro da maioria é deixar o view morrer no Short. Você deve usar o Short apenas como um "Outdoor" que aponta para sua "Loja" (o vídeo longo de 1 hora, que paga bem).
-        </p>
-
-        <Step number={1} title="Configuração do Funil 'Related Video'">
-           O YouTube removeu os links clicáveis nos comentários dos Shorts para evitar spam. A ÚNICA forma de linkar é usando a ferramenta nativa "Vídeo Relacionado".
-           <br/><br/>
-           1. Crie um Short com o <strong>melhor momento</strong> (Drop/Refrão) do seu vídeo longo.
-           <br/>2. Adicione uma legenda fixa e grande no vídeo: "Full Song Link ▶️" (com uma seta apontando para baixo).
-           <br/>3. Suba o Short.
-           <br/>4. Vá no YouTube Studio (Versão Desktop). Abra o Short em "Detalhes".
-           <br/>5. Na barra lateral direita, encontre a opção <strong>"Vídeo Relacionado" (Related Video)</strong>.
-           <br/>6. Selecione o vídeo de 1 hora correspondente.
-           <br/><em>Resultado: Um botão "Play" aparece nativamente na tela do Short, exatamente onde você apontou a seta, levando o usuário direto para o vídeo longo. A conversão disso é altíssima.</em>
-        </Step>
       </>
     )
   },
 
-  // FASE 3: MONETIZAÇÃO E ESCALA
+  // --- FASE 2: ESCALA E ESTRATÉGIA AVANÇADA (AULAS 11-20) ---
   {
     id: 'b11_cpm_reality',
     trackId: 'monetization',
-    title: '11. A Realidade do CPM (Quanto Paga?)',
-    description: 'Dados reais de RPM por nicho e geografia. Onde está o dinheiro.',
-    duration: '15 min',
-    level: 'Business',
-    content: () => (
-      <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          Muitos iniciantes se frustram porque fazem 100 mil views e ganham pouco dinheiro. Isso acontece porque escolheram o nicho errado ou o país errado. O CPM (Custo por Mil Views) varia drasticamente baseado no poder de compra do público e na idade.
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
-           <div className="bg-gray-800 p-6 rounded-xl border-t-4 border-green-500 shadow-lg">
-              <strong className="block text-white mb-2 flex items-center gap-2 text-lg"><DollarSign className="w-5 h-5 text-green-400"/> Alta Renda</strong>
-              <span className="bg-green-900/30 text-green-400 px-2 py-1 rounded text-xs font-bold uppercase">Finance, Tech, Crypto</span>
-              <p className="text-gray-300 text-sm mt-3 leading-relaxed">
-                <strong>RPM: $10 - $25</strong>. 
-                <br/>Ex: "Música para Traders Focarem" ou "Coding Music". O anunciante aqui é banco ou corretora, eles pagam muito caro.
-              </p>
-           </div>
-           <div className="bg-gray-800 p-6 rounded-xl border-t-4 border-blue-500 shadow-lg">
-              <strong className="block text-white mb-2 flex items-center gap-2 text-lg"><Activity className="w-5 h-5 text-blue-400"/> Média Renda</strong>
-              <span className="bg-blue-900/30 text-blue-400 px-2 py-1 rounded text-xs font-bold uppercase">Meditação, Sleep, Gym</span>
-              <p className="text-gray-300 text-sm mt-3 leading-relaxed">
-                <strong>RPM: $3 - $7</strong>. 
-                <br/>O equilíbrio perfeito entre volume e valor. Anunciantes de apps de saúde, colchões e suplementos.
-              </p>
-           </div>
-           <div className="bg-gray-800 p-6 rounded-xl border-t-4 border-yellow-500 shadow-lg">
-              <strong className="block text-white mb-2 flex items-center gap-2 text-lg"><Users className="w-5 h-5 text-yellow-400"/> Volume Puro</strong>
-              <span className="bg-yellow-900/30 text-yellow-400 px-2 py-1 rounded text-xs font-bold uppercase">Kids, Shorts, Meme</span>
-              <p className="text-gray-300 text-sm mt-3 leading-relaxed">
-                <strong>RPM: $0.30 - $1.50</strong>. 
-                <br/>Paga pouco por view, mas é fácil fazer 10 milhões de views. É o jogo das "Vacas Leiteiras" (Cash Cows).
-              </p>
-           </div>
-        </div>
-      </>
-    )
-  },
-  {
-    id: 'b12_affiliate_hacks',
-    trackId: 'monetization',
-    title: '12. Afiliados: Monetizando com 0 Inscritos',
-    description: 'Programas de afiliados específicos para canais de música (Amazon, Sweetwater).',
+    title: '11. A Geografia do Dinheiro (CPM & RPM)',
+    description: 'Como ganhar 10x mais focando nos países Tier 1.',
     duration: '20 min',
     level: 'Business',
     content: () => (
       <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          O maior erro é esperar as 4.000 horas do AdSense para começar a ganhar dinheiro. Você pode (e deve) monetizar desde o primeiro vídeo usando Marketing de Afiliados. Como seus vídeos são "utilitários" (servem para dormir, estudar, treinar), seu público tem necessidades físicas que podem ser atendidas com produtos.
+        <p className="text-gray-300 mb-6">
+          Nem todo view vale o mesmo. O YouTube paga baseado no poder de compra do país de quem assiste.
         </p>
-        
-        <ul className="space-y-6 mt-6">
-           <li className="bg-gray-900 p-5 rounded-xl border border-gray-800 hover:border-pink-500 transition-colors">
-              <strong className="text-pink-400 block mb-2 text-lg">Para Canais de Sleep/Meditação</strong>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                 Cadastre-se na <strong>Amazon Associates</strong>. As pessoas que buscam música para dormir geralmente têm desconforto. Crie links para "Fones de Ouvido Sleep-mask" (aquelas faixas de cabeça bluetooth confortáveis para dormir de lado) ou Máquinas de Ruído Branco.
-                 <br/><br/>
-                 <em>Copy para descrição: "🎧 O fone mais confortável para dormir de lado que eu uso: [Link]"</em>. Isso converte muito.
-              </p>
+
+        <div className="overflow-hidden rounded-xl border border-gray-700 shadow-2xl mb-8">
+           <table className="w-full text-left text-sm text-gray-400">
+             <thead className="bg-gray-800 text-gray-200 uppercase font-bold text-xs">
+               <tr>
+                 <th className="p-4">Região (Tier)</th>
+                 <th className="p-4">Países</th>
+                 <th className="p-4 text-right">RPM Estimado (por 1k views)</th>
+               </tr>
+             </thead>
+             <tbody className="divide-y divide-gray-800 bg-gray-900/50">
+               <tr className="hover:bg-gray-800 transition-colors">
+                 <td className="p-4 text-green-400 font-bold">Tier 1 (Rico)</td>
+                 <td className="p-4">EUA, Reino Unido, Austrália, Canadá</td>
+                 <td className="p-4 text-right font-mono text-green-400">$10 - $25</td>
+               </tr>
+               <tr className="hover:bg-gray-800 transition-colors">
+                 <td className="p-4 text-yellow-400 font-bold">Tier 2 (Médio)</td>
+                 <td className="p-4">Europa Oriental, Japão, Coreia</td>
+                 <td className="p-4 text-right font-mono text-yellow-400">$4 - $8</td>
+               </tr>
+               <tr className="hover:bg-gray-800 transition-colors">
+                 <td className="p-4 text-red-400 font-bold">Tier 3 (Baixo)</td>
+                 <td className="p-4">Brasil, Índia, Indonésia</td>
+                 <td className="p-4 text-right font-mono text-red-400">$0.50 - $2</td>
+               </tr>
+             </tbody>
+           </table>
+        </div>
+
+        <ConceptCard title="Estratégia Global" icon={Globe2} color="blue">
+           Como seus vídeos são de música (sem fala), você PODE e DEVE mirar no Tier 1.
+           <br/>Nunca escreva títulos em Português. Use Inglês. O brasileiro entende "Relaxing Music", mas o americano não entende "Música Relaxante".
+        </ConceptCard>
+      </>
+    )
+  },
+  {
+    id: 'b12_visual_engineering',
+    trackId: 'monetization',
+    title: '12. Engenharia Visual Avançada (Loops)',
+    description: 'Fugindo do "Conteúdo Reutilizado" com loops complexos.',
+    duration: '25 min',
+    level: 'Profissional',
+    content: () => (
+      <>
+        <WarningBox>
+           <strong>Perigo:</strong> Se você usar uma imagem estática por 1 hora, o YouTube pode negar sua monetização alegando "Conteúdo Repetitivo" ou "Baixo Esforço".
+        </WarningBox>
+
+        <p className="text-gray-300 mt-4 mb-6">
+           Você precisa transformar a imagem em um "Cinemagraph" (Foto viva).
+        </p>
+
+        <Step number={1} title="Ferramentas de Animação">
+           1. <strong>Wallpaper Engine (Steam):</strong> Baixe wallpapers animados em 4K, grave a tela (OBS Studio) e use como base. Custa barato e a qualidade é insana.
+           <br/>2. <strong>Motionleap (Mobile):</strong> App que anima água, céu e adiciona overlays de chuva.
+        </Step>
+
+        <Step number={2} title="A Técnica do Canvas Híbrido">
+           No editor de vídeo, coloque uma camada de partículas (poeira, neve, faíscas de fogo) sobre a imagem com opacidade 30%. Isso garante que *todos* os pixels da tela mudem a cada frame, satisfazendo o algoritmo de detecção de movimento do YouTube.
+        </Step>
+      </>
+    )
+  },
+  {
+    id: 'b13_audio_stitching',
+    trackId: 'monetization',
+    title: '13. Audio Stitching: O Loop Invisível',
+    description: 'Técnica de edição para emendar músicas sem cortes bruscos.',
+    duration: '20 min',
+    level: 'Profissional',
+    content: () => (
+      <>
+        <p className="text-gray-300 mb-6">
+          Nada quebra mais a imersão de quem está dormindo do que um silêncio total ou um corte seco quando a música repete.
+        </p>
+
+        <div className="bg-gray-900 p-6 rounded-xl border border-gray-800 mb-6">
+           <h4 className="text-white font-bold mb-4">O Crossfade Manual (Regra dos 10s)</h4>
+           <div className="relative h-20 bg-black rounded-lg overflow-hidden border border-gray-700 flex items-center">
+             <div className="absolute left-0 w-2/3 h-full bg-blue-500/30 border-r border-blue-500 flex items-center justify-center text-xs">Clip A (Terminando)</div>
+             <div className="absolute right-0 w-2/3 h-full bg-green-500/30 border-l border-green-500 flex items-center justify-center text-xs">Clip B (Começando)</div>
+             <div className="absolute left-1/3 right-1/3 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent z-10 flex items-center justify-center">
+                <span className="bg-black/80 px-2 py-1 rounded text-[10px] text-white">Zona de Crossfade (10s)</span>
+             </div>
+           </div>
+        </div>
+
+        <Step number={1} title="Execução">
+           Não coloque um clipe encostado no outro. Coloque o Clip B em uma trilha abaixo, começando 10 segundos antes do Clip A acabar. Aplique "Fade Out" no Clip A e "Fade In" no Clip B durante essa sobreposição.
+        </Step>
+      </>
+    )
+  },
+  {
+    id: 'b14_seo_stacking',
+    trackId: 'monetization',
+    title: '14. SEO Stacking: Dominação de Busca',
+    description: 'A técnica avançada de empilhar palavras-chave para hackear o ranking.',
+    duration: '20 min',
+    level: 'Business',
+    content: () => (
+      <>
+        <p className="text-gray-300 mb-6">
+          O YouTube escaneia seu vídeo em 3 camadas. Você precisa colocar a palavra-chave (ex: "Deep Sleep") em todas elas.
+        </p>
+
+        <ul className="space-y-4">
+           <li className="bg-gray-900 p-4 rounded-lg border-l-4 border-blue-500">
+             <strong className="text-blue-400 block mb-1">Nível 1: Metadados</strong>
+             <span className="text-sm text-gray-400">Título, Descrição e Tags. (O básico).</span>
            </li>
-           <li className="bg-gray-900 p-5 rounded-xl border border-gray-800 hover:border-pink-500 transition-colors">
-              <strong className="text-pink-400 block mb-2 text-lg">Para Canais de Estudo/Lo-fi</strong>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                 Seu público quer produtividade. Venda planners digitais, luminárias de mesa estilo "Aesthetic" ou assinaturas de software como Notion (muitos pagam comissão). Se você usa IA, seja afiliado das ferramentas de IA que você usa.
-              </p>
+           <li className="bg-gray-900 p-4 rounded-lg border-l-4 border-purple-500">
+             <strong className="text-purple-400 block mb-1">Nível 2: Arquivo Bruto (Raw File)</strong>
+             <span className="text-sm text-gray-400">O nome do arquivo .mp4 que você sobe. Renomeie para <code>deep_sleep_music_432hz.mp4</code>. O YouTube lê isso.</span>
+           </li>
+           <li className="bg-gray-900 p-4 rounded-lg border-l-4 border-red-500">
+             <strong className="text-red-400 block mb-1">Nível 3: Legendas Ocultas (Closed Captions)</strong>
+             <span className="text-sm text-gray-400">Mesmo sem fala, você pode subir um arquivo de legenda .srt com marcadores de tempo descritivos: "[00:00] Relaxing deep sleep music starts". Isso conta muito para o SEO.</span>
            </li>
         </ul>
       </>
     )
   },
   {
-    id: 'b13_selling_assets',
+    id: 'b15_shorts_funnel',
     trackId: 'monetization',
-    title: '13. Venda de Ativos Digitais (Gumroad)',
-    description: 'Transforme seus arquivos WAV em produtos para Streamers e RPG.',
-    duration: '20 min',
-    level: 'Profissional',
+    title: '15. O Funil de Shorts (Ponte para o Longo)',
+    description: 'Usando o alcance viral dos Shorts para bombear vídeos de 1 hora.',
+    duration: '15 min',
+    level: 'Business',
     content: () => (
       <>
-        <div className="flex items-center gap-6 bg-gradient-to-r from-purple-900/20 to-transparent p-8 rounded-2xl border border-purple-500/30 mb-8">
-           <ShoppingBag className="w-16 h-16 text-purple-400 shrink-0" />
-           <div>
-             <h3 className="font-bold text-white text-xl">O Modelo "Streamer Safe Pack"</h3>
-             <p className="text-gray-300 text-sm mt-2 leading-relaxed">
-               Streamers da Twitch e YouTubers morrem de medo de levar "Copyright Strike" (DMCA) e perder a monetização de suas lives. Eles precisam desesperadamente de música de fundo segura e de alta qualidade. Você tem gigabytes disso no seu HD.
-             </p>
-           </div>
-        </div>
+        <p className="text-gray-300 mb-6">
+          Shorts dão visualizações rápidas mas pagam mal. Vídeos longos pagam bem mas crescem devagar. O segredo é o <strong>Funil</strong>.
+        </p>
 
-        <h4 className="text-white font-bold mb-4">Como criar seu produto em 24h:</h4>
-        <Step number={1} title="A Oferta Irresistível">
-           1. Selecione suas 50 melhores faixas de Lo-Fi, Synthwave ou Rock instrumental.
-           <br/>2. Empacote em um arquivo ZIP com qualidade alta (WAV ou MP3 320kbps).
-           <br/>3. Crie um produto no <strong>Gumroad</strong> ou <strong>Hotmart</strong> chamado "Streamer Safe Music Pack - 100% DMCA Free".
-           <br/>4. Preço: Entre $15 e $25 USD (venda em dólar para ganhar 5x).
-           <br/>5. Licença (importante): Escreva um texto simples dizendo "Ao comprar, você tem licença vitalícia para usar em suas lives e vídeos monetizados, sem medo de strike. Só é proibido revender as músicas".
-           <br/>6. Coloque o link no topo da descrição de <strong>todos</strong> os seus vídeos: "⬇️ Download this music for your streams".
+        <Step number={1} title="Criação do Teaser">
+           Pegue o melhor momento (o "Hook") da sua música de 3 minutos. Gere um vídeo vertical (9:16).
+           Coloque um texto na tela: "Quer dormir em 5 minutos? Ouça a versão completa 👇".
+        </Step>
+
+        <Step number={2} title="O Link Mágico (Related Video)">
+           No YouTube Studio (PC), ao editar o Short, há um campo chamado "Vídeo Relacionado". Selecione seu vídeo longo de 1 hora.
+           Isso cria um botão clicável "▶️ Created from..." direto na tela do Short. É a única forma de linkar vídeos nativamente.
         </Step>
       </>
     )
   },
   {
-    id: 'b14_community_tab',
+    id: 'b16_global_reach',
     trackId: 'monetization',
-    title: '14. Hackeando a Aba Comunidade',
-    description: 'Como reativar inscritos mortos usando Enquetes de Imagem.',
-    duration: '12 min',
+    title: '16. Localização de Metadados (Alcance Global)',
+    description: 'Como fazer seu vídeo aparecer em buscas em Japonês, Russo e Árabe.',
+    duration: '15 min',
     level: 'Business',
     content: () => (
       <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          A Aba Comunidade do YouTube é frequentemente ignorada, mas ela tem um alcance viral bizarro, muitas vezes maior que os próprios vídeos. O YouTube mostra seus posts de comunidade para pessoas que <strong>ainda não são inscritas</strong> no seu canal, mas assistiram a algo parecido. É uma ferramenta de descoberta poderosa.
+        <p className="text-gray-300 mb-4">
+          Sua música é universal. Por que seu título está só em Inglês?
         </p>
 
+        <ConceptCard title="Tradução Nativa do YouTube" icon={Globe2} color="amber">
+           Vá em Detalhes do Vídeo > Legendas > Adicionar Idioma.
+           <br/>Você pode adicionar traduções oficiais do Título e Descrição.
+           <br/><br/>
+           Se um usuário do Japão buscar por "música para dormir" (em japonês), o YouTube mostrará SEU vídeo com o título traduzido automaticamente. Isso triplica seu alcance potencial.
+        </ConceptCard>
+
         <TipBox>
-           <strong>A Estratégia da Enquete Visual (Image Poll):</strong> 
-           <br/>Não faça enquetes de texto. Faça enquetes de imagem.
-           <br/><br/>
-           Pergunte: "Qual vibe você prefere para o próximo vídeo de relaxamento?"
-           <br/>Opção A: [Imagem de Chuva na Janela gerada no Midjourney]
-           <br/>Opção B: [Imagem de Floresta Mágica gerada no Midjourney]
-           <br/><br/>
-           <strong>Por que funciona?</strong> Pessoas adoram clicar em enquetes visuais, o esforço é zero. Cada clique conta como "engajamento" para o algoritmo. Quando alguém vota, o YouTube entende que essa pessoa está interessada no seu canal e passa a recomendar seus vídeos na Home dela novamente, "ressuscitando" inscritos mortos.
+           Idiomas prioritários para música: Espanhol, Português, Hindi, Árabe, Japonês, Russo e Indonésio.
         </TipBox>
       </>
     )
   },
   {
-    id: 'b15_global_reach',
+    id: 'b17_affiliate',
     trackId: 'monetization',
-    title: '15. Estratégia de Alcance Global',
-    description: 'Como usar metadados traduzidos para ganhar views da Índia, Brasil e Indonésia.',
+    title: '17. Monetização Alternativa (Afiliados)',
+    description: 'Ganhando dinheiro antes mesmo de monetizar com AdSense.',
     duration: '15 min',
     level: 'Business',
     content: () => (
       <>
-        <div className="flex items-center gap-4 mb-6">
-           <Globe2 className="w-10 h-10 text-blue-400" />
-           <p className="text-gray-300 leading-relaxed text-sm">
-             A maior vantagem de fazer música instrumental é que ela <strong>não tem idioma</strong>. Um piano soa igual no Brasil, na Rússia ou na Indonésia. Se você limita seu título ao Português ou Inglês, está deixando 80% do dinheiro na mesa.
-           </p>
-        </div>
-
-        <Step number={1} title="Tradução Automática de Metadados (Nativa do YouTube)">
-           Não coloque títulos misturados (Ex: "Music for Sleep / Musica para Dormir"). Isso confunde o algoritmo. Use a ferramenta certa:
-           <br/><br/>
-           1. No YouTube Studio, vá em <strong>Legendas/CC</strong> no menu lateral.
-           <br/>2. Clique em "Adicionar Idioma".
-           <br/>3. Selecione os mercados gigantes: <strong>Espanhol, Português, Hindi, Indonésio e Árabe</strong>.
-           <br/>4. Copie seu título e descrição, jogue no Google Translate (ou ChatGPT) e cole nos campos correspondentes de cada idioma.
-           <br/><br/>
-           <strong>Resultado Mágico:</strong> Se um usuário da Índia buscar "Sleep Music" em Hindi, o YouTube mostrará seu vídeo com o título e descrição traduzidos automaticamente para Hindi. Para ele, parecerá um conteúdo local. Isso triplica seu CTR global instantaneamente.
-        </Step>
-      </>
-    )
-  },
-  {
-    id: 'b16_analytics_avd',
-    trackId: 'monetization',
-    title: '16. Analytics: AVD e Retenção Relativa',
-    description: 'Como ler o gráfico de retenção para saber se sua música é boa ou chata.',
-    duration: '15 min',
-    level: 'Profissional',
-    content: () => (
-      <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          Esqueça Likes e Comentários. Para canais de música longa, a única métrica que importa para viralizar é o <strong>AVD (Average View Duration)</strong> ou Duração Média da Visualização. O YouTube quer manter as pessoas na plataforma. Se seu vídeo de 1 hora segura as pessoas por 20 minutos, o algoritmo vai promovê-lo insanamente.
+        <p className="text-gray-300 mb-6">
+          Não deixe a descrição vazia. Ela é um outdoor imobiliário. Venda produtos que resolvam o problema do seu público.
         </p>
 
-        <div className="flex gap-4 mb-6">
-           <div className="flex-1 bg-gray-900 border border-gray-800 p-4 rounded text-center">
-              <BarChart4 className="w-8 h-8 text-green-500 mx-auto mb-2"/>
-              <h4 className="font-bold text-white">AVD (Duração Média)</h4>
-              <p className="text-xs text-gray-400 mt-2">
-                Meta: <strong>30% a 40%</strong> em vídeos de 1 hora. <br/>Se conseguir 15-20 minutos de média, o vídeo tem potencial de milhões de views.
-              </p>
+        <div className="grid md:grid-cols-2 gap-4">
+           <div className="bg-gray-800 p-4 rounded-lg">
+             <strong className="text-purple-400 block mb-2">Canal de Sono/Lofi</strong>
+             <p className="text-sm text-gray-400">Amazon Associates: Fones de ouvido com cancelamento de ruído, luminárias RGB, cadeiras confortáveis, chás de camomila.</p>
            </div>
-           <div className="flex-1 bg-gray-900 border border-gray-800 p-4 rounded text-center">
-              <Target className="w-8 h-8 text-red-500 mx-auto mb-2"/>
-              <h4 className="font-bold text-white">Dips (Quedas)</h4>
-              <p className="text-xs text-gray-400 mt-2">
-                Olhe o gráfico. Quedas bruscas significam que a música ficou chata, alta demais ou mudou de ritmo. Use o editor do YouTube para cortar esse trecho pós-upload.
-              </p>
+           <div className="bg-gray-800 p-4 rounded-lg">
+             <strong className="text-green-400 block mb-2">Canal de Foco/Gym</strong>
+             <p className="text-sm text-gray-400">ClickBank/Hotmart: Suplementos, Planners digitais, Apps de produtividade, Equipamentos de treino.</p>
            </div>
         </div>
-        <WarningBox>
-           <strong>A Intro é a Morte:</strong> Em canais de música, <strong>JAMAIS faça introdução falada</strong> ("Olá pessoal, se inscrevam..."). Nem introdução visual de logo de 10 segundos.
-           <br/>A música deve começar no milissegundo 0:00. O usuário clicou para ouvir, não para esperar. Qualquer segundo de silêncio ou fala no início fará 50% das pessoas fecharem o vídeo imediatamente (Bounce Rate).
-        </WarningBox>
+
+        <p className="text-gray-300 text-sm mt-4">
+           Coloque o link na primeira linha da descrição: "🎵 O fone que eu uso para produzir: [Link]".
+        </p>
       </>
     )
   },
   {
-    id: 'b17_outsourcing',
+    id: 'b18_community_tab',
     trackId: 'monetization',
-    title: '17. Escala: Terceirização (SOPs)',
-    description: 'Como contratar editores baratos para gerenciar 5 canais simultaneamente.',
-    duration: '18 min',
+    title: '18. Hack de Engajamento: Aba Comunidade',
+    description: 'Como reativar inscritos mortos e validar ideias.',
+    duration: '10 min',
     level: 'Business',
     content: () => (
       <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          Você começou como "Eu-quipe", fazendo tudo. Mas para ter um Império de 5 ou 10 canais, você precisa se tornar CEO. Tarefas repetitivas (como fazer o loop de 1 hora ou criar a thumbnail) devem ser delegadas assim que o primeiro canal der lucro ($300-$500/mês). Use esse dinheiro para comprar seu tempo de volta.
+        <p className="text-gray-300 mb-4">
+          A Aba Comunidade (Community Tab) aparece no feed até de quem não ativou o sininho.
         </p>
 
-        <h3 className="text-white font-bold mb-4">O Protocolo de Delegação (SOP)</h3>
-        <ul className="list-disc list-inside space-y-4 text-gray-300">
-           <li className="leading-relaxed"><strong>Grave o Processo:</strong> Use o Loom para gravar sua tela enquanto você faz a edição do vídeo, o loop e a thumbnail. Narre o que está fazendo. Esse vídeo é o seu "Treinamento".</li>
-           <li className="leading-relaxed"><strong>Onde contratar:</strong> Sites como <strong>VintePila</strong> (Brasil) ou <strong>OnlineJobs.ph</strong> (Filipinas) têm editores dispostos a fazer trabalhos simples por valores acessíveis. A tarefa de "Looping" é mecânica e barata.</li>
-           <li className="leading-relaxed"><strong>Seu novo papel:</strong> Você para de editar e foca apenas na <strong>Inteligência</strong>: Gerar Prompts no Suno, Análise de Dados (quais nichos estão em alta) e Controle de Qualidade final.</li>
-        </ul>
-      </>
-    )
-  },
-  {
-    id: 'b18_protecting_asset',
-    trackId: 'monetization',
-    title: '18. Proteção de Ativo (Content ID)',
-    description: 'Nuances sobre direitos autorais em IA e como evitar re-uploads.',
-    duration: '15 min',
-    level: 'Business',
-    content: () => (
-      <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          O YouTube é uma selva. Se seu canal crescer, ele <strong>vai</strong> ser copiado. Canais "Sanguessugas" vão baixar seu vídeo e postar no canal deles. Como a lei de Copyright para IA ainda é uma área cinzenta, a melhor proteção é a estratégia técnica.
-        </p>
-
-        <Step number={1} title="Defesa em Camadas">
-           1. <strong>Marca d'água Queimada:</strong> Sempre coloque o logo do seu canal com 5% a 10% de opacidade no canto do vídeo durante a renderização (não use apenas a ferramenta de marca d'água do YouTube, pois ela não fica no arquivo baixado). Isso torna o re-upload "sujo" e difícil de limpar.
-           <br/><br/>
-           2. <strong>Metadados de Autoridade:</strong> A melhor proteção é ser o primeiro. Se você postar primeiro e tiver mais views, o algoritmo do YouTube saberá que você é a fonte original (Source of Truth). Ele priorizará seu vídeo nas buscas.
-           <br/><br/>
-           3. <strong>Content ID (Cuidado):</strong> Se você usa uma distribuidora (como DistroKid) para lançar no Spotify, o Content ID do YouTube será ativado automaticamente. Isso protegerá seu vídeo, mas cuidado: As distribuidoras estão banindo contas de IA pura. Use com cautela ou prefira focar apenas na monetização do YouTube (AdSense) sem distribuidora externa.
+        <Step number={1} title="Enquetes Visuais (Image Polls)">
+           O YouTube adora enquetes de imagem. Elas têm engajamento altíssimo pois exigem apenas um clique.
+           <br/>Poste duas capas de álbum geradas por IA e pergunte: "Qual vibe vocês querem no próximo vídeo? A ou B?".
         </Step>
+
+        <p className="text-gray-300 text-sm">
+           Isso cria um compromisso. Quem votou na opção A sente que "ajudou a criar" o vídeo e vai clicar quando ele sair.
+        </p>
       </>
     )
   },
   {
-    id: 'b19_playlists_power',
+    id: 'b19_outsourcing',
     trackId: 'monetization',
-    title: '19. O Poder das Playlists Internas',
-    description: 'Aumentando o "Session Time" e criando jornadas para o usuário.',
-    duration: '12 min',
-    level: 'Business',
+    title: '19. Automação e Terceirização (Scaling)',
+    description: 'Como gerenciar 5 canais ao mesmo tempo sem ficar louco.',
+    duration: '20 min',
+    level: 'Masterclass',
     content: () => (
       <>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          O YouTube tem uma métrica secreta chamada <strong>"Session Time"</strong>. É o tempo total que o usuário fica no site depois de clicar no seu vídeo. Se alguém assiste seu vídeo e depois sai do YouTube, isso é ruim. Se alguém assiste seu vídeo e depois assiste <i>outro</i> vídeo seu, seu canal ganha muitos pontos de autoridade.
-        </p>
-
-        <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-            <h4 className="text-white font-bold mb-4 flex items-center gap-2"><Layers className="w-5 h-5 text-purple-400"/> A Estratégia da Jornada Diária</h4>
-            <p className="text-gray-300 text-sm mb-4">
-              Não crie playlists aleatórias. Crie playlists baseadas na <strong>Rotina do Usuário</strong>. Guie ele pelo dia.
-            </p>
-            <ul className="space-y-3 text-gray-300 text-sm">
-                <li>• <strong>07:00 AM:</strong> Playlist "⚡ Morning Focus & Energy" (Jazz Animado/Lo-Fi rápido)</li>
-                <li>• <strong>02:00 PM:</strong> Playlist "📚 Deep Work Afternoon" (Binaural/Concentração)</li>
-                <li>• <strong>10:00 PM:</strong> Playlist "🌙 Instant Sleep & Insomnia Relief" (Ambient/432Hz)</li>
-            </ul>
-            <p className="text-gray-400 text-xs mt-4 italic">
-               Dica Pro: Coloque o link da Playlist "Próximo Passo" na <strong>Tela Final</strong> e no <strong>Card</strong> dos vídeos. Se o usuário está ouvindo a música de foco, sugira a de descanso para depois. Mantenha ele no seu ecossistema 24h.
-            </p>
+        <div className="flex items-center gap-4 bg-gray-900 p-6 rounded-xl border border-gray-800 mb-6">
+           <Users className="w-10 h-10 text-blue-500" />
+           <div>
+              <h3 className="text-white font-bold">Mentalidade de CEO</h3>
+              <p className="text-gray-400 text-sm">Você deve trabalhar NO negócio, não PARA o negócio. O trabalho braçal (looping, upload) deve ser delegado.</p>
+           </div>
         </div>
+
+        <Step number={1} title="Crie um SOP (Standard Operating Procedure)">
+           Grave a tela do seu computador fazendo o processo inteiro de um vídeo (Gerar Suno -> Midjourney -> CapCut -> Upload). Fale explicando.
+        </Step>
+
+        <Step number={2} title="Contrate Barato">
+           Vá no Workana ou VintePila. Envie o vídeo do SOP. Pague R$ 20 - R$ 50 por pacote de vídeos. Seu tempo vale muito mais que isso focado em estratégia e novos canais.
+        </Step>
       </>
     )
   },
   {
     id: 'b20_exit_strategy',
     trackId: 'monetization',
-    title: '20. O Grande Cheque: Exit Strategy',
-    description: 'Como vender seu canal por 30x o lucro mensal em sites como Flippa.',
-    duration: '20 min',
-    level: 'Profissional',
+    title: '20. O Grande Cheque: Vendendo o Canal (Exit)',
+    description: 'Como vender seu canal monetizado por 30x o lucro mensal.',
+    duration: '25 min',
+    level: 'Masterclass',
     content: () => (
       <>
-        <div className="bg-green-900/20 border border-green-500/30 p-8 rounded-2xl mb-8 shadow-2xl">
-           <h3 className="text-2xl font-bold text-green-400 flex items-center gap-3 mb-4"><DollarSign className="w-8 h-8"/> O "Exit" (A Saída)</h3>
-           <p className="text-gray-200 text-lg leading-relaxed">
-             A maioria dos YouTubers acha que vai viver de AdSense para sempre. O Empreendedor Digital sabe que o maior lucro está na <strong>VENDA do ativo</strong>. Canais "Faceless" (sem rosto) são ativos extremamente líquidos e fáceis de vender porque não dependem da sua imagem. Investidores compram esses canais para diversificar renda, assim como compram apartamentos para alugar.
+        <div className="bg-gradient-to-r from-green-900 to-emerald-900 p-8 rounded-3xl text-center border border-green-500/30 shadow-2xl relative overflow-hidden mb-8">
+           <DollarSign className="absolute top-0 left-0 text-green-500/10 w-48 h-48 -rotate-12" />
+           <h2 className="text-3xl font-bold text-white mb-2 relative z-10">O Jogo do Equity</h2>
+           <p className="text-green-200 text-lg relative z-10">
+             Canais Dark são ativos digitais. Eles têm valor de mercado (Valuation).
            </p>
         </div>
-        
-        <h3 className="text-xl font-bold text-white mb-4">A Matemática da Venda (Valuation)</h3>
-        <ul className="space-y-4 text-gray-300 mb-8 bg-black/20 p-6 rounded-xl border border-gray-800">
-           <li className="flex justify-between border-b border-gray-700 pb-2">
-             <span>Lucro Mensal Médio (últimos 6-12 meses):</span>
-             <span className="font-bold text-white">$1.000 (R$ 5.000)</span>
-           </li>
-           <li className="flex justify-between border-b border-gray-700 pb-2">
-             <span>Multiplicador de Mercado (Padrão):</span>
-             <span className="font-bold text-white">24x a 36x</span>
-           </li>
-           <li className="flex justify-between pt-2">
-             <span className="text-green-400 font-bold">Valor de Venda (À Vista):</span>
-             <span className="font-bold text-green-400 text-xl">$24.000 - $36.000 <br/><span className="text-sm font-normal text-gray-500">(R$ 120k - R$ 180k)</span></span>
-           </li>
-        </ul>
 
-        <p className="text-gray-300 leading-relaxed mb-8">
-           Sites como <strong>Flippa</strong>, <strong>Empire Flippers</strong> e <strong>Mid-Man</strong> são marketplaces seguros e regulamentados onde você pode listar seu canal para venda.
-           <br/><br/>
-           <strong>O Plano Final:</strong> Construa o canal desde o dia 1 pensando que ele é uma empresa que pode ser vendida, não um diário pessoal. Mantenha as métricas limpas, não leve strikes e mantenha uma receita estável. Quando cansar, venda-o pelo preço de um carro de luxo ou um apartamento.
+        <p className="text-gray-300 mb-6">
+           Se seu canal lucra $500/mês de forma passiva (AdSense), ele vale entre <strong>24x a 36x</strong> esse valor no mercado.
+           Ou seja, você pode vendê-lo por <strong>$12.000 a $18.000</strong> à vista.
         </p>
-        
-        <div className="text-center py-8">
-          <p className="font-bold text-white text-2xl animate-pulse">
-             Você completou a Masterclass. <br/>Agora vá construir seu Império.
-          </p>
+
+        <Step number={1} title="Onde Vender?">
+           Sites como <strong>Flippa</strong>, <strong>Empire Flippers</strong> ou grupos privados de investidores de mídia.
+        </Step>
+
+        <Step number={2} title="Preparação para Venda">
+           Mantenha a contabilidade limpa. Não misture canais no mesmo AdSense se planeja vender separadamente. O comprador quer ver um histórico de 6 a 12 meses de receita estável.
+        </Step>
+
+        <div className="mt-8 text-center text-gray-500 italic text-sm border-t border-gray-800 pt-6">
+           Parabéns. Você completou a trilha de Negócios. Agora você tem o conhecimento técnico (Suno) e estratégico (YouTube) para construir seu império.
         </div>
       </>
     )
   }
 ];
 
-export const ALL_LESSONS = [...CREATION_LESSONS, ...ADVANCED_BUSINESS_LESSONS];
+// --- TRILHA BÔNUS: DICAS DE MESTRE (MANTIDA A VERSÃO ENRICHED) ---
 
-// Definição das Trilhas para a Sidebar
+export const BONUS_LESSONS: Lesson[] = [
+  {
+    id: 'bonus1_mastering_lufs',
+    trackId: 'bonus',
+    title: '1. O Segredo do LUFS (Masterização Profissional)',
+    description: 'Por que sua música soa "baixa" perto de artistas famosos e a ciência do Loudness.',
+    duration: '20 min',
+    level: 'Masterclass',
+    content: () => (
+      <>
+        <div className="bg-gradient-to-r from-yellow-900/40 to-amber-900/40 border border-yellow-500/50 p-6 rounded-xl mb-8 shadow-[0_0_30px_rgba(234,179,8,0.1)]">
+           <h2 className="text-2xl font-bold text-yellow-400 mb-4 flex items-center gap-3">
+             <Speaker className="w-6 h-6 animate-pulse"/> A Guerra do Volume
+           </h2>
+           <p className="text-gray-200 leading-relaxed mb-4">
+             O áudio cru do Suno geralmente sai a <strong>-18 LUFS</strong> (Loudness Units Full Scale). As músicas profissionais no Spotify tocam a <strong>-14 LUFS</strong>, e no YouTube Music podem chegar a <strong>-9 LUFS</strong> (muito mais alto).
+           </p>
+           <p className="text-gray-200 leading-relaxed">
+             Se sua música for baixa, o cérebro humano interpreta como "baixa qualidade" e pula. Você precisa <strong>Normalizar e Limitar</strong>.
+           </p>
+        </div>
+
+        <Step number={1} title="A Solução Gratuita: BandLab Mastering">
+           Não precisa pagar engenheiro. A IA do BandLab resolve isso em segundos.
+           <br/><br/>
+           1. Acesse <strong>BandLab Mastering (Web)</strong>.
+           <br/>2. Arraste seu arquivo WAV do Suno.
+           <br/>3. Escolha o preset:
+           <ul className="list-disc list-inside ml-4 mt-2 text-gray-400 text-sm">
+             <li><strong>Fire:</strong> Para Phonk, Gym e Trap (Foco em Graves e Pancada).</li>
+             <li><strong>Universal:</strong> Para Pop, Lofi e Acústico (Equilíbrio).</li>
+             <li><strong>Tape:</strong> Para Jazz e Soul (Adiciona calor analógico).</li>
+           </ul>
+        </Step>
+      </>
+    )
+  },
+  {
+    id: 'bonus2_neuro_lyrics',
+    trackId: 'bonus',
+    title: '2. Copywriting Musical: O Efeito "Open Loop"',
+    description: 'Técnicas de neurociência para fazer a pessoa ouvir a letra até o final.',
+    duration: '20 min',
+    level: 'Masterclass',
+    content: () => (
+      <>
+        <p className="text-gray-300 leading-relaxed mb-6">
+          Grandes compositores como Taylor Swift usam o conceito de <strong>"Storytelling Gap"</strong>. Eles abrem uma pergunta na primeira frase que só é respondida no refrão.
+        </p>
+
+        <ComparisonTable 
+          title="Técnica do Gancho (The Hook)"
+          leftTitle="Letra Amadora (Descritiva)"
+          rightTitle="Letra Profissional (Misteriosa)"
+          leftItems={[
+            "O dia estava bonito",
+            "Eu acordei e tomei café",
+            "Fui para a rua caminhar"
+          ]}
+          rightItems={[
+            "Você disse que nunca voltaria",
+            "Mas vi sua sombra na minha porta",
+            "Por que você mentiu?"
+          ]}
+        />
+        
+        <TipBox>
+           <strong>Prompt Secreto:</strong> Peça ao ChatGPT: <em>"Reescreva esta letra usando a técnica 'In Media Res' (começar no meio da ação) e crie um mistério na primeira estrofe."</em>
+        </TipBox>
+      </>
+    )
+  },
+  {
+    id: 'bonus3_color_theory',
+    trackId: 'bonus',
+    title: '3. Teoria das Cores para Thumbnails',
+    description: 'A regra 60-30-10 e cores complementares para explodir seu CTR.',
+    duration: '15 min',
+    level: 'Masterclass',
+    content: () => (
+      <>
+        <p className="text-gray-300 leading-relaxed mb-6">
+          O YouTube é um mar de vermelho e branco. Para se destacar, você deve usar a <strong>Roda de Cores</strong> a seu favor. O olho humano é programado para notar contraste.
+        </p>
+
+        <div className="grid md:grid-cols-2 gap-4 mt-6">
+           <div className="bg-gray-900 p-5 rounded-xl border border-gray-800">
+              <strong className="text-yellow-400 block mb-2">Combinação Lofi (Complementar)</strong>
+              <p className="text-gray-400 text-sm">
+                 Roxo (Fundo) + Amarelo (Luz da Janela/Texto).
+                 <br/>O amarelo é o oposto do roxo na roda de cores, criando vibração máxima.
+              </p>
+           </div>
+           <div className="bg-gray-900 p-5 rounded-xl border border-gray-800">
+              <strong className="text-cyan-400 block mb-2">Combinação Tech/Futuro</strong>
+              <p className="text-gray-400 text-sm">
+                 Preto (Fundo) + Ciano Neon ou Magenta.
+                 <br/>O alto contraste com o preto cria a sensação de "brilho".
+              </p>
+           </div>
+        </div>
+
+        <Step number={1} title="A Regra 60-30-10">
+           Ao criar sua capa no Canva/Midjourney:
+           <br/>- <strong>60%</strong> Cor Dominante (Fundo/Ambiente)
+           <br/>- <strong>30%</strong> Cor Secundária (Objetos)
+           <br/>- <strong>10%</strong> Cor de Ação (Texto ou Ponto Focal em cor oposta)
+        </Step>
+      </>
+    )
+  },
+  {
+    id: 'bonus4_legal_shield',
+    trackId: 'bonus',
+    title: '4. O Escudo Jurídico (Disputando Claims)',
+    description: 'O texto exato para copiar e colar caso o YouTube marque sua música.',
+    duration: '25 min',
+    level: 'Masterclass',
+    content: () => (
+      <>
+        <div className="flex items-center gap-4 bg-red-900/20 p-6 rounded-xl border border-red-500/30 mb-6">
+           <ShieldCheck className="w-12 h-12 text-red-400" />
+           <div>
+             <h3 className="text-xl font-bold text-white">Strike vs. Claim</h3>
+             <p className="text-gray-300 text-sm">
+               <strong>Strike:</strong> Penalidade grave. Seu canal pode cair.<br/>
+               <strong>Content ID Claim:</strong> Apenas redireciona o dinheiro do vídeo para outra pessoa. É comum em IA e 99% das vezes é erro.
+             </p>
+           </div>
+        </div>
+
+        <p className="text-gray-300 mb-4">Se você tem a assinatura paga do Suno, você tem a licença comercial. Se receber um Claim, não aceite. Dispute.</p>
+
+        <div className="bg-gray-900 p-4 rounded-lg border-l-4 border-green-500">
+           <h4 className="text-green-400 font-bold mb-2 text-sm uppercase">Modelo de Disputa (Copie e Cole)</h4>
+           <CodeBlock>
+             "I dispute this claim on the grounds that I possess a valid commercial license for the audio content utilized in this video. 
+             <br/><br/>
+             This track was generated using Suno AI under a paid [Pro/Premier] Subscription, which explicitly grants me, the creator, full ownership and commercial rights to the generated output, in accordance with Suno's Terms of Service (Section 2 - Commercial Rights).
+             <br/><br/>
+             Please release this claim immediately as it holds no legal merit."
+           </CodeBlock>
+        </div>
+      </>
+    )
+  },
+  {
+    id: 'bonus5_alchemy_frequencies',
+    trackId: 'bonus',
+    title: '5. A Alquimia das Frequências (432Hz & Binaural)',
+    description: 'Transforme o áudio padrão em "Música de Cura" para dobrar a retenção.',
+    duration: '30 min',
+    level: 'Masterclass',
+    content: () => (
+      <>
+        <div className="relative overflow-hidden bg-gradient-to-br from-indigo-900 to-violet-900 border border-indigo-500/30 p-8 rounded-2xl mb-8 shadow-2xl">
+           <div className="absolute top-0 right-0 p-8 opacity-10">
+              <Zap className="w-40 h-40 text-white" />
+           </div>
+           
+           <h2 className="text-3xl font-bold text-white mb-4 flex items-center gap-3 relative z-10">
+             <Activity className="w-8 h-8 text-indigo-400"/> O Segredo da Retenção
+           </h2>
+           <p className="text-indigo-100 text-lg leading-relaxed relative z-10">
+             Música padrão é afinada em <strong>440Hz</strong>. Porém, nos nichos de Meditação, Estudo e Sono, o público busca frequências específicas que "hackeiam" o cérebro.
+             <br/><br/>
+             Transformar sua música Suno para <strong>432Hz</strong> (Frequência do Universo) ou <strong>528Hz</strong> (Frequência do Milagre) não é misticismo, é física. O som fica mais "macio" e menos cansativo, fazendo a pessoa ouvir por horas.
+           </p>
+        </div>
+
+        <Step number={1} title="A Conversão no Audacity (Grátis)">
+           1. Baixe o <strong>Audacity</strong> (Software gratuito de áudio).
+           <br/>2. Importe sua música do Suno.
+           <br/>3. Selecione a faixa inteira (Ctrl + A).
+           <br/>4. Vá em <strong>Efeitos > Alterar Tom (Change Pitch)</strong>.
+           <br/>5. Na caixa "Frequência (Hz)", mude de <strong>440</strong> para <strong>432</strong>.
+           <br/>6. Aplique. A música ficará levemente mais grave e muito mais relaxante.
+        </Step>
+
+        <TipBox>
+           <strong>Marketing:</strong> Coloque no título do vídeo: <em>"432Hz Miracle Tone"</em> ou <em>"Binaural Beats for Focus"</em>. Esses termos têm volumes de busca gigantescos e pouca concorrência de qualidade.
+        </TipBox>
+      </>
+    )
+  }
+];
+
+// --- EXPORTS ---
+
+export const ALL_LESSONS = [...CREATION_LESSONS, ...ADVANCED_BUSINESS_LESSONS, ...BONUS_LESSONS];
+
 export const TRACKS: Track[] = [
   {
     id: 'creation',
@@ -1609,6 +1562,12 @@ export const TRACKS: Track[] = [
     title: 'YouTube Music Empire',
     icon: Youtube, 
     lessons: ADVANCED_BUSINESS_LESSONS
+  },
+  {
+    id: 'bonus',
+    title: 'Bônus: Dicas de Mestre',
+    icon: Star,
+    lessons: BONUS_LESSONS
   }
 ];
 

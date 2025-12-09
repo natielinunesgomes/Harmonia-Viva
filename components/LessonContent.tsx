@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { ArrowRight, AlertCircle, CheckCircle, ExternalLink, Check, Lightbulb } from 'lucide-react';
 import { Lesson } from '../types';
-import { ALL_LESSONS } from '../constants';
+import { ALL_LESSONS, TRACKS } from '../constants';
 import { useProgress } from '../contexts/ProgressContext';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const LessonContent: React.FC<Props> = ({ lesson, onComplete }) => {
-  const { markAsCompleted, triggerConfetti, completedLessons } = useProgress();
+  const { markAsCompleted, triggerConfetti, triggerGraduation, completedLessons } = useProgress();
   
   // Check if it's the last lesson globally
   const isLastLesson = ALL_LESSONS[ALL_LESSONS.length - 1].id === lesson.id;
@@ -23,22 +23,55 @@ export const LessonContent: React.FC<Props> = ({ lesson, onComplete }) => {
     // 1. Mark as complete
     markAsCompleted(lesson.id);
     
-    // 2. Visual Reward
-    triggerConfetti();
+    // 2. Determine Celebration Type (Standard vs Graduation)
+    // Find the track this lesson belongs to
+    const currentTrack = TRACKS.find(t => t.id === lesson.trackId);
+    
+    if (currentTrack) {
+      // Get the last lesson ID of this specific track
+      const lastLessonIdOfTrack = currentTrack.lessons[currentTrack.lessons.length - 1].id;
+      
+      // If this is the last lesson of the track, trigger Graduation
+      if (lesson.id === lastLessonIdOfTrack) {
+        triggerGraduation();
+      } else {
+        // Otherwise, standard confetti
+        triggerConfetti();
+      }
+    } else {
+      triggerConfetti();
+    }
 
     // 3. Navigate after short delay
+    // If graduation, wait a bit longer to enjoy the animation
+    const delay = 1500; // Keep navigation snappy, animation can persist or fade
     setTimeout(() => {
       onComplete();
-    }, 1500);
+    }, delay);
   };
+
+  // Badge Logic
+  let badgeClass = "bg-gray-500/10 text-gray-400";
+  let trackName = "Curso";
+  
+  if (lesson.trackId === 'creation') {
+    badgeClass = "bg-pink-500/10 text-pink-500";
+    trackName = "Masterclass v5";
+  } else if (lesson.trackId === 'monetization') {
+    badgeClass = "bg-green-500/10 text-green-500";
+    trackName = "Business";
+  } else if (lesson.trackId === 'bonus') {
+    badgeClass = "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30";
+    trackName = "Dicas de Mestre"; // Updated name
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-12">
       {/* Header */}
       <div className="border-b border-gray-800 pb-6">
-        <div className="flex items-center gap-3 text-sm text-pink-500 font-semibold mb-2">
-          <span className="bg-pink-500/10 px-3 py-1 rounded-full uppercase tracking-wider text-xs flex items-center gap-2">
-            {lesson.trackId === 'creation' ? 'Masterclass v5' : 'Business'}
+        <div className="flex items-center gap-3 text-sm font-semibold mb-2">
+          <span className={`${badgeClass} px-3 py-1 rounded-full uppercase tracking-wider text-xs flex items-center gap-2`}>
+            {trackName}
             {isCompleted && <Check className="w-3 h-3" />}
           </span>
           <span className="text-gray-500">•</span>

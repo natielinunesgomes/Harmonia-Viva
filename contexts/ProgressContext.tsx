@@ -4,7 +4,9 @@ interface ProgressContextType {
   completedLessons: string[];
   markAsCompleted: (lessonId: string) => void;
   isConfettiActive: boolean;
+  isGraduationActive: boolean; // Novo estado
   triggerConfetti: () => void;
+  triggerGraduation: () => void; // Nova função
   getTrackProgress: (trackLessons: { id: string }[]) => number;
 }
 
@@ -29,6 +31,7 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   });
 
   const [isConfettiActive, setIsConfettiActive] = useState(false);
+  const [isGraduationActive, setIsGraduationActive] = useState(false); // Estado inicial
 
   useEffect(() => {
     localStorage.setItem('harmonia_progress', JSON.stringify(completedLessons));
@@ -42,8 +45,15 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const triggerConfetti = () => {
     setIsConfettiActive(true);
-    // Reset after animation duration (approx 3s)
-    setTimeout(() => setIsConfettiActive(false), 3000);
+    // Increased duration to 5000ms to allow stars to fall gently to the bottom
+    setTimeout(() => setIsConfettiActive(false), 5000);
+  };
+
+  // Nova função de celebração maior
+  const triggerGraduation = () => {
+    setIsGraduationActive(true);
+    // Dura um pouco mais que o confete
+    setTimeout(() => setIsGraduationActive(false), 4500);
   };
 
   const getTrackProgress = (trackLessons: { id: string }[]) => {
@@ -57,7 +67,9 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       completedLessons, 
       markAsCompleted, 
       isConfettiActive, 
+      isGraduationActive,
       triggerConfetti,
+      triggerGraduation,
       getTrackProgress
     }}>
       {children}

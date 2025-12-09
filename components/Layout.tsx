@@ -1,5 +1,5 @@
 import React, { useState, useCallback, memo } from 'react';
-import { Music, Menu, X, Youtube, Wand2, LucideIcon, CheckCircle2, Trophy } from 'lucide-react';
+import { Music, Menu, X, Youtube, Wand2, LucideIcon, CheckCircle2, Trophy, Star } from 'lucide-react';
 import { NavLink, Link, Outlet, useLocation } from 'react-router-dom';
 import { TRACKS } from '../constants';
 import { useProgress } from '../contexts/ProgressContext';
@@ -87,30 +87,55 @@ const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => {
 
         {/* Dynamic Tracks */}
         {TRACKS.map((track) => {
-          const isCreation = track.id === 'creation';
           const progress = getTrackProgress(track.lessons);
           const isComplete = progress === 100;
+          const isBonus = track.id === 'bonus';
+          const isCreation = track.id === 'creation';
 
-          const titleColor = isComplete 
-            ? 'text-yellow-400' 
-            : (isCreation ? 'text-pink-400' : 'text-green-400');
-            
-          const borderColor = isComplete
-            ? 'border-yellow-500'
-            : (isCreation ? 'border-pink-500' : 'border-green-500');
-            
-          const bgHeader = isCreation ? 'from-pink-900/10' : 'from-green-900/10';
-          
-          const activeColor = isCreation ? 'text-pink-200' : 'text-green-200';
-          const activeBg = isCreation ? 'bg-pink-500/10' : 'bg-green-500/10';
-          const activeBorder = isCreation ? 'border-pink-500/20' : 'border-green-500/20';
+          // Visual Logic
+          let titleColor, borderColor, bgHeader, activeColor, activeBg, activeBorder, progressBarColor;
+
+          if (isBonus) {
+             titleColor = 'text-yellow-400';
+             borderColor = 'border-yellow-500';
+             bgHeader = 'from-yellow-900/20';
+             activeColor = 'text-yellow-200';
+             activeBg = 'bg-yellow-500/10';
+             activeBorder = 'border-yellow-500/30';
+             progressBarColor = 'bg-yellow-500';
+          } else if (isComplete) {
+             titleColor = 'text-yellow-400';
+             borderColor = 'border-yellow-500';
+             bgHeader = isCreation ? 'from-pink-900/10' : 'from-green-900/10'; // Keep base nuance
+             activeColor = 'text-yellow-200';
+             activeBg = 'bg-yellow-500/10';
+             activeBorder = 'border-yellow-500/30';
+             progressBarColor = 'bg-yellow-500';
+          } else if (isCreation) {
+             titleColor = 'text-pink-400';
+             borderColor = 'border-pink-500';
+             bgHeader = 'from-pink-900/10';
+             activeColor = 'text-pink-200';
+             activeBg = 'bg-pink-500/10';
+             activeBorder = 'border-pink-500/20';
+             progressBarColor = 'bg-pink-600';
+          } else {
+             // Monetization
+             titleColor = 'text-green-400';
+             borderColor = 'border-green-500';
+             bgHeader = 'from-green-900/10';
+             activeColor = 'text-green-200';
+             activeBg = 'bg-green-500/10';
+             activeBorder = 'border-green-500/20';
+             progressBarColor = 'bg-green-600';
+          }
 
           return (
             <div key={track.id} className="pb-2">
               <div className={`py-2 px-6 mb-2 bg-gradient-to-r ${bgHeader} to-transparent border-l-4 ${borderColor}`}>
                 <div className="flex items-center justify-between mb-1">
-                  <h3 className={`text-sm font-bold uppercase tracking-wider flex items-center gap-2 ${titleColor}`}>
-                    {isComplete ? <Trophy className="w-4 h-4" /> : <track.icon className="w-4 h-4" />}
+                  <h3 className={`text-sm font-bold uppercase tracking-wider flex items-center gap-2 ${titleColor} ${isBonus ? 'animate-pulse' : ''}`}>
+                    {isBonus ? <Star className="w-4 h-4 fill-yellow-500" /> : (isComplete ? <Trophy className="w-4 h-4" /> : <track.icon className="w-4 h-4" />)}
                     {track.title}
                   </h3>
                   <span className={`text-[10px] font-bold ${titleColor}`}>{progress}%</span>
@@ -118,7 +143,7 @@ const SidebarContent = memo(({ onClose }: { onClose?: () => void }) => {
                 {/* Progress Bar */}
                 <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
                   <div 
-                    className={`h-full transition-all duration-1000 ease-out ${isComplete ? 'bg-yellow-500' : (isCreation ? 'bg-pink-600' : 'bg-green-600')}`}
+                    className={`h-full transition-all duration-1000 ease-out ${progressBarColor}`}
                     style={{ width: `${progress}%` }}
                   />
                 </div>
