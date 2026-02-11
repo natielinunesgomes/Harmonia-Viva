@@ -1,8 +1,8 @@
 
 import React, { useMemo } from 'react';
-import { ArrowRight, AlertCircle, CheckCircle, ExternalLink, Check, Lightbulb, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, AlertCircle, CheckCircle, ExternalLink, Check, Lightbulb } from 'lucide-react';
 import { Lesson } from '../types';
-import { ALL_LESSONS, TRACKS } from '../constants';
+import { ALL_LESSONS } from '../constants';
 import { useProgress } from '../contexts/ProgressContext';
 
 interface Props {

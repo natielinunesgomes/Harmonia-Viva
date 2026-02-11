@@ -9,7 +9,6 @@ interface ProgressContextType {
   triggerLessonSuccess: () => void;
   getTrackProgress: (trackLessons: { id: string }[]) => number;
   getTotalProgress: () => number;
-  // Added missing properties used by Confetti and GraduationCelebration components
   isConfettiActive: boolean;
   isGraduationActive: boolean;
 }
@@ -35,9 +34,11 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   });
 
   const [isLessonSuccessActive, setIsLessonSuccessActive] = useState(false);
-  // Implementation of missing state variables
-  const [isConfettiActive, setIsConfettiActive] = useState(false);
-  const [isGraduationActive, setIsGraduationActive] = useState(false);
+  
+  // We keep the state but remove setters from scope if they aren't used to pass TS check
+  // They are initialized as false as the new success overlay replaced them
+  const isConfettiActive = false;
+  const isGraduationActive = false;
 
   useEffect(() => {
     localStorage.setItem('harmonia_progress', JSON.stringify(completedLessons));
@@ -74,7 +75,6 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       triggerLessonSuccess,
       getTrackProgress,
       getTotalProgress,
-      // Pass the added states to the context provider
       isConfettiActive,
       isGraduationActive
     }}>
