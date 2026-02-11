@@ -1,5 +1,6 @@
+
 import React, { useMemo } from 'react';
-import { ArrowRight, AlertCircle, CheckCircle, ExternalLink, Check, Lightbulb } from 'lucide-react';
+import { ArrowRight, AlertCircle, CheckCircle, ExternalLink, Check, Lightbulb, CheckCircle2 } from 'lucide-react';
 import { Lesson } from '../types';
 import { ALL_LESSONS, TRACKS } from '../constants';
 import { useProgress } from '../contexts/ProgressContext';
@@ -10,47 +11,27 @@ interface Props {
 }
 
 export const LessonContent: React.FC<Props> = ({ lesson, onComplete }) => {
-  const { markAsCompleted, triggerConfetti, triggerGraduation, completedLessons } = useProgress();
+  const { markAsCompleted, triggerLessonSuccess, completedLessons } = useProgress();
   
-  // Check if it's the last lesson globally
   const isLastLesson = ALL_LESSONS[ALL_LESSONS.length - 1].id === lesson.id;
   const isCompleted = completedLessons.includes(lesson.id);
 
-  // Memoize content to prevent unnecessary re-evaluations during parent renders
   const ContentBody = useMemo(() => lesson.content(), [lesson]);
 
   const handleAction = () => {
-    // 1. Mark as complete
+    // 1. Marcar como completo
     markAsCompleted(lesson.id);
     
-    // 2. Determine Celebration Type (Standard vs Graduation)
-    // Find the track this lesson belongs to
-    const currentTrack = TRACKS.find(t => t.id === lesson.trackId);
-    
-    if (currentTrack) {
-      // Get the last lesson ID of this specific track
-      const lastLessonIdOfTrack = currentTrack.lessons[currentTrack.lessons.length - 1].id;
-      
-      // If this is the last lesson of the track, trigger Graduation
-      if (lesson.id === lastLessonIdOfTrack) {
-        triggerGraduation();
-      } else {
-        // Otherwise, standard confetti
-        triggerConfetti();
-      }
-    } else {
-      triggerConfetti();
-    }
+    // 2. Trigger no novo overlay de sucesso
+    triggerLessonSuccess();
 
-    // 3. Navigate after short delay
-    // If graduation, wait a bit longer to enjoy the animation
-    const delay = 1500; // Keep navigation snappy, animation can persist or fade
+    // 3. Navegação após delay
+    const delay = 1800; 
     setTimeout(() => {
       onComplete();
     }, delay);
   };
 
-  // Badge Logic
   let badgeClass = "bg-gray-500/10 text-gray-400";
   let trackName = "Curso";
   
@@ -62,7 +43,7 @@ export const LessonContent: React.FC<Props> = ({ lesson, onComplete }) => {
     trackName = "Business";
   } else if (lesson.trackId === 'bonus') {
     badgeClass = "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30";
-    trackName = "Dicas de Mestre"; // Updated name
+    trackName = "Dicas de Mestre";
   }
 
   return (
@@ -99,7 +80,6 @@ export const LessonContent: React.FC<Props> = ({ lesson, onComplete }) => {
           }`}
           aria-label={isLastLesson ? "Finalizar curso" : "Próxima lição"}
         >
-          {/* Subtle shine effect */}
           <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none" />
           
           {isLastLesson ? (
@@ -119,7 +99,6 @@ export const LessonContent: React.FC<Props> = ({ lesson, onComplete }) => {
   );
 };
 
-// Reusable UI Components for Lessons
 export const TipBox: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
   <div className="bg-gradient-to-r from-violet-900/30 to-violet-800/10 border-l-4 border-violet-500 p-6 my-8 rounded-r-2xl shadow-sm hover:bg-violet-900/20 transition-colors">
     <div className="flex items-start gap-4">

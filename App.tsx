@@ -1,11 +1,11 @@
+
 import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Loading } from './components/Loading';
 import { AccessWarningModal } from './components/AccessWarningModal';
 import { ProgressProvider } from './contexts/ProgressContext';
-import { Confetti } from './components/Confetti';
-import { GraduationCelebration } from './components/GraduationCelebration';
+import { LessonSuccessOverlay } from './components/LessonSuccessOverlay';
 
 // Eager load core pages for instant navigation
 import Home from './pages/Home';
@@ -17,8 +17,7 @@ const LessonPage = React.lazy(() => import('./pages/LessonPage'));
 function App() {
   return (
     <ProgressProvider>
-      <Confetti />
-      <GraduationCelebration />
+      <LessonSuccessOverlay />
       <AccessWarningModal />
       <Routes>
         <Route path="/" element={<Layout />}>

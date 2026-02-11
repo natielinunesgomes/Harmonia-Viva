@@ -1,9 +1,11 @@
-import { GoogleGenAI, Type, GenerateContentResponse, Schema } from "@google/genai";
+
+import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { PromptResult } from "../types";
 
 // NOTE: process.env.API_KEY is defined in vite.config.ts
 const apiKey = process.env.API_KEY;
-const MODEL_NAME = 'gemini-2.5-flash';
+// Using gemini-3-pro-preview for advanced prompt engineering tasks
+const MODEL_NAME = 'gemini-3-pro-preview';
 
 // --- CONFIGURAÇÃO DA IA ---
 let ai: GoogleGenAI | null = null;
@@ -115,7 +117,8 @@ OUTPUT JSON:
 }
 `;
 
-const responseSchema: Schema = {
+// Define responseSchema as an object literal to avoid deprecated Schema usage
+const responseSchema = {
   type: Type.OBJECT,
   properties: {
     stylePrompt: { 
@@ -159,6 +162,7 @@ const generateFallback = (input: string, options?: PromptOptions): PromptResult 
 // --- PARSER ---
 const parseResponse = (response: GenerateContentResponse): PromptResult | null => {
   try {
+    // Correctly using .text property instead of .text() method
     const text = response.text;
     if (!text) return null;
     const jsonStr = text.replace(/```json|```/g, '').trim();

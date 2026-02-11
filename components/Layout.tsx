@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, memo } from 'react';
 import { Music, Menu, X, Youtube, Wand2, LucideIcon, CheckCircle2, Trophy, Star } from 'lucide-react';
 import { NavLink, Link, Outlet, useLocation } from 'react-router-dom';

@@ -1,13 +1,17 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { ALL_LESSONS } from '../constants';
 
 interface ProgressContextType {
   completedLessons: string[];
   markAsCompleted: (lessonId: string) => void;
-  isConfettiActive: boolean;
-  isGraduationActive: boolean; // Novo estado
-  triggerConfetti: () => void;
-  triggerGraduation: () => void; // Nova função
+  isLessonSuccessActive: boolean;
+  triggerLessonSuccess: () => void;
   getTrackProgress: (trackLessons: { id: string }[]) => number;
+  getTotalProgress: () => number;
+  // Added missing properties used by Confetti and GraduationCelebration components
+  isConfettiActive: boolean;
+  isGraduationActive: boolean;
 }
 
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined);
@@ -30,8 +34,10 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   });
 
+  const [isLessonSuccessActive, setIsLessonSuccessActive] = useState(false);
+  // Implementation of missing state variables
   const [isConfettiActive, setIsConfettiActive] = useState(false);
-  const [isGraduationActive, setIsGraduationActive] = useState(false); // Estado inicial
+  const [isGraduationActive, setIsGraduationActive] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('harmonia_progress', JSON.stringify(completedLessons));
@@ -43,17 +49,9 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  const triggerConfetti = () => {
-    setIsConfettiActive(true);
-    // Increased duration to 5000ms to allow stars to fall gently to the bottom
-    setTimeout(() => setIsConfettiActive(false), 5000);
-  };
-
-  // Nova função de celebração maior
-  const triggerGraduation = () => {
-    setIsGraduationActive(true);
-    // Dura um pouco mais que o confete
-    setTimeout(() => setIsGraduationActive(false), 4500);
+  const triggerLessonSuccess = () => {
+    setIsLessonSuccessActive(true);
+    setTimeout(() => setIsLessonSuccessActive(false), 2200);
   };
 
   const getTrackProgress = (trackLessons: { id: string }[]) => {
@@ -62,15 +60,23 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return Math.round((completedCount / trackLessons.length) * 100);
   };
 
+  const getTotalProgress = () => {
+    if (ALL_LESSONS.length === 0) return 0;
+    const completedCount = ALL_LESSONS.filter(l => completedLessons.includes(l.id)).length;
+    return Math.round((completedCount / ALL_LESSONS.length) * 100);
+  };
+
   return (
     <ProgressContext.Provider value={{ 
       completedLessons, 
       markAsCompleted, 
-      isConfettiActive, 
-      isGraduationActive,
-      triggerConfetti,
-      triggerGraduation,
-      getTrackProgress
+      isLessonSuccessActive,
+      triggerLessonSuccess,
+      getTrackProgress,
+      getTotalProgress,
+      // Pass the added states to the context provider
+      isConfettiActive,
+      isGraduationActive
     }}>
       {children}
     </ProgressContext.Provider>
